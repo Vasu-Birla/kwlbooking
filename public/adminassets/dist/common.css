@@ -1,0 +1,9 @@
+.card-primary.card-outline {
+    border-top: 3px solid #fb9d06;
+}
+.card {
+    background-color: #ffffffbf;
+}
+.login-box-msg, .register-box-msg {
+    font-weight: 600;
+}

@@ -38,6 +38,27 @@ const home = async (req, res, next) => {
   };
 
 
+  const appointments = async (req, res, next) => {
+    const con = await connection();
+    const output= req.cookies.rental_msg || '';
+    try {
+
+      await con.beginTransaction();
+      res.render('superadmin/appointments',{output:output}) 
+      await con.commit();
+
+    } catch (error) {
+      await con.rollback();
+      console.error('Error:', error);
+      res.status(500).send('Internal Server Error');
+    } finally {
+      con.release();
+    }
+  };
+
+  
+
+
 
   
 const index = async (req, res, next) => {
@@ -5936,6 +5957,9 @@ export {home, loginAdmin ,login , logout ,error404 , error500,  index,profile,pr
    ForgotPassword,sendOTP,verifyOTP,resetpassword ,inquiry_contactsPost , 
    checksubadminemail,checksubadminphonenumber ,checksubadminusername , 
    viewSubadmins ,updateSubadmin,changeSubadminStatus,deleteSubadmin
+
+
+   ,appointments
    
   
 

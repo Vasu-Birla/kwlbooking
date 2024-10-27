@@ -108,7 +108,8 @@ import { login , home, error404, error500, loginAdmin,profile,profilePost,addUse
   viewSubadmins,
   updateSubadmin,
   changeSubadminStatus,
-  deleteSubadmin
+  deleteSubadmin,
+  appointments
 } from "../controllers/superadminController.js";
 import { isAuthenticatedAdmin } from "../middleware/Adminauth.js";
 
@@ -133,6 +134,12 @@ router.route('/login').get(login);
 router.route('/login').post(loginAdmin)
 
 router.route('/logout').get(logout)
+
+
+//---------- appointments ------------- 
+
+
+router.route('/appointments').get(appointments);
 
 
 
