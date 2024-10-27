@@ -49,3 +49,36 @@
       </div>
     </div>
   </header>
+
+
+  <script>
+    function highlightActiveNavLink() {
+        const savedPath = localStorage.getItem('activeNavPath') || window.location.pathname;
+
+        // Remove active class from all links
+        document.querySelectorAll('#navmenu a').forEach((link) => {
+            link.classList.remove('active');
+        });
+
+        // Highlight the active link
+        const activeLink = document.querySelector(`#navmenu a[href="${savedPath}"]`);
+        if (activeLink) {
+            activeLink.classList.add('active');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        highlightActiveNavLink();
+
+        // Save active path to local storage on link click
+        document.querySelectorAll('#navmenu a').forEach((link) => {
+            link.addEventListener('click', () => {
+                localStorage.setItem('activeNavPath', link.getAttribute('href'));
+            });
+        });
+    });
+</script>
+
+
+
+  

@@ -56,3 +56,33 @@ a:hover {color: #fb9f07;text-decoration: none;}
     <!-- // sidebar -->
     
 </aside>
+
+
+
+<script>
+    function highlightActiveLink() {
+        const savedPath = localStorage.getItem('activePath') || window.location.pathname;
+
+        // Remove active class from all links
+        document.querySelectorAll('.nav-link').forEach((link) => {
+            link.classList.remove('active');
+        });
+
+        // Highlight the active link
+        const activeLink = document.querySelector(`.nav-link[href="${savedPath}"]`);
+        if (activeLink) {
+            activeLink.classList.add('active'); // Add active class to the link itself
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        highlightActiveLink();
+
+        // Save active path to local storage on link click
+        document.querySelectorAll('.nav-link').forEach((link) => {
+            link.addEventListener('click', () => {
+                localStorage.setItem('activePath', link.getAttribute('href'));
+            });
+        });
+    });
+</script>
