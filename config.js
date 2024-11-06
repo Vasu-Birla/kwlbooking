@@ -1,18 +1,29 @@
-import mysql from 'mysql2/promise';
+// config.js
 
-const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  //password: 'Kil@123456',
-  port: '3306',
-  database: 'car_rental',
-  waitForConnections: true, // Enable queueing
-  connectionLimit: 100, // Set an appropriate limit
-});
+import sql from 'mssql';
 
-const connection = () => {
-  return pool.getConnection();
+// Configuration object for connecting to MSSQL
+const config = {
+  user: 'root', // replace with your MSSQL username
+  password: 'Kilvish@420420', // replace with your MSSQL password
+  server: '82.112.238.22', // replace with your MSSQL server address
+  database: 'kwlbooking', // replace with your database name
+  options: {
+    encrypt: true, // Use encryption if your server supports it
+    trustServerCertificate: true // change this to true if using a self-signed certificate
+  }
 };
 
-export default connection;
+// Create a function to connect to the database
+const connection = async () => {
+  try {
+    const pool = await sql.connect(config);
+    console.log('Connected to MSSQL database successfully');
+    return pool; // return pool object to use later for queries
+  } catch (err) {
+    console.error('Error connecting to MSSQL database:', err.message);
+    throw err; // rethrow the error so the calling function knows it failed
+  }
+};
+
+export { connection, sql };

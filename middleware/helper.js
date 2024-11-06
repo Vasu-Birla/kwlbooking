@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import nodemailer from 'nodemailer';
-import connection from '../config.js';
+// import connection from '../config.js';
+import { connection, sql } from '../config.js';
 import jsPDF from 'jspdf';
 
 import crypto from 'crypto';

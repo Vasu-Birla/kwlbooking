@@ -4,7 +4,8 @@ import * as url from 'url';
 import * as path from 'path';
 import cookie from 'cookie-parser';
 import dotenv from 'dotenv'
-import connection from "./config.js";
+// import connection from "./config.js";
+import { connection, sql } from './config.js';
 import requestIp from "request-ip";
 
 import SuperAdminRouter from "./routes/superadminRoute.js";
@@ -36,12 +37,12 @@ app.use(async (req, res, next) => {
       app.locals.host  =  process.env.Host;
       app.locals.currentUrl = req.originalUrl;
 
-      const [locations] = await con.query('SELECT * FROM tbl_locations');
-      app.locals.locations = locations;        
-
+      // const [locations] = await con.query('SELECT * FROM tbl_locations');
+      // app.locals.locations = locations;        
+      // req.locations = locations;
       app.locals.dashboard_type = 'User';
       
-      req.locations = locations;
+     
 
 
       app.locals.currency  =  process.env.currency;

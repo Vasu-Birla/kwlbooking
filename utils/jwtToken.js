@@ -1,12 +1,14 @@
 
 import jwt from 'jsonwebtoken';
-import connection from '../config.js';
+//import connection from '../config.js';
+import { connection, sql } from '../config.js';
 import dotenv from 'dotenv'
 dotenv.config({path:"./config.env"});
 
 const con = await connection();
 
 const sendTokenAdmin = (admin, statusCode, res)=>{
+    console.log("Correct ")
     const token =  getJWTToken(admin.admin_id ); 
     //options for tokens  
         const options = {
