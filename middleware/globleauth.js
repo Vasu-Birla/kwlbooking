@@ -4,15 +4,17 @@ import { connection, sql } from '../config.js';
 
 
 
-const isAuthenticatedUser = async (req, res, next) => {
-  console.log("...Authenticati..")
+const globalAuth = async (req, res, next) => {
+
     const { User_kwl_token } = req.cookies;
+    
   
-    if (!User_kwl_token) {
-      return res.redirect('/#popup1');
-    }
-  
+ 
     try {
+
+      if (User_kwl_token){       
+    
+    
       const decodedData = jwt.verify(User_kwl_token, process.env.JWT_SECRET);
       const pool = await connection();
 
@@ -36,10 +38,15 @@ const isAuthenticatedUser = async (req, res, next) => {
    
   
       next();
+    }else{
+      res.app.locals.loggeduser = undefined;
+      res.app.locals.dashboard_type = 'Guest'
+      next();
+    }
     } catch (error) {
       console.error('Error during user authentication:', error);
       return res.redirect('/#popup1');
     }
   };
 
-export  {isAuthenticatedUser}
+export  {globalAuth}

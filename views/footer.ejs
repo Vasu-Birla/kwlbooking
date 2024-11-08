@@ -102,12 +102,12 @@
           <div class="col-lg-12 form-group">
            
             <label>Email</label>
-            <input type="email" name="email" id="loginEmail" class="form-control" placeholder="Your Email" required>
+            <input type="email" name="email" id="loginEmail" class="form-control" placeholder="Your Email" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required>
           </div>
           <div class="col-lg-12 form-group">
            
             <label>OTP</label>
-            <input type="text" name="otp" id="loginOtp" class="form-control" placeholder="Your OTP" required>
+            <input type="text" name="otp" id="loginOtp" class="form-control" placeholder="Your OTP" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required>
           </div>
           <div class="form-group">
             <button type="button" class="form-control btn-get-otp" id="kilotp" onclick="getOtp()" style="background-color: #1977cc; color: white;">Get OTP</button>
@@ -139,18 +139,40 @@
 <!-- Login POPUP CODE END -->
 
 <script>
-// Function to open the popup
-function openPopup() {
-  document.getElementById("popup1").style.display = "flex"; // Use flex to center it
-}
+//------- login modal script 
+document.addEventListener("DOMContentLoaded", function() {
+  // Get the modal and login button
+  var modal = document.getElementById("popup1");
+  var loginButton = document.querySelector("a.btn-getstarted");
+  
+  // Get the close button
+  var closeBtn = document.querySelector(".popup .close");
 
-// Function to close the popup
-function closePopup() {
-  document.getElementById("popup1").style.display = "none";
-}
+  // Function to open the modal
+  function openModal() {
+    modal.classList.add("show"); // Add the "show" class to make it visible
+    window.location.hash = "popup1"; // Update the URL with #popup1
+  }
 
-// Attach the close function to the close icon
-document.querySelector(".close").onclick = closePopup;
+  // Function to close the modal
+  function closeModal() {
+    modal.classList.remove("show"); // Remove the "show" class to hide it
+    history.pushState("", document.title, window.location.pathname); // Remove the hash from URL
+  }
+
+  // Open the modal when the login button is clicked
+  loginButton.onclick = function(event) {
+    event.preventDefault(); // Prevent default link behavior
+    openModal();
+  };
+
+  // Close the modal only when the close button is clicked
+  closeBtn.onclick = function() {
+    closeModal();
+  };
+});
+
+
 
 </script>
 
@@ -605,6 +627,7 @@ if (result.msg == true && result.exists == true) {
     document.getElementById('kilotpresend').style.display = 'block';
 } else if (!result.exists) {
     otpStatus.textContent = 'Account not fount';
+    document.getElementById('errmsg1').textContent = ''
     otpStatus.style.color = 'red';
 } else {
     otpStatus.textContent = 'Failed to send OTP. Please try again.';
@@ -653,228 +676,6 @@ if (result.success) {
 //---------------- Input Validations ---------------------- 
 
 
-
-
-function validateInput(event) {
-
-const inputField = event.target;
-const errorMessageDiv = document.getElementById('errmsg');
-
-
-
-  // allowed char with space 
-  var validCharacters;  
-    validCharacters= /^[a-zA-Z0-9@._\s-]*$/;  
-if(inputField.name == 'user_mobile'){
-   validCharacters = /^[0-9]*$/;
-}
-
-
-if (inputField.type === 'file') {
-  const file = inputField.files[0]; // Get the selected file
-  //const validImageTypes = ['image/jpeg', 'image/png']; // Define allowed image file types
-  const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/tiff', 'image/webp', 'image/svg+xml']; // Define allowed image file types
-
-  if (!validImageTypes.includes(file.type)) {
-    // Show error message and clear the input field
-    errorMessageDiv.textContent = 'Please select a valid image file (JPEG or PNG)!';
-    errorMessageDiv.style.color = 'red';
-    inputField.value = ''; // Clear the input field
-  } else {
-    // Clear error message
-    errorMessageDiv.textContent = '';
-  }
-}else{
-
-           if (event.type === 'keyup') {
-              if (!validCharacters.test(inputField.value)) {
-              // Show error message and highlight the field
-              errorMessageDiv.textContent = 'Invalid character entered!';
-              errorMessageDiv.style.color = 'red';
-              inputField.style.borderColor = 'red';
-              } else {
-              // Clear error message
-              errorMessageDiv.textContent = '';
-              inputField.style.borderColor = '';
-              }
-           } else if (event.type === 'change') {
-              if (errorMessageDiv.textContent !== '') {
-              // Clear the input field and error message
-              inputField.value = '';
-              errorMessageDiv.textContent = '';
-              inputField.style.borderColor = '';
-              }
-           }
-
-}
-
-
-}
-
-
-function validateInput0(event) {
-
-const inputField = event.target;
-const errorMessageDiv = document.getElementById('errmsg0');  
-
-
-  // allowed char with space 
-    var validCharacters;  
-    validCharacters= /^[a-zA-Z0-9@._\s-]*$/;  
-if(inputField.name == 'company_mobile'){
-   validCharacters = /^[0-9]*$/;
-}
-
-
-if (inputField.type === 'file') {
-  const file = inputField.files[0]; // Get the selected file
-  //const validImageTypes = ['image/jpeg', 'image/png']; // Define allowed image file types
-  const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/tiff', 'image/webp', 'image/svg+xml']; // Define allowed image file types
-
-  if (!validImageTypes.includes(file.type)) {
-    // Show error message and clear the input field
-    errorMessageDiv.textContent = 'Please select a valid image file (JPEG or PNG)!';
-    errorMessageDiv.style.color = 'red';
-    inputField.value = ''; // Clear the input field
-  } else {
-    // Clear error message
-    errorMessageDiv.textContent = '';
-  }
-}else{
-
-           if (event.type === 'keyup') {
-              if (!validCharacters.test(inputField.value)) {
-              // Show error message and highlight the field
-              errorMessageDiv.textContent = 'Invalid character entered!';
-              errorMessageDiv.style.color = 'red';
-              inputField.style.borderColor = 'red';
-              } else {
-              // Clear error message
-              errorMessageDiv.textContent = '';
-              inputField.style.borderColor = '';
-              }
-           } else if (event.type === 'change') {
-              if (errorMessageDiv.textContent !== '') {
-              // Clear the input field and error message
-              inputField.value = '';
-              errorMessageDiv.textContent = '';
-              inputField.style.borderColor = '';
-              }
-           }
-
-}
-
-
-}
-
-
-
-
-
-function validateInput2(event) {
-const validCharacters = /^[a-zA-Z0-9@._-]*$/; //  allowed char witout Space 
-
-// allowed char with space 
-// const validCharacters = /^[a-zA-Z0-9@._\s-]*$/;  
-
-const inputField = event.target;
-const errorMessageDiv = document.getElementById('errmsg');
-
-
-if (inputField.type === 'file') {
- const file = inputField.files[0]; // Get the selected file
- //const validImageTypes = ['image/jpeg', 'image/png']; // Define allowed image file types
- const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/tiff', 'image/webp', 'image/svg+xml']; // Define allowed image file types
-
- if (!validImageTypes.includes(file.type)) {
-   // Show error message and clear the input field
-   errorMessageDiv.textContent = 'Please select a valid image file (JPEG or PNG)!';
-   errorMessageDiv.style.color = 'red';
-   inputField.value = ''; // Clear the input field
- } else {
-   // Clear error message
-   errorMessageDiv.textContent = '';
- }
-}else{
-
-          if (event.type === 'keyup') {
-             if (!validCharacters.test(inputField.value)) {
-             // Show error message and highlight the field
-             errorMessageDiv.textContent = 'Invalid character entered!';
-             errorMessageDiv.style.color = 'red';
-             inputField.style.borderColor = 'red';
-             } else {
-             // Clear error message
-             errorMessageDiv.textContent = '';
-             inputField.style.borderColor = '';
-             }
-          } else if (event.type === 'change') {
-             if (errorMessageDiv.textContent !== '') {
-             // Clear the input field and error message
-             inputField.value = '';
-             errorMessageDiv.textContent = '';
-             inputField.style.borderColor = '';
-             }
-          }
-
-}
-
-
-}
-
-
-
-
-function validateInput02(event) {
-const validCharacters = /^[a-zA-Z0-9@._-]*$/; //  allowed char witout Space 
-
-// allowed char with space 
-// const validCharacters = /^[a-zA-Z0-9@._\s-]*$/;  
-
-const inputField = event.target;
-const errorMessageDiv = document.getElementById('errmsg0');
-
-
-if (inputField.type === 'file') {
- const file = inputField.files[0]; // Get the selected file
- //const validImageTypes = ['image/jpeg', 'image/png']; // Define allowed image file types
- const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/tiff', 'image/webp', 'image/svg+xml']; // Define allowed image file types
-
- if (!validImageTypes.includes(file.type)) {
-   // Show error message and clear the input field
-   errorMessageDiv.textContent = 'Please select a valid image file (JPEG or PNG)!';
-   errorMessageDiv.style.color = 'red';
-   inputField.value = ''; // Clear the input field
- } else {
-   // Clear error message
-   errorMessageDiv.textContent = '';
- }
-}else{
-
-          if (event.type === 'keyup') {
-             if (!validCharacters.test(inputField.value)) {
-             // Show error message and highlight the field
-             errorMessageDiv.textContent = 'Invalid character entered!';
-             errorMessageDiv.style.color = 'red';
-             inputField.style.borderColor = 'red';
-             } else {
-             // Clear error message
-             errorMessageDiv.textContent = '';
-             inputField.style.borderColor = '';
-             }
-          } else if (event.type === 'change') {
-             if (errorMessageDiv.textContent !== '') {
-             // Clear the input field and error message
-             inputField.value = '';
-             errorMessageDiv.textContent = '';
-             inputField.style.borderColor = '';
-             }
-          }
-
-}
-
-
-}
 
 
    
@@ -1197,6 +998,482 @@ document.querySelector('.dropdown-toggle').addEventListener('click', function() 
 
 // Fetch notifications on page load
 document.addEventListener('DOMContentLoaded', fetchNotifications);
+
+
+
+
+</script>
+
+
+
+
+<script>
+
+   //==================== Comman Kilvalidation start =====================
+   
+      
+   function validateRequiredFields(kil) {
+   
+   
+   const form = document.querySelector(`${kil}`); 
+   
+   const inputs = form.querySelectorAll('input[required], select[required], textarea[required]'); // Get only required inputs
+   
+   
+   let isValid = true;
+   let kilerror = 'This Field is Required.'
+   
+   
+   
+   // Remove previous error messages and borders
+   form.querySelectorAll('.error-message').forEach(errorMsg => errorMsg.remove());
+   inputs.forEach(input => {
+    
+       input.style.border = ''; // Reset borders
+   });
+   
+   inputs.forEach(input => {
+   
+   
+   
+                    if(input.type == 'date'){
+                        
+                        kilerror = "Please Select Date"
+                        input.style.border = '1px solid red';
+                    }else if(input.name == 'comments'){
+                    
+                        kilerror = 'Please Enter Comments'
+                    }else if(input.type == 'email'){
+                    
+                    kilerror = 'Please Enter Email'
+                }else if(input.type == 'password'){
+                    
+                    kilerror = 'Please Enter Password'
+                }else{
+                    kilerror = 'This Field is Required.'
+                }
+     
+   
+       if (!input.value.trim()) {  // If the required field is empty      
+           isValid = false;
+           input.style.border = '1px solid red'; // Set border to red for empty required fields
+           addErrorMessage(input.parentNode, kilerror); // Add error message
+       }
+   });
+   
+   return isValid;
+   }
+   
+   
+   // Add real-time validation for each required field
+   function addRealTimeValidation(kil) {
+       const form = document.querySelector(`${kil}`); 
+       const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+   
+       inputs.forEach(input => {
+           input.addEventListener('input', function () {
+               const label = document.querySelector(`label[for='${input.name}']`); // Find label based on name
+               if (input.value.trim()) {
+                   input.style.border = '';
+                   const errorMessage = input.parentNode.querySelector('.error-message');
+                   if (errorMessage) {
+                       errorMessage.remove();
+                   }
+                   if (label && label.innerHTML.includes('*')) {
+                       label.innerHTML = label.innerHTML.replace(' <span style="color:red;">*</span>', ''); // Remove asterisk
+                   }
+               } else {
+                   // If the input is empty again, add the asterisk back
+                   if (label && !label.innerHTML.includes('*')) {
+                       label.innerHTML += ' <span style="color:red;">*</span>'; // Append asterisk
+                   }
+               }
+           });
+   
+           input.addEventListener('change', function () {
+               const label = document.querySelector(`label[for='${input.name}']`); // Find label based on name
+               if (input.value.trim()) {
+                   input.style.border = '';
+                   const errorMessage = input.parentNode.querySelector('.error-message');
+                   if (errorMessage) {
+                       errorMessage.remove();
+                   }
+                   if (label && label.innerHTML.includes('*')) {
+                       label.innerHTML = label.innerHTML.replace(' <span style="color:red;">*</span>', ''); // Remove asterisk
+                   }
+               } else {
+                   // If the select input is empty again, add the asterisk back
+                   if (label && !label.innerHTML.includes('*')) {
+                       label.innerHTML += ' <span style="color:red;">*</span>'; // Append asterisk
+                   }
+               }
+           });
+       });
+   }
+   
+   
+   // Combined validation function
+   function validateForm(kil) {
+   
+   
+   if(!validateRequiredFields(kil)){
+     event.preventDefault();
+   }
+   }
+   
+   // Add real-time validation once the document is loaded
+   document.addEventListener('DOMContentLoaded', () => {
+   addRealTimeValidation('#kilform');  // Activate real-time validation
+   });
+   
+   
+   function validateKilvishInput(event) {
+          const inputField = event.target;
+      
+          // General valid character sets
+          // let validCharacters = /^[a-zA-Z0-9@,._\s-]*$/;
+      
+          let validCharacters = /^[a-zA-Z\s]*$/; // only char, no special char no numbers 
+      
+          // Define allowed image file types
+          const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/tiff', 'image/webp', 'image/svg+xml'];
+      
+          // Use parentNode for regular inputs, container for checkboxes
+          const container = inputField.closest('.col-lg-12') || inputField.closest('.form-group') || inputField.closest('div');
+          const inputParent = inputField.parentNode;
+      
+          // Remove previous error message and border
+          let errorMessage = inputParent.querySelector('.error-message');
+          if (errorMessage) errorMessage.remove();
+          inputField.style.border = ''; // Reset border
+      
+          // Custom validations based on input name
+          if (inputField.name === 'description' || inputField.name ===  'address') {
+              validCharacters = /^[a-zA-Z0-9@,._\s-'"*]*$/;
+      
+              // Check length limit
+              if (inputField.value.length > 400) {
+                  addErrorMessage(inputParent, 'Input exceeds the maximum length of 400 characters!');
+                  inputField.style.border = '1px solid red';
+                  inputField.value = inputField.value.substring(0, 400); // Truncate the input
+                  return;
+              }
+          }  else if (inputField.name === 'agent_name') {
+   
+                         validCharacters = /^[a-zA-Z\s]*$/; 
+                   
+                       // const allowedChars = /^[a-zA-Z0-9._@-]+$/;  //for kilMiddle Conditon 
+                        const allowedChars = /^[a-zA-Z0-9._@-\s]+$/; // For any additional validations
+                        
+                        const inputValue = inputField.value; 
+
+                          
+
+                                    if (!allowedChars.test(inputField.value)) {
+                                        // Allow common validation to handle non-numeric characters
+                                    } else if (inputValue.length > 20 || inputValue.length < 2  ) {                        
+                                        addErrorMessage(inputParent, 'Agent Name Must Be Between 2 And 20 Characters.');
+                                        inputField.style.border = '1px solid red'; 
+
+                                        if (event.type === 'change') {
+                                            inputField.value = ''; 
+                                        }    
+                                        return;
+                                        } 
+
+
+                                        inputField.style.border = '';
+
+
+
+                        } else if (inputField.name === 'otp') {
+   
+   
+   
+              validCharacters = /^\d{6,6}$/;
+              const numericOnlyPattern = /^\d+$/; // Checks for numeric-only input
+            const inputValue = inputField.value; 
+   
+                        const numericValue = parseInt(inputValue, 10);
+   
+                        if (!numericOnlyPattern.test(inputField.value)) {
+                           // Allow common validation to handle non-numeric characters
+                       } else if (inputValue.length > 6 || inputValue.length < 6  ) {                        
+                              addErrorMessage(inputParent, 'OTP must be exactly 6 digits');
+                              inputField.style.border = '1px solid red'; 
+   
+                              if (event.type === 'change') {
+                                 inputField.value = ''; 
+                              }    
+                              return;
+                           } 
+   
+   
+                           inputField.style.border = '';
+   
+   
+   
+          }else if (inputField.name === 'credit_limit') { 
+   
+          
+   
+   
+                            // validCharacters = /^\d{0,6}$/;  // without decimal 
+                            validCharacters = /^\d{0,6}(\.\d{0,2})?$/;   //with decimal 2 place
+                            const numericOnlyPattern = /^\d+$/; // Checks for numeric-only input
+                            const inputValue = inputField.value; 
+                      
+                                        const numericValue = parseInt(inputValue, 10);
+
+                                        if (!numericOnlyPattern.test(inputField.value)) {
+                                            // Allow common validation to handle non-numeric characters
+                                        } else if (inputValue.length > 5 || inputValue == 0  ) {                        
+                                            addErrorMessage(inputParent, 'Credit Limit Amount Cannot Be 0 Or Exceed 5 Digits');
+                                            inputField.style.border = '2px solid red'; 
+
+                                            if (event.type === 'change') {
+                                                inputField.value = ''; 
+                                            }    
+                                            return;
+                                            } 
+
+
+                                            inputField.style.border = '';
+
+
+
+                            }else if (inputField.name === 'agent_contact' || inputField.id =='agent_contact') {
+   
+   
+                                            
+                                            validCharacters = /^\d{7,10}$/;
+                                            const numericOnlyPattern = /^\d+$/; // Checks for numeric-only input
+                                            const inputValue = inputField.value; 
+
+                                                        const numericValue = parseInt(inputValue, 10);
+
+                                                        if (!numericOnlyPattern.test(inputField.value)) {
+                                                            // Allow common validation to handle non-numeric characters
+                                                        } else if (inputValue.length > 10 || inputValue.length < 7  ) {                        
+                                                            addErrorMessage(inputParent, 'Mobile Number Must Be Between 7 And 10 Digits.');
+                                                            inputField.style.border = '2px solid red'; 
+
+                                                            if (event.type === 'change') {
+                                                                inputField.value = ''; 
+                                                            }    
+                                                            return;
+                                                            } 
+
+
+                                                            inputField.style.border = '';
+
+
+
+   }else if (inputField.type === 'date') {
+         
+                                validCharacters = /^(?:\d{4}[-\/]\d{2}[-\/]\d{2})$/; 
+                                
+                                const inputValue = inputField.value.trim();
+   
+   
+                                const inputDate = new Date(inputValue.replace(/[-\/]/g, '/'));
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0); // Set to midnight for comparison
+   
+                                         // Check if the date is in the past
+                          if (inputDate < today) {
+                             addErrorMessage(inputParent, 'The date cannot be in the past.');
+                             inputField.style.border = '2px solid red';
+                             
+                             if (event.type === 'change') {
+                                   inputField.value = ''; // Clear the input field on change
+                             }
+                             
+                             return; // Exit the function after handling the error
+                          }
+   
+   
+                 inputField.style.border = '';
+                  }else if (inputField.name === 'model_name' || inputField.name ==='models[]') {
+                     // Only numbers allowed, between 7 and 10 digits
+                     validCharacters = /^[a-zA-Z0-9]{4,20}$/;
+                  }else if(inputField.type =='email'){
+                     validCharacters = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/; // Basic email pattern
+                     const allowedEmailChars = /^[a-zA-Z0-9._@-]+$/; 
+                    
+                     const inputValue = inputField.value; 
+   
+                     // If input contains invalid characters, skip email validation and let common validation handle it
+                               if (!allowedEmailChars.test(inputValue)) {
+                                   // Skip email validation, allowing common validation to catch unwanted characters
+                               } else if (!validCharacters.test(inputValue)) {                        
+                                 addErrorMessage(inputParent, 'Invalid Email Format.');
+                                 inputField.style.border = '1px solid red'; 
+   
+                                 if (event.type === 'change') {
+                                   inputField.value = ''; 
+                                 }    
+                                 return;
+                             } 
+   
+   
+                             inputField.style.border = '';
+   
+                  }else if(inputField.type ==='password'){
+      
+                                  const hasSequentialChars = (password) => {
+                                       console.log("passworddddddd -", password)
+                                       const length = password.length;
+                                       
+                                       // Check for ascending sequences (e.g., "123", "abc")
+                                       for (let i = 0; i < length - 3; i++) {
+                                          if (password.charCodeAt(i + 1) === password.charCodeAt(i) + 1 &&
+                                                password.charCodeAt(i + 2) === password.charCodeAt(i) + 2 &&
+                                                password.charCodeAt(i + 3) === password.charCodeAt(i) + 3) {
+                                                return true; // Ascending sequence found
+                                          }
+                                       }
+      
+                                       // Check for descending sequences (e.g., "321", "cba")
+                                       for (let i = 0; i < length - 3; i++) {
+                                          if (password.charCodeAt(i + 1) === password.charCodeAt(i) - 1 &&
+                                                password.charCodeAt(i + 2) === password.charCodeAt(i) - 2 &&
+                                                password.charCodeAt(i + 3) === password.charCodeAt(i) - 3) {
+                                                return true; // Descending sequence found
+                                          }
+                                       }
+                                       
+                                       return false; // No sequential characters
+                                    };
+      
+                     
+      
+                     validCharacters = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{12,}$/;
+      
+      
+                                                // Check if password meets the required pattern
+                                 if (!validCharacters.test(inputField.value)) {
+                                    addErrorMessage(inputParent, 'Password must be at least 12 characters long and contain at least one uppercase letter, one lowercase letter, one special character, and one number.');
+                                    inputField.style.border = '1px solid red';
+                                    if (event.type === 'change') {   inputField.value = '';  }
+                                    return; // Stop further validation
+                                 }
+      
+                                 // Check for sequential characters
+                                 if (hasSequentialChars(inputField.value)) {
+                                    addErrorMessage(inputParent, 'Password should not contain sequential characters.');
+                                    inputField.style.border = '1px solid red';
+                                       if (event.type === 'change') {   inputField.value = '';  }
+                                    return; // Stop further validation
+                                 }
+      
+      
+                                 // Function to check for sequential characters in the password
+                       
+                                                         
+      
+      
+      
+                  }
+                    
+      
+                  
+      
+      
+      
+          // Handle file input validation
+          if (inputField.type === 'file') {
+              const file = inputField.files[0];
+              if (file && !validImageTypes.includes(file.type)) {
+                  addErrorMessage(inputParent, 'Please select a valid image file (JPEG, PNG, etc.)');
+                  inputField.value = ''; // Clear the file input field
+                  inputField.style.border = '1px solid red';
+                  return;
+              }
+          } else {
+              // For normal text/number input validation
+              if (event.type === 'keyup') {
+                  if (!validCharacters.test(inputField.value)) {
+                      addErrorMessage(inputParent, 'Invalid character entered!');
+                      inputField.style.border = '1px solid red';
+                      
+                  }
+              }
+      
+              if (event.type === 'change') {
+                  if (!validCharacters.test(inputField.value)) {
+                      // On invalid input during change event, clear the field and show an error
+                      inputField.value = ''; // Clear invalid input
+                      addErrorMessage(inputParent, 'Invalid character or format!');
+                      inputField.style.border = '1px solid red';
+                  } else {
+                      // Clear error when value is corrected
+                      inputField.style.border = '';
+                      if (errorMessage) errorMessage.remove();
+                  }
+              }
+          }
+      }
+      
+   
+   
+   
+   
+   
+      // Function to display error messages under the input field or container for checkboxes
+      function addErrorMessage(parent, message) {
+          if (!parent.querySelector('.error-message')) {
+              const errorMessage = document.createElement('div');
+              errorMessage.className = 'error-message';
+              errorMessage.style.color = 'red';
+              errorMessage.style.fontSize = '12px';
+              errorMessage.innerText = message;
+              parent.appendChild(errorMessage);
+          }
+      }
+      
+      
+   
+   
+      document.addEventListener('DOMContentLoaded', () => {    
+       addRealTimeValidation('#kilform');  // Activate real-time validation
+
+       const form = document.querySelector(`#kilform`); 
+      // const requiredFields = form.querySelectorAll('input[required], select[required], textarea[required]');
+      const requiredFields = document.querySelectorAll('input[required], select[required], textarea[required]');
+   
+            requiredFields.forEach(field => {
+    
+       const label = document.querySelector(`label[for='${field.name}']`); // Use name instead of id
+      // Check if the field is empty
+                     if (label && !label.innerHTML.includes('*') && field.value.trim() === '') { 
+                                          // Append asterisk only if the field is empty
+                            label.innerHTML += ' <span style="color:red;">*</span>'; 
+                        }
+
+   
+   });
+   
+   
+   });
+
+
+
+   //============= Clear Kilalert msg after 5 sec =========== 
+    // Wait for the DOM to fully load
+    document.addEventListener("DOMContentLoaded", function() {
+        // Set a timeout to clear the message after 5 seconds
+        setTimeout(function() {
+            const messageElement = document.getElementById("kilmessage");
+            if (messageElement) {
+                messageElement.innerHTML = ""; // Clear the message
+            }
+        }, 5000); // 5000 milliseconds = 5 seconds
+    });
+   
+   
+   
+   //====================== Command Kilvish validation End ===============================
 
 
 

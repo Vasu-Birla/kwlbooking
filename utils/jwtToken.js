@@ -23,9 +23,13 @@ const sendTokenAdmin = (admin, statusCode, res)=>{
 
 
 
-// Creating Token and saving in Cookie for user 
-const sendTokenUser = (user,type, statusCode, res)=>{ 
-    const token =  getJWTToken(user.user_id); 
+
+
+const sendTokenUser = (user, statusCode, res)=>{
+    
+    const token =  getJWTTokenUSER(user.user_email); 
+    
+
     //options for tokens  
         const options = {
             expires: new Date(
@@ -34,16 +38,22 @@ const sendTokenUser = (user,type, statusCode, res)=>{
             httpOnly:true
         }                 
         //res.redirect('/user/home/')
-        console.log("login success", user.user_id)
-       res.status(statusCode).cookie('User_kwl_token',token,options).redirect('/viewBookings')      
-
+        console.log("login success", user.user_email)
+        res.status(statusCode).cookie('User_kwl_token',token,options).redirect('/viewBookings')      
+    
        
 }
+
 
 
 
 function getJWTToken(id){ 
     return jwt.sign({id:id},process.env.JWT_SECRET,{ expiresIn: process.env.JWT_EXPIRE })
 }
+
+function getJWTTokenUSER(user_email) { 
+    return jwt.sign({ user_email: user_email }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
+}
+
 
 export {sendTokenUser , sendTokenAdmin }
