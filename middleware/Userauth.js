@@ -1,42 +1,42 @@
-import jwt from 'jsonwebtoken';
-import connection from '../config.js';
+import jwt from 'jsonwebtoken'
+// import connection  from '../config.js'
+import { connection, sql } from '../config.js';
+
+
 
 const isAuthenticatedUser = async (req, res, next) => {
-   // Print the entire req.body to debug
-   console.log("Full body -->", req.body);
-  const { user_type } = req.body; // Assuming 'type' is sent in the request body
-  console.log("type--> ",user_type)
+    const { User_kwl_token } = req.cookies;
+  
+    if (!User_kwl_token) {
+      return res.redirect('/#popup1');
+    }
+  
+    try {
+      const decodedData = jwt.verify(User_kwl_token, process.env.JWT_SECRET);
+      const pool = await connection();
+  
+      const result = await pool.request()
+        .input('user_email', sql.Int, decodedData.id)
+        .query('SELECT * FROM tbl_bookings WHERE user_email = @user_email');
+  
+      const user = result.recordset[0];
+  
+      if (!user) {
+          res.app.locals.dashboard_type = 'Guest'
+         return res.redirect('/#popup1');
+      }
+  
+      req.user = user;
+      res.app.locals.loggeduser = user;
+    res.app.locals.dashboard_type = 'User'
+  
+   
+  
+      next();
+    } catch (error) {
+      console.error('Error during user authentication:', error);
+      return res.redirect('/#popup1');
+    }
+  };
 
-  // If 'type' is present and is 'Guest', skip token verification
-  if (user_type === 'Guest') {
-    console.log("gurest mode")
-    return next();
-  }
-
-  // If 'type' is not present or any other type, proceed with token verification
-  if (req.header('Authorization')) {
-    var token = req.header('Authorization').replace('Bearer ', '');
-  }
-
-  const con = await connection();
-  console.log("jwt from user", token);
-
-  if (!token) {
-    return res.status(200).json({ result: 'Access denied. No token provided.' });
-  }
-
-  try {
-    const decodedData = jwt.verify(token, process.env.JWT_SECRET);
-    const [result] = await con.query('SELECT * FROM tbl_user WHERE user_id = ?', [decodedData.id]);
-    console.log(result[0]);
-    req.user = result[0];
-
-    next();
-  } catch (error) {
-    res.status(400).json({ result: 'Session Time Out!!' });
-  } finally {
-    con.release();
-  }
-};
-
-export { isAuthenticatedUser };
+export  {isAuthenticatedUser}

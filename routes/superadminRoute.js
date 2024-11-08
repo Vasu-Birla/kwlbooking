@@ -14,9 +14,9 @@ import { login , home, error404, error500, loginAdmin,profile,profilePost,logout
 } from "../controllers/superadminController.js";
 import { isAuthenticatedAdmin } from "../middleware/Adminauth.js";
 
-import upload from '../middleware/upload.js';
 
-import { docUploads, profileUpload , vehicleUploads, countryUploads ,sliderUploads, fileUpload } from '../middleware/uploader.js';
+
+import {  profileUpload , fileUpload } from '../middleware/uploader.js';
 
 const router = express.Router();
 

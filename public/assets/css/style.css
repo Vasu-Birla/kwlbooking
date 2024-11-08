@@ -1,124 +1,407 @@
-
+/* Tabs Styling */
 .tabs {
     display: flex;
     justify-content: space-around;
-    border-bottom: 2px solid #ddd;
     margin-bottom: 20px;
+    background: #f7f9fc;
+    border-radius: 10px;
+    padding: 5px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .tab {
-    position: relative;
-    padding: 10px 20px;
-    width: 100%;
+    flex: 1;
+    padding: 12px 0;
+    text-align: center;
     cursor: pointer;
-    color: #666;
+    background-color: #3875c6;
+    color: #fff;
     font-weight: bold;
-    transition: color 0.3s, background-color 0.3s;
-    background-color: #f0f0f0; /* Light background for non-active tab */
-    border: 1px solid #ddd;
-    border-bottom: none;
+    border-radius: 8px;
+    transition: all 0.3s;
 }
 
-.tab:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    width: 10px;
-    height: 10px;
-    background-color: #f0f0f0;
-    transform: translateY(-50%) rotate(45deg);
-    border-right: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
+.tab:hover {
+    background-color: #d0eaff;
+    color: #1977cc;
 }
 
 .tab.active {
-    background-color: #ffffff; /* White background for active tab */
-    color: #333; /* Darker text for active tab */
-    border-bottom: 2px solid #000; /* Highlight the active tab */
+    background-color: #133590;
+    color: #ffffff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.tab.active:not(:last-child)::after {
-    background-color: #ffffff;
-    border-right: 2px solid #000;
-    border-bottom: 2px solid #000;
+/* Calendar and Container Styling */
+.colcontainer {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 25px;
+    background-color: #fafafa;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
 }
-.tab-content {
-    display: none;
-    animation: fadeIn 0.5s ease;
+
+.calendar {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    margin-bottom: 20px;
 }
-.tab-content.active {
-    display: block;
-}
-.button-container {
+
+.calendar-header {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.calendaricon {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #1977cc;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.day {
+    padding: 12px;
+    background-color: #f0f4f8;
+    border-radius: 6px;
+    font-weight: bold;
+    color: #666;
+    transition: background-color 0.3s, color 0.3s;
+    cursor: pointer;
+}
+
+.day:hover {
+    background-color: #1977cc;
+    color: #ffffff;
+}
+
+.selected-day {
+    background-color: #1977cc;
+    color: #ffffff;
+}
+
+/* Time Slots Styling */
+.time-slots {
+    margin-top: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+}
+
+#timeSlots {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.time-slot {
+    padding: 10px;
+    background-color: #f0f4f8;
+    text-align: center;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.time-slot:hover {
+    background-color: #1977cc;
+    color: #ffffff;
+}
+
+.selected-time {
+    background-color: #1977cc;
+    color: #ffffff;
+}
+
+/* Button Styling */
+.button-container {
+    /* display: flex; */
     justify-content: space-between;
     margin-top: 20px;
 }
+
 .button {
-    padding: 10px 20px;
+    padding: 10px 25px;
     border: none;
     background-color: #1977cc;
     color: #fff;
     font-weight: bold;
     cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.3s;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.3s;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
+
 .button:hover {
-    background-color: #1977cc;
+    background-color: #004a8f;
+    transform: scale(1.05);
 }
-.calendar, .time-slots {
-    margin-top: 20px;
-}
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #333;
-}
-.calendar-days {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
-    margin-top: 10px;
-    text-align: center;
-}
-.day {
-    padding: 10px;
-    background-color: #eee;
-    border-radius: 4px;
-    cursor: pointer;
-}
-.selected-day {
-    background-color: #3a3a3a;
-    color: #fff;
-}
-.time-slot {
-    padding: 10px;
-    background-color: #eee;
-    text-align: center;
-    border-radius: 4px;
-    cursor: pointer;
-}
-.selected-time {
-    background-color:#008000;
-    color: #fff;
-}
+
+/* Animation for Smooth Transitions */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
 }
 
-.calendaricon{
-    font-size: 24px;
-    font-weight: bold;
+.tab-content {
+    display: none;
+    animation: fadeIn 0.5s ease;
 }
-.colcontainer{
-    border: 1px solid #000;
-    border-radius: 5px;
-    padding: 20px 20px 20px 20px;
+
+.tab-content.active {
+    display: block;
 }
+
 label {
     font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+input.form-control {
+    border: 1px solid #ccc;
+    padding: 8px;
+    border-radius: 5px;
+    transition: border-color 0.3s;
+}
+
+input.form-control:focus {
+    border-color: #1977cc;
+    outline: none;
+}
+
+
+/* Overlay */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: none; /* Initially hidden */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it’s above other elements */
+  }
+  
+  /* Popup box */
+  .popup {
+    background: white;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    position: relative;
+  }
+  
+  /* Close button */
+  .popup .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    color: #333;
+    text-decoration: none;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+}
+
+
+/* Style the user image as a circle */
+.user-img {
+    width: 25px; /* Size of the circle */
+    height: 25px; /* Size of the circle */
+    border-radius: 50%; /* Makes the image round */
+    object-fit: cover; /* Ensures the image fits well inside the circle */
+    margin-right: 8px; /* Space between the image and username */
+    cursor: pointer; /* Cursor changes to pointer on hover */
+  }
+  
+  /* Style the username */
+  .username {
+    font-size: 14px;
+    font-weight: bold;
+    vertical-align: middle;
+    margin-right: 10px; /* Space between the username and the dropdown */
+    cursor: pointer; /* Cursor changes to pointer on hover */
+  }
+  
+  /* Style the dropdown container */
+  .login-css {
+    position: relative; /* So the dropdown menu can be positioned relative to this container */
+  }
+  
+  /* Dropdown menu initially hidden */
+  .dropdown-menu {
+    display: none; /* Hide the dropdown by default */
+    position: absolute;
+    top: 70%; /* Positions the dropdown below the user image */
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    min-width: 150px; /* Minimum width of the dropdown */
+    z-index: 10;
+  }
+  
+  /* Style the dropdown items */
+  .dropdown-item {
+    padding: 8px 12px;
+    color: #333;
+    text-decoration: none;
+    display: block;
+  }
+  
+  .dropdown-item:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
+  }
+  
+  /* Logout button style */
+  .logout-btn {
+    background-color: #e74c3c; /* Red background */
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    width: 100%;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  
+  .logout-btn:hover {
+    background-color: #c0392b;
+  }
+  
+  /* Show the dropdown when the container is hovered or clicked */
+  .login-css:hover .dropdown-menu {
+    display: block; /* Display the dropdown when hovering */
+  }
+  
+  /* For smaller screens, you can tweak the size or appearance */
+
+  
+/* General table styling */
+table.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(45deg, #f3f4f6, #e1e5eb); /* Add gradient background */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Add subtle shadow to the table */
+    border-radius: 10px; /* Rounded corners for the table */
+    overflow: hidden; /* To ensure rounded corners don't break */
+}
+
+/* Header styling */
+thead {
+    background-color: #007bff; /* Blue background for the header */
+    color: white;
+}
+
+thead th {
+    font-size: 13px;
+    text-transform: uppercase;
+    padding: 15px 12px;
+    letter-spacing: 1px;
+}
+
+/* Body rows styling */
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9; /* Lighter background for even rows */
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #ffffff; /* White background for odd rows */
+}
+
+tbody tr:hover {
+    background-color: #f1f1f1; /* Highlight on row hover */
+}
+
+/* Action button styling */
+.action-btn {
+    background: none;
+    border: none;
+    padding: 5px 10px;
+    margin: 0 5px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 5px;
+}
+
+/* Styling for Edit button */
+.edit-btn {
+    background-color: #28a745;
+}
+
+.edit-btn:hover {
+    background-color: #218838;
+}
+
+.edit-btn i {
+    transition: transform 0.3s ease;
+}
+
+/* Styling for Cancel button */
+.cancel-btn {
+    background-color: #dc3545;
+}
+
+.cancel-btn:hover {
+    background-color: #c82333;
+}
+
+.cancel-btn i {
+    transition: transform 0.3s ease;
+}
+
+/* Smooth icon scaling effect on hover */
+.action-btn i {
+    transition: transform 0.3s ease;
+}
+
+.action-btn:hover i {
+    transform: scale(1.1);
+}
+
+/* Table footer styling */
+tfoot {
+    background-color: #007bff; /* Same blue as header */
+    color: white;
+}
+
+tfoot th {
+    font-size: 13px;
+    text-transform: uppercase;
+}
+
+/* Responsive table adjustments */
+@media (max-width: 768px) {
+    th, td {
+        padding: 8px 10px;
+    }
+
+    .action-btn {
+        font-size: 12px;
+        padding: 8px;
+    }
 }

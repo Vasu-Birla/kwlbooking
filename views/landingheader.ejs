@@ -35,52 +35,6 @@
   <!-- Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet"> 
   <link href="assets/css/style.css" rel="stylesheet"> 
-
-
-<style>
-
-
-/* Popup Overlay (default: hidden) */
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  display: none; /* Hide by default */
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-/* Show popup when #popup1 is in the URL */
-.overlay:target {
-  display: flex;
-}
-
-.popup {
-  background: #fff;
-  padding: 20px;
-  width: 90%;
-  max-width: 500px;
-  position: relative;
-  border-radius: 5px;
-  text-align: center;
-}
-
-.popup .close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 24px;
-  text-decoration: none;
-  color: #333;
-}
-
-  
-</style>
-  
 </head>
 
 <body class="index-page">
@@ -96,32 +50,7 @@
           <ul>
             <li><a href="/" class="active">Home<br></a></li>
             <li><a href="/booking_availability">Make an Appointment</a></li>
-            <!-- <li class="login-css dash-right"><a class="btn-getstarted " onclick="openPopup()" >Login</a> </li> -->
-
-            <% if (typeof loggeduser !== 'undefined' && loggeduser) { %>
-              <li class="login-css dash-right">
-                  <a class="btn-getstarted" href="#" style="color: #000;background: #ffffff;">
-                      <img src="assets/img/logo.png" alt="User Image" class="user-img"> 
-                      <span class="username"><%= loggeduser.username %></span>
-                  </a>
-                  <div class="dropdown-menu">
-                      <button class="dropdown-item logout-btn" onclick="logout()">Logout</button> <!-- Logout button -->
-                  </div>
-              </li>
-          <% } else { %>
-              <li class="login-css dash-right">
-                  <a class="btn-getstarted" href="#popup1">Login</a>
-              </li>
-          <% } %>
-          
-
-
-
-
-            
-
-
-
+            <li class="login-css dash-right"><a class="btn-getstarted " onclick="openPopup()" >Login</a> </li>
           </ul>
           <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>

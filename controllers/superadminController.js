@@ -5,12 +5,7 @@ import { connection, sql } from '../config.js';
 import * as path from 'path';
 import * as url from 'url';
 import {sendTokenAdmin} from "../utils/jwtToken.js";
-import {hashPassword, comparePassword , senddocNotificationUser,sendOTPFornewPass, encrypt,decrypt , encrypt64 ,decrypt64 } from '../middleware/helper.js'
-
-
-
-
-
+import {hashPassword, comparePassword } from '../middleware/helper.js'
 import moment from 'moment-timezone';
 import { contains } from "cheerio";
 // moment.tz.setDefault('Asia/Hong_Kong');
@@ -22,23 +17,6 @@ const __dirname = url.fileURLToPath(new URL('.',import.meta.url));
 
 
 
-const home1 = async (req, res, next) => {
-    const con = await connection();
-    const output= req.cookies.rental_msg || '';
-    try {
-
-      await con.beginTransaction();
-      res.render('superadmin/index',{output:output}) 
-      await con.commit();
-
-    } catch (error) {
-      await con.rollback();
-      console.error('Error:', error);
-      res.status(500).send('Internal Server Error');
-    } finally {
-      con.release();
-    }
-  };
 
   const home = async (req, res, next) => {
     const pool = await connection();
@@ -75,23 +53,6 @@ const home1 = async (req, res, next) => {
   };
 
 
-  const appointments1 = async (req, res, next) => {
-    const con = await connection();
-    const output= req.cookies.rental_msg || '';
-    try {
-
-      await con.beginTransaction();
-      res.render('superadmin/appointments',{output:output}) 
-      await con.commit();
-
-    } catch (error) {
-      await con.rollback();
-      console.error('Error:', error);
-      res.status(500).send('Internal Server Error');
-    } finally {
-      con.release();
-    }
-  };
 
 
 const appointments = async (req, res, next) => {
@@ -230,92 +191,6 @@ const logout = async (req, res) => {
     res.render('superadmin/kil500', { output: `${error}` });
   }
 };
-
-
-
-
-
-
-  const login1 = async(req,res,next) => {
-
-    const con = await connection();
-
-    try {
-        await con.beginTransaction();
-        res.render('superadmin/login',{'output':''})
-        await con.commit();
-    } catch (error) {
-        console.error('Error:',error);
-        res.status(500).send('Internal Server Error');
-    } finally{
-        con.release();
-    }
-  };
-
-
-  const loginAdmin1 = async (req, res, next) => { 
-    try {
-      console.log(req.body);
-      const con = await connection();
-    
-      const { username, password } = req.body;
-    
-      // If the user doesn't enter username or password
-      if (!username || !password) {
-        return res.render('superadmin/login', { 'output': 'Please Enter Username and Password' });
-      }
-    
-      const [results] = await con.query('SELECT * FROM tbl_admin WHERE username = ?', [username]);
-      const admin = results[0];
-  
-      // If admin not found
-      if (!admin) {
-        return res.render('superadmin/login', { 'output': 'Invalid Username' });
-      }
-  
-      // Compare password
-      const isValid = comparePassword(password, admin.password);
-      console.log("isValid--> ", isValid);
-  
-      if (!isValid) {
-        return res.render('superadmin/login', { 'output': 'Incorrect Password' });
-      }
-  
-      // If login successful
-      sendTokenAdmin(admin, 200, res);
-  
-    } catch (error) {
-      console.error('Error during login:', error);
-      // Handle errors like database connection failure, unexpected errors, etc.
-      res.render('superadmin/login', { 'output': 'An error occurred. Please try again later.' });
-    }
-  };
-
-
-  const logout1 = async (req, res) => {
-
-          try {
-            res.cookie("Admin_token",null,{
-              expires : new Date(Date.now()),
-              httpOnly:true
-          })
-          
-          res.redirect('/superadmin/login')
-    } catch (error) {
-        console.error('Error logging out admin:', error);
-        // res.cookie('rental_msg', 'Error logging out admin: : '+ error);
-       res.render('superadmin/kil500', { output: `${error}` });
-        // res.render('kil404', { output: `Requested Page or URL Not Found` });
-
-        // res.redirect('/superadmin')
-    }
-  };
-
-
-
-
-
-
 
 
 

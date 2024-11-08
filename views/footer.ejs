@@ -4,7 +4,7 @@
       <div class="row gy-4">
         <div class="col-lg-4 col-md-6 footer-about">
           <a href="/" class="logo d-flex align-items-center">
-            <span class="sitename">KWL-IAS</span>
+            <img src="assets/img/logo.png">
           </a>
           <div class="social-links d-flex mt-4">
             <a href="#"><i class="bi bi-twitter-x"></i></a>
@@ -37,7 +37,7 @@
       </div>
     </div>
     <div class="container copyright text-center mt-4">
-      <p>© <span>Copyright 2024</span> <strong class="px-1 sitename">KWL-IAS</strong> <span>All Rights Reserved.</span> Designed by <a href="https://cyberimpulses.com/" target="_blank">CISS</a></p>
+      <p>© <span>Copyright 2024</span> <strong class="px-1 sitename">Kingston Wharves</strong> <span>All Rights Reserved.</span> Designed by <a href="https://cyberimpulses.com/" target="_blank">Amber Innovations</a></p>
     </div>
   </footer>
   <!-- Footer End -->
@@ -56,8 +56,1151 @@
   <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
 
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
 
+  <!-- Datatables CSS -->
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap4.js"></script>
+<script>
+    new DataTable('#example');
+</script>
+
 </body>
 </html>
+
+
+
+
+<!-- Login POPUP CODE START -->
+<div id="popup1" class="overlay">
+  <div class="popup">
+    <div class="popup-header" style="padding-bottom: 20px;">
+      <img src="assets/img/favicon.png" alt="" style="width: 14%;"><span style="color: #07233d;font-size: 20px;">Kingston Wharves</span>
+      <a class="close" href="#">&times;</a>
+    </div>
+    <div class="headings-full">
+      <!-- <h3 class="headings"> Welcome To Job Portal Website 2 </h3> -->
+      <center>
+        <h4>Login</h4>
+        <p>User the registered email address to login</p>
+      </center>
+      <hr>
+    </div>
+    <div class="content">
+      <div class="full-content">
+        <div id="errmsg1"></div>
+        <div id="loader1" style="display:none; font-size:16px; color:rgb(8, 233, 102); margin-bottom:15px;"></div>
+
+        <form id="loginForm" method="post" action="/login">   
+        <div class="form-group row">
+          <div class="col-lg-12 form-group">
+           
+            <label>Email</label>
+            <input type="email" name="email" id="loginEmail" class="form-control" placeholder="Your Email" required>
+          </div>
+          <div class="col-lg-12 form-group">
+           
+            <label>OTP</label>
+            <input type="text" name="otp" id="loginOtp" class="form-control" placeholder="Your OTP" required>
+          </div>
+          <div class="form-group">
+            <button type="button" class="form-control btn-get-otp" id="kilotp" onclick="getOtp()" style="background-color: #1977cc; color: white;">Get OTP</button>
+            <span id="otpStatus" class="form-control otps"></span>
+          </div>
+          <div class="form-group justify-content-between align-items-center">
+            <!-- <div class="form-check">
+              <label class="form-check-label text-muted" style="color: black !important;">
+                <input type="checkbox" class="form-check-input">
+                Remember me
+                <i class="input-helper"></i>
+              </label>
+            </div> -->
+          </div>
+          <div class="col-md-12 text-center">
+            <div class="fpassword d-flex">
+              <button type="button" class="form-control" style="background: #f1bf17; color: white; font-weight: 500; padding: 7px 15px; margin: 0px 5px;" onclick="login()">Login</button>
+              <button type="button" class="form-control btn-get-otp" id="kilotpresend" onclick="getOtp()" style="background-color: #26b28b !important; color: white; display: none;"> Resend</button>
+              <!-- <a href="#" class="form-control" style="text-align: left; background: #26b28b; color: white; font-weight: 500; padding: 7px 15px; margin: 0px 5px;">Forget Password</a> -->
+            </div>
+          </div>
+        </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Login POPUP CODE END -->
+
+<script>
+// Function to open the popup
+function openPopup() {
+  document.getElementById("popup1").style.display = "flex"; // Use flex to center it
+}
+
+// Function to close the popup
+function closePopup() {
+  document.getElementById("popup1").style.display = "none";
+}
+
+// Attach the close function to the close icon
+document.querySelector(".close").onclick = closePopup;
+
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var input = document.querySelector("#phone");
+    var iti = window.intlTelInput(input, {
+      preferredCountries: ["us", "gb"], // Customize based on your needs
+      separateDialCode: true,
+      utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.min.js", // Utility script
+    });
+
+// Update hidden input field with full phone number
+input.addEventListener("input", function() {
+  var fullPhoneNumber = iti.getNumber();
+  var countryCode =   '+'+iti.getSelectedCountryData().dialCode;
+
+
+  document.querySelector("#fullPhoneNumber").value = fullPhoneNumber;
+  document.querySelector("#countryCode").value = countryCode;
+
+});
+
+// Initialize hidden field with the current value on page load
+var fullPhoneNumber = iti.getNumber();
+var countryCode =   '+'+iti.getSelectedCountryData().dialCode;
+document.querySelector("#fullPhoneNumber").value = fullPhoneNumber;
+document.querySelector("#countryCode").value = countryCode;
+
+});
+
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    var input = document.querySelector("#phone1");
+    var iti = window.intlTelInput(input, {
+      preferredCountries: ["us", "gb"], // Customize based on your needs
+      separateDialCode: true,
+      utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.min.js", // Utility script
+    });
+
+// Update hidden input field with full phone number
+input.addEventListener("input", function() {
+  var fullPhoneNumber = iti.getNumber();
+  var countryCode =   '+'+iti.getSelectedCountryData().dialCode;
+
+
+  document.querySelector("#fullPhoneNumber1").value = fullPhoneNumber;
+  document.querySelector("#countryCode1").value = countryCode;
+
+});
+
+// Initialize hidden field with the current value on page load
+var fullPhoneNumber = iti.getNumber();
+var countryCode =   '+'+iti.getSelectedCountryData().dialCode;
+document.querySelector("#fullPhoneNumber1").value = fullPhoneNumber;
+document.querySelector("#countryCode1").value = countryCode;
+
+});
+
+
+
+
+
+
+
+</script>
+
+
+<!-- SIGNIN POPUP SCRIPT START  -->
+<script>
+let openModalBtn = document.getElementById("openModalBtn");
+let modal = document.getElementById("myModal");
+let closeModalBtn = document.getElementById("closeModalBtn");
+
+openModalBtn.addEventListener("click", function() {
+  modal.style.display = "block";
+});
+
+closeModalBtn.addEventListener("click", function() {
+  modal.style.display = "none";
+});
+
+window.addEventListener("click", function(event) {
+  if (event.target === modal) {
+      modal.style.display = "none";
+  }
+});
+
+function regisermodal(){
+openModalBtn.click();
+}
+
+function loginmodal(){
+modal.style.display = "none";
+}
+
+
+
+function backbutton(){
+
+document.getElementById('showrole').style.display = "block";
+
+document.getElementById('jobs').style.display = "none";
+
+document.getElementById('Employer').style.display = "none";
+
+document.getElementById("openModalBtn").click();
+
+}
+
+</script>
+<!-- REGISTER POPUP SCRIPT START  -->
+<script>
+function openPage1(pageName,elmnt,color) {
+document.getElementById('showrole').style.display = "none";
+var i, tabcontent, tablinks;
+tabcontent = document.getElementsByClassName("tabcontent1");
+for (i = 0; i < tabcontent.length; i++) {
+  tabcontent[i].style.display = "none";
+}
+tablinks = document.getElementsByClassName("tablink1");
+for (i = 0; i < tablinks.length; i++) {
+  tablinks[i].style.backgroundColor = "";
+}
+document.getElementById(pageName).style.display = "block";
+elmnt.style.backgroundColor = color;
+
+
+
+}
+
+
+
+function openPage(pageName,elmnt,color) {
+var i, tabcontent, tablinks;
+tabcontent = document.getElementsByClassName("tabcontent");
+for (i = 0; i < tabcontent.length; i++) {
+tabcontent[i].style.display = "none";
+}
+tablinks = document.getElementsByClassName("tablink");
+for (i = 0; i < tablinks.length; i++) {
+tablinks[i].style.backgroundColor = "";
+}
+document.getElementById(pageName).style.display = "block";
+elmnt.style.backgroundColor = color;
+}
+
+
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+
+
+function myFunction() {
+document.getElementById("myDropdown").classList.toggle("show");
+}
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+if (!event.target.matches('.dropbtn')) {
+var dropdowns = document.getElementsByClassName("dropdown-content");
+var i;
+for (i = 0; i < dropdowns.length; i++) {
+  var openDropdown = dropdowns[i];
+  if (openDropdown.classList.contains('show')) {
+    openDropdown.classList.remove('show');
+  }
+}
+}
+}
+</script>
+
+
+</body>
+
+</html>
+
+
+<script>
+
+
+
+async function openOtpModal() {
+        const errorMessageDiv = document.getElementById('errmsg0');
+        const loaderDiv = document.getElementById('loader0');
+        const loaderDivResend = document.getElementById('loader0resend');
+
+        const otpMessageDiv = document.getElementById('otpmsg0');
+
+        const email = document.getElementById('email0').value;
+        const company_name = document.getElementById('company_name').value;
+        // const company_location = document.getElementById('company_location').value;
+        // const company_mobile = document.getElementById('phone1').value;
+       
+        // const language = document.getElementById('language0').value;
+
+        if (company_name &&  email) {
+            console.log("done");
+        } else {
+            errorMessageDiv.textContent = 'Please fill out all required fields.';
+            errorMessageDiv.style.color = 'red';
+            return;
+        }
+
+      
+
+        errorMessageDiv.textContent = '';
+        // document.getElementById('emailDisplay').innerText = email;
+
+        document.getElementById('emailDisplayUnique').innerText = email; // Updated ID
+     
+        // Show loader and message
+    loaderDiv.style.display = 'block';
+    loaderDiv.innerHTML = `<div class="spinner-border text-success" role="status"></div> Sending OTP...`;
+    // loaderDiv.textContent = 'Sending OTP...';
+
+    loaderDivResend.style.display = 'block';
+    loaderDivResend.innerHTML = `<div class="spinner-border text-success" role="status"></div> Re-sending OTP...`;
+
+    
+
+
+        // Send OTP to the email
+        const response = await fetch('/sendsignupOTP', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email })
+        });
+
+        const result = await response.json();
+
+        loaderDiv.style.display = 'none';
+        loaderDivResend.style.display = 'none';
+        
+        if (result.msg && !result.exists) {
+           // $('#otpModal').modal('show');
+            $('#otpModalUnique0').modal('show'); // Updated ID
+            otpMessageDiv.textContent = `“A one time password (OTP) has been sent to ${email}. If you do not receive the mail, please also check your SPAM mailbox`;
+        otpMessageDiv.style.color = 'grey';
+        } else if(result.msg && result.exists){
+          errorMessageDiv.textContent = `Account with Email: ${email} is already exists`;
+          errorMessageDiv.style.color = 'red';
+
+        } else {
+            errorMessageDiv.textContent = 'Failed to send OTP. Please try again.';
+            errorMessageDiv.style.color = 'red';
+        }
+    }
+
+    async function openOtpModalUser() {
+        const errorMessageDiv = document.getElementById('errmsg');
+        const loaderDiv = document.getElementById('loader');
+        const loaderDivResend = document.getElementById('loaderresend');
+
+        const otpMessageDiv = document.getElementById('otpmsg');
+        
+
+        const user_name = document.getElementById('user_name').value;
+        // const user_location = document.getElementById('user_location').value;
+        // const user_mobile = document.getElementById('phone').value;
+        const email = document.getElementById('email').value;
+        // const language = document.getElementById('language').value;
+
+        if (user_name && email) {
+            console.log("done");
+        } else {
+            errorMessageDiv.textContent = 'Please fill out all required fields.';
+            errorMessageDiv.style.color = 'red';
+            return;
+        }
+
+        errorMessageDiv.textContent = '';
+        // document.getElementById('emailDisplay').innerText = email;
+        document.getElementById('emailDisplayUnique').innerText = email; // Updated ID
+
+        // Show loader and message
+    loaderDiv.style.display = 'block';
+    loaderDiv.innerHTML = `<div class="spinner-border text-success" role="status"></div> Sending OTP...`;
+
+    loaderDivResend.style.display = 'block';
+    loaderDivResend.innerHTML = `<div class="spinner-border text-success" role="status"></div> Re-sending OTP...`;
+
+    
+
+    // loaderDiv.textContent = 'Sending OTP...';
+
+
+        // Send OTP to the email
+        const response = await fetch('/sendsignupOTP', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email })
+        });
+
+        const result = await response.json();
+
+        loaderDiv.style.display = 'none';
+        loaderDivResend.style.display = 'none';
+
+        
+
+        
+        
+        if (result.msg && !result.exists) {
+           // $('#otpModal').modal('show');
+            $('#otpModalUnique').modal('show'); // Updated ID
+            otpMessageDiv.textContent = `“A one time password (OTP) has been sent to ${email}. If you do not receive the mail, please also check your SPAM mailbox`;
+        otpMessageDiv.style.color = 'grey';
+        } else if(result.msg && result.exists){
+          errorMessageDiv.textContent = `Account with Email: ${email} is already exists`;
+          errorMessageDiv.style.color = 'red';
+
+        } else {
+            errorMessageDiv.textContent = 'Failed to send OTP. Please try again.';
+            errorMessageDiv.style.color = 'red';
+        }
+    }
+
+
+    function closeOtpModal(){
+      $('#otpModalUnique').modal('hide');
+    }
+
+    function closeOtpModal0(){
+      $('#otpModalUnique0').modal('hide');
+    }
+
+
+
+
+    async function verifyOtp0() {
+    const otp = document.getElementById('otp0').value;
+    const email = document.getElementById('email0').value; // Use the email from the form
+    const signup_type = document.getElementById('signup_type0').value;
+    
+
+    const errorMessageDiv = document.getElementById('otpmsg0');
+
+    const response = await fetch('/verifyotp', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, otp })
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+        // OTP verified, submit the registration form
+        if(signup_type== 'user'){
+          document.getElementById('userRegisterForm').submit();
+        }else{
+          document.getElementById('companyRegisterForm').submit();
+        }
+        
+    } else {
+        // alert('Invalid or expired OTP');
+        errorMessageDiv.textContent = 'Invalid or expired OTP';
+        errorMessageDiv.style.color = 'red';
+        return;
+    }
+}
+
+
+
+ async function verifyOtp() {
+    const otp = document.getElementById('otp').value;
+    const email = document.getElementById('email').value; // Use the email from the form
+    const signup_type = document.getElementById('signup_type').value;
+    
+
+    const errorMessageDiv = document.getElementById('otpmsg');
+
+    const response = await fetch('/verifyotp', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, otp })
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+        // OTP verified, submit the registration form
+        if(signup_type== 'user'){
+          document.getElementById('userRegisterForm').submit();
+        }else{
+          document.getElementById('companyRegisterForm').submit();
+        }
+        
+    } else {
+        // alert('Invalid or expired OTP');
+        errorMessageDiv.textContent = 'Invalid or expired OTP';
+        errorMessageDiv.style.color = 'red';
+        return;
+    }
+}
+
+
+
+
+
+
+//-------------- login part ----------- 
+
+async function getOtp() {
+const email = document.getElementById('loginEmail').value;
+const errorMessageDiv = document.getElementById('errmsg1');
+const loaderDiv = document.getElementById('loader1');
+
+if (!email) {
+ 
+    errorMessageDiv.textContent = 'Please enter your email';
+    errorMessageDiv.style.color = 'red';
+          
+    return;
+}
+
+
+
+        // Show loader and message
+        loaderDiv.style.display = 'block';
+    loaderDiv.innerHTML = `<div class="spinner-border text-success" role="status"></div> Sending OTP...`;
+    // loaderDiv.textContent = 'Sending OTP...';
+
+
+const response = await fetch('/getLoginOtp', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ email })
+});
+
+const result = await response.json();
+const otpStatus = document.getElementById('otpStatus');
+
+loaderDiv.style.display = 'none';
+
+if (result.msg == true && result.exists == true) {
+    otpStatus.textContent = `“A one time password (OTP) has been sent to ${email} .  If you do not receive the mail, please also check your SPAM mailbox.`;
+    otpStatus.style.color = 'green';
+    document.getElementById('loginOtp').value = result.otp;
+    document.getElementById('kilotp').style.display = 'none';
+    document.getElementById('kilotpresend').style.display = 'block';
+} else if (!result.exists) {
+    otpStatus.textContent = 'Account not fount';
+    otpStatus.style.color = 'red';
+} else {
+    otpStatus.textContent = 'Failed to send OTP. Please try again.';
+    otpStatus.style.color = 'red';
+}
+}
+
+async function login() {
+const email = document.getElementById('loginEmail').value;
+const otp = document.getElementById('loginOtp').value;
+const errorMessageDiv = document.getElementById('errmsg1');
+
+if (!email || !otp) {
+    errorMessageDiv.textContent = 'Please enter both email and OTP';
+    errorMessageDiv.style.color = 'red';
+          
+    return;
+}
+
+const response = await fetch('/verifyLoginOtp', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ email, otp })
+});
+
+const result = await response.json();
+
+if (result.success) {
+  document.getElementById('loginForm').submit();
+        
+    } else {
+        // alert('Invalid or expired OTP');
+        errorMessageDiv.textContent = 'Invalid or expired OTP';
+        errorMessageDiv.style.color = 'red';
+        return;
+    }
+}
+
+
+
+
+
+
+//---------------- Input Validations ---------------------- 
+
+
+
+
+function validateInput(event) {
+
+const inputField = event.target;
+const errorMessageDiv = document.getElementById('errmsg');
+
+
+
+  // allowed char with space 
+  var validCharacters;  
+    validCharacters= /^[a-zA-Z0-9@._\s-]*$/;  
+if(inputField.name == 'user_mobile'){
+   validCharacters = /^[0-9]*$/;
+}
+
+
+if (inputField.type === 'file') {
+  const file = inputField.files[0]; // Get the selected file
+  //const validImageTypes = ['image/jpeg', 'image/png']; // Define allowed image file types
+  const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/tiff', 'image/webp', 'image/svg+xml']; // Define allowed image file types
+
+  if (!validImageTypes.includes(file.type)) {
+    // Show error message and clear the input field
+    errorMessageDiv.textContent = 'Please select a valid image file (JPEG or PNG)!';
+    errorMessageDiv.style.color = 'red';
+    inputField.value = ''; // Clear the input field
+  } else {
+    // Clear error message
+    errorMessageDiv.textContent = '';
+  }
+}else{
+
+           if (event.type === 'keyup') {
+              if (!validCharacters.test(inputField.value)) {
+              // Show error message and highlight the field
+              errorMessageDiv.textContent = 'Invalid character entered!';
+              errorMessageDiv.style.color = 'red';
+              inputField.style.borderColor = 'red';
+              } else {
+              // Clear error message
+              errorMessageDiv.textContent = '';
+              inputField.style.borderColor = '';
+              }
+           } else if (event.type === 'change') {
+              if (errorMessageDiv.textContent !== '') {
+              // Clear the input field and error message
+              inputField.value = '';
+              errorMessageDiv.textContent = '';
+              inputField.style.borderColor = '';
+              }
+           }
+
+}
+
+
+}
+
+
+function validateInput0(event) {
+
+const inputField = event.target;
+const errorMessageDiv = document.getElementById('errmsg0');  
+
+
+  // allowed char with space 
+    var validCharacters;  
+    validCharacters= /^[a-zA-Z0-9@._\s-]*$/;  
+if(inputField.name == 'company_mobile'){
+   validCharacters = /^[0-9]*$/;
+}
+
+
+if (inputField.type === 'file') {
+  const file = inputField.files[0]; // Get the selected file
+  //const validImageTypes = ['image/jpeg', 'image/png']; // Define allowed image file types
+  const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/tiff', 'image/webp', 'image/svg+xml']; // Define allowed image file types
+
+  if (!validImageTypes.includes(file.type)) {
+    // Show error message and clear the input field
+    errorMessageDiv.textContent = 'Please select a valid image file (JPEG or PNG)!';
+    errorMessageDiv.style.color = 'red';
+    inputField.value = ''; // Clear the input field
+  } else {
+    // Clear error message
+    errorMessageDiv.textContent = '';
+  }
+}else{
+
+           if (event.type === 'keyup') {
+              if (!validCharacters.test(inputField.value)) {
+              // Show error message and highlight the field
+              errorMessageDiv.textContent = 'Invalid character entered!';
+              errorMessageDiv.style.color = 'red';
+              inputField.style.borderColor = 'red';
+              } else {
+              // Clear error message
+              errorMessageDiv.textContent = '';
+              inputField.style.borderColor = '';
+              }
+           } else if (event.type === 'change') {
+              if (errorMessageDiv.textContent !== '') {
+              // Clear the input field and error message
+              inputField.value = '';
+              errorMessageDiv.textContent = '';
+              inputField.style.borderColor = '';
+              }
+           }
+
+}
+
+
+}
+
+
+
+
+
+function validateInput2(event) {
+const validCharacters = /^[a-zA-Z0-9@._-]*$/; //  allowed char witout Space 
+
+// allowed char with space 
+// const validCharacters = /^[a-zA-Z0-9@._\s-]*$/;  
+
+const inputField = event.target;
+const errorMessageDiv = document.getElementById('errmsg');
+
+
+if (inputField.type === 'file') {
+ const file = inputField.files[0]; // Get the selected file
+ //const validImageTypes = ['image/jpeg', 'image/png']; // Define allowed image file types
+ const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/tiff', 'image/webp', 'image/svg+xml']; // Define allowed image file types
+
+ if (!validImageTypes.includes(file.type)) {
+   // Show error message and clear the input field
+   errorMessageDiv.textContent = 'Please select a valid image file (JPEG or PNG)!';
+   errorMessageDiv.style.color = 'red';
+   inputField.value = ''; // Clear the input field
+ } else {
+   // Clear error message
+   errorMessageDiv.textContent = '';
+ }
+}else{
+
+          if (event.type === 'keyup') {
+             if (!validCharacters.test(inputField.value)) {
+             // Show error message and highlight the field
+             errorMessageDiv.textContent = 'Invalid character entered!';
+             errorMessageDiv.style.color = 'red';
+             inputField.style.borderColor = 'red';
+             } else {
+             // Clear error message
+             errorMessageDiv.textContent = '';
+             inputField.style.borderColor = '';
+             }
+          } else if (event.type === 'change') {
+             if (errorMessageDiv.textContent !== '') {
+             // Clear the input field and error message
+             inputField.value = '';
+             errorMessageDiv.textContent = '';
+             inputField.style.borderColor = '';
+             }
+          }
+
+}
+
+
+}
+
+
+
+
+function validateInput02(event) {
+const validCharacters = /^[a-zA-Z0-9@._-]*$/; //  allowed char witout Space 
+
+// allowed char with space 
+// const validCharacters = /^[a-zA-Z0-9@._\s-]*$/;  
+
+const inputField = event.target;
+const errorMessageDiv = document.getElementById('errmsg0');
+
+
+if (inputField.type === 'file') {
+ const file = inputField.files[0]; // Get the selected file
+ //const validImageTypes = ['image/jpeg', 'image/png']; // Define allowed image file types
+ const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/tiff', 'image/webp', 'image/svg+xml']; // Define allowed image file types
+
+ if (!validImageTypes.includes(file.type)) {
+   // Show error message and clear the input field
+   errorMessageDiv.textContent = 'Please select a valid image file (JPEG or PNG)!';
+   errorMessageDiv.style.color = 'red';
+   inputField.value = ''; // Clear the input field
+ } else {
+   // Clear error message
+   errorMessageDiv.textContent = '';
+ }
+}else{
+
+          if (event.type === 'keyup') {
+             if (!validCharacters.test(inputField.value)) {
+             // Show error message and highlight the field
+             errorMessageDiv.textContent = 'Invalid character entered!';
+             errorMessageDiv.style.color = 'red';
+             inputField.style.borderColor = 'red';
+             } else {
+             // Clear error message
+             errorMessageDiv.textContent = '';
+             inputField.style.borderColor = '';
+             }
+          } else if (event.type === 'change') {
+             if (errorMessageDiv.textContent !== '') {
+             // Clear the input field and error message
+             inputField.value = '';
+             errorMessageDiv.textContent = '';
+             inputField.style.borderColor = '';
+             }
+          }
+
+}
+
+
+}
+
+
+   
+
+</script>
+
+
+<script>
+
+//-------- Notifcation kilScript ---------- 
+let showAllNotifications = false;
+
+function fetchNotificationswithoutmessge() {
+  fetch('/notificationsUsers')
+      .then(response => response.json())
+      .then(data => {
+          const badge = document.querySelector('.header-badge');
+          const notificationList = document.querySelector('.dropdown-menu');
+
+          // Update the notification counter
+          if (data.unreadCount > 0) {
+              badge.textContent = data.unreadCount;
+              badge.style.display = 'inline';
+          } else {
+              badge.style.display = 'none';
+          }
+
+          // Update the notification list
+          notificationList.innerHTML = `
+              <li class="not-head">You have <b class="text-primary">${data.unreadCount}</b> new notifications.</li>
+          `;
+
+          const notificationsToShow = showAllNotifications ? data.notifications : data.notifications.slice(0, 5);
+          
+          notificationsToShow.forEach(notification => {
+              const notificationClass = notification.status === 'unread' ? 'unread-notification' : '';
+              notificationList.innerHTML += `
+                  <li class="bell-notification ${notificationClass}" style="padding: 10px;">
+                      <a href="javascript:;" class="media" onclick="markAsRead(${notification.noti_id})">
+                          <span class="media-left media-icon">
+                              <img class="img-circle" src="assets/img/human-1.png" alt="Notification Image" style="width: 40px; height: 40px;">
+                          </span>
+                          <div class="media-body">
+                              <span class="block" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">${notification.title}</span><br>
+                              <span class="text-muted block-time">${new Date(notification.created_at).toLocaleString()}</span>
+                          </div>
+                      </a>
+                  </li>
+              `;
+          });
+
+          if (data.notifications.length > 5) {
+              notificationList.innerHTML += `
+                  <li class="not-footer">
+                      <a href="javascript:;" onclick="toggleNotifications()">See ${showAllNotifications ? 'less' : 'more'} notifications.</a>
+                  </li>
+              `;
+          }
+      })
+      .catch(error => {
+          console.error('Error fetching notifications:', error);
+      });
+}
+
+
+function fetchNotifications() {
+  fetch('/notificationsUsers')
+      .then(response => response.json())
+      .then(data => {
+          const badge = document.querySelector('.header-badge');
+          const notificationList = document.querySelector('.dropdown-menu');
+
+          // Update the notification counter
+          if (data.unreadCount > 0) {
+              badge.textContent = data.unreadCount;
+              badge.style.display = 'inline';
+          } else {
+              badge.style.display = 'none';
+          }
+
+          // Update the notification list
+          notificationList.innerHTML = `
+              <li class="not-head">You have <b class="text-primary">${data.unreadCount}</b> new notifications.</li>
+          `;
+
+          const notificationsToShow = showAllNotifications ? data.notifications : data.notifications.slice(0, 5);
+
+            function escapeHtml(text) {
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+}
+
+          
+          notificationsToShow.forEach(notification => {
+              const notificationClass = notification.status === 'unread' ? 'unread-notification' : '';
+
+              const escapedMessage = escapeHtml(notification.message); 
+              notificationList.innerHTML += `
+                  <li class="bell-notification ${notificationClass}" style="padding: 10px;">
+                      <a href="javascript:;" class="media" onclick="handleNotificationClick(${notification.noti_id}, '', '${notification.created_at}')">
+                          <span class="media-left media-icon">
+                              <img class="img-circle" src="assets/img/human-1.png" alt="Notification Image" style="width: 40px; height: 40px;">
+                          </span>
+                          <div class="media-body">
+                              <span class="block" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">${notification.title}</span><br>
+                              <span class="text-muted block-time">${new Date(notification.created_at).toLocaleString()}</span>
+                          </div>
+                      </a>
+                  </li>
+              `;
+          });
+
+          if (data.notifications.length > 5) {
+              notificationList.innerHTML += `
+                  <li class="not-footer">
+                      <a href="javascript:;" onclick="toggleNotifications()">See ${showAllNotifications ? 'less' : 'more'} notifications.</a>
+                  </li>
+              `;
+          }
+      })
+      .catch(error => {
+          console.error('Error fetching notifications:', error);
+      });
+}
+
+
+
+// Function to toggle between showing all notifications and only five
+function toggleNotifications() {
+  showAllNotifications = !showAllNotifications;
+  fetchNotifications();
+}
+
+function decodeHtml(text) {
+  const txt = document.createElement('textarea');
+  txt.innerHTML = text;
+  return txt.value;
+}
+
+
+function handleNotificationClick1(noti_id, message, dateTime) {
+  markAsRead(noti_id);
+
+  // message = decodeHtml(message);
+
+  // Show SweetAlert popup with the notification message
+  Swal.fire({
+      html: `
+          <div class="custom-popup-header">
+              <div class="notification-date-time">${formatDateTime(dateTime)}</div>
+          </div>
+          <div class="custom-popup-body">
+              ${message} <!-- Ensure the message is properly sanitized if it contains HTML -->
+          </div>
+      `,
+      showCloseButton: true,
+      customClass: {
+          popup: 'custom-popup'
+      },
+      padding: '1em',
+      backdrop: false // Optional: Adjust backdrop as needed
+  });
+}
+
+
+
+function handleNotificationClick(noti_id, message, dateTime) {
+  markAsRead(noti_id);
+
+  // message = decodeHtml(message);
+
+
+  fetch(`/noti/${noti_id}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        const { title, message, created_at } = data.notification;
+
+        Swal.fire({
+          html: `
+          <div class="custom-popup-header">
+              <div class="notification-date-time">${formatDateTime(dateTime)}</div>
+          </div>
+          <div class="custom-popup-body">
+              ${message} <!-- Ensure the message is properly sanitized if it contains HTML -->
+          </div>
+      `,
+          showCloseButton: true,
+          showConfirmButton: false,
+          customClass: {
+            container: 'swal2-container',
+            header: 'swal2-header',
+            body: 'swal2-body'
+          }
+        });
+
+        // Mark notification as read
+   
+      }
+    });
+}
+
+
+
+
+
+
+// JavaScript to handle notification click and show modal
+document.querySelectorAll('.mediaaaaaa').forEach(notification => {
+notification.addEventListener('click', function() {
+  const notificationId = this.getAttribute('data-id');
+
+
+
+
+
+  fetch(`/api/notifications/${notificationId}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        const { title, message, created_at } = data.notification;
+
+        Swal.fire({
+          title: `Notification Details`,
+          html: `
+            <div class="notification-modal">
+              <div class="modal-header">
+                <h5>${title}</h5>
+                <small>${new Date(created_at).toLocaleString()}</small>
+              </div>
+              <div class="modal-body">
+                ${message}
+              </div>
+            </div>
+          `,
+          showCloseButton: true,
+          showConfirmButton: false,
+          customClass: {
+            container: 'swal2-container',
+            header: 'swal2-header',
+            body: 'swal2-body'
+          }
+        });
+
+        // Mark notification as read
+   
+      }
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+});
+});
+
+
+
+
+
+function formatDateTime(dateTime) {
+  const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+  return new Date(dateTime).toLocaleDateString(undefined, options);
+}
+
+// Function to mark a notification as read
+function markAsRead(noti_id) {
+  fetch(`/mark-as-read/${noti_id}`, { method: 'POST' })
+      .then(response => {
+          if (response.ok) {
+              fetchNotifications();  // Refresh notifications after marking one as read
+          } else {
+              return response.json().then(data => {
+                  throw new Error(data.error || 'Failed to mark notification as read');
+              });
+          }
+      })
+      .catch(error => {
+          console.error('Error marking notification as read:', error);
+      });
+}
+
+
+// Function to mark a notification as read
+function markAsRead(noti_id) {
+  fetch(`/mark-as-read/${noti_id}`, { method: 'POST' })
+      .then(response => {
+          if (response.ok) {
+              fetchNotifications();  // Refresh notifications after marking one as read
+          } else {
+              return response.json().then(data => {
+                  throw new Error(data.error || 'Failed to mark notification as read');
+              });
+          }
+      })
+      .catch(error => {
+          console.error('Error marking notification as read:', error);
+      });
+}
+
+// Toggle notification dropdown visibility
+document.querySelector('.dropdown-toggle').addEventListener('click', function() {
+  const notificationList = document.querySelector('.dropdown-menu');
+  notificationList.style.display = notificationList.style.display === 'none' ? 'block' : 'none';
+});
+
+// Fetch notifications on page load
+document.addEventListener('DOMContentLoaded', fetchNotifications);
+
+
+
+
+</script>
+
+

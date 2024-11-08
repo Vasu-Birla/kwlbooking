@@ -1,20 +1,30 @@
+// for Amber database 
 import sql from 'mssql';
 
-const poolPromise = new sql.ConnectionPool({
-  user: 'kw-dev-user',               // Username
-  password: 'A#hgfvyewr6376423',     // Password
-  server: '20.98.216.185',           // Server Address
-  database: 'kw-dev',                // Database Name
-  port: 2019,                        // Port Number
+// Configuration object for connecting to MSSQL
+const config = {
+  user: 'kw-dev-user', // replace with your MSSQL username
+  password: 'A#hgfvyewr6376423', // replace with your MSSQL password
+  server: '20.98.216.185', // replace with your MSSQL server address
+  database: 'kw-dev', // replace with your database name
+  port: 2019,
   options: {
-    encrypt: false,                  // Set to true if using Azure
-    trustServerCertificate: true     // Set to true if using self-signed certificate
+    encrypt: true, // Use encryption if your server supports it
+    trustServerCertificate: true // change this to true if using a self-signed certificate
   }
-}).connect(); // Establish the connection pool
-
-// Function to get a connection from the pool
-const connection = () => {
-  return poolPromise;
 };
 
-export default connection;
+// Create a function to connect to the database
+const connection = async () => {
+  try {
+    const pool = await sql.connect(config);
+    console.log('Connected to MSSQL database successfully');
+    return pool; // return pool object to use later for queries
+  } catch (err) {
+    console.error('Error connecting to MSSQL database:', err.message);
+    throw err; // rethrow the error so the calling function knows it failed
+  }
+};
+
+export { connection, sql };
+
