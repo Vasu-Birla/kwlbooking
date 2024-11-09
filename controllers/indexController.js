@@ -4,6 +4,8 @@ import { connection, sql } from '../config.js';
 import {sendTokenUser} from "../utils/jwtToken.js";
 import axios from 'axios';
 
+import { sendWelcomeMsg } from '../middleware/helper.js';
+
 
 
 
@@ -65,19 +67,19 @@ const booking_availability = async (req, res, next) => {
     // await request.query('UPDATE bookings SET status = @status WHERE id = @bookingId');
 
 
-    const username = '19354905';
-    const password = 'b0a1d960446f9efab07df16c4c16b444';
-    const auth = Buffer.from(`${username}:${password}`).toString('base64');
+    // const username = '19354905';
+    // const password = 'b0a1d960446f9efab07df16c4c16b444';
+    // const auth = Buffer.from(`${username}:${password}`).toString('base64');
 
-    const response = await axios.get('https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone', {
-      headers: {
-        Authorization: `Basic ${auth}`
-      }
-    });
+    // const response = await axios.get('https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone', {
+    //   headers: {
+    //     Authorization: `Basic ${auth}`
+    //   }
+    // });
 
-    const availableDates = response.data.map(item => item.date);
+    // const availableDates = response.data.map(item => item.date);
 
-    console.log("avilability ")
+    // console.log("avilability ")
 
 
     await transaction.commit(); // Commit the transaction if successful
@@ -101,18 +103,21 @@ const booking_availability = async (req, res, next) => {
 
 
 
-const dates_availability = async (req, res, next) => {
+const dates_availability = async (req, res, next) => { console.log("............data availabilty",req.query)
 
 
   try {
     const { appointmentTypeID, month } = req.query;
+    
 
     if (!appointmentTypeID || !month) {
       return res.status(400).json({ error: 'appointmentTypeID and month are required' });
     }
 
+    var appointmentTypeID1 =  18478069
+
     const response = await axios.get(
-      `https://acuityscheduling.com/api/v1/availability/dates?month=${month}&appointmentTypeID=${appointmentTypeID}&timezone=`,
+      `https://acuityscheduling.com/api/v1/availability/dates?month=${month}&appointmentTypeID=${appointmentTypeID1}&timezone=`,
       {
         auth: {
           username: '19354905',
@@ -121,11 +126,182 @@ const dates_availability = async (req, res, next) => {
       }
     );
 
+    console.log(response.data)
+
     res.status(200).json(response.data);
   } catch (error) {
     res.render('kil500', { output: `${error}` });
   }
 };
+
+
+const appointment_types = async (req, res, next) => {
+
+
+  try {
+    // Make a request to the third-party API
+    const response = await axios.get('https://acuityscheduling.com/api/v1/appointment-types', {
+      auth: {
+        username: '19354905',       // Replace with actual username
+        password: 'b0a1d960446f9efab07df16c4c16b444'  // Replace with actual password
+      }
+    });
+
+    // Send the appointment types data back to the client
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error fetching appointment types:', error);
+    res.status(500).json({ message: 'Failed to fetch appointment types' });
+  }
+
+};
+
+
+
+
+
+
+const time_availability = async (req, res, next) => { console.log("............Timeslots availabilty",req.query)
+
+
+  try {
+    const { appointmentTypeID, date } = req.query;
+    
+
+    if (!appointmentTypeID || !date) {
+      return res.status(400).json({ error: 'appointmentTypeID and date are required' });
+    }
+
+ 
+
+    const response = await axios.get(
+      `https://acuityscheduling.com/api/v1/availability/times?date=${date}&appointmentTypeID=${appointmentTypeID}&timezone=`,
+      {
+        auth: {
+          username: '19354905',
+          password: 'b0a1d960446f9efab07df16c4c16b444'
+        }
+      }
+    );
+
+    console.log(response.data)
+
+    res.status(200).json(response.data);
+  } catch (error) {
+    res.render('kil500', { output: `${error}` });
+  }
+};
+
+
+
+
+
+
+
+
+const getBookingOtp = async (req, res, next) => {
+  console.log("sending Booking OTP", req.body)
+  let pool;
+  let transaction;
+  const { email } = req.body;
+
+  try {
+    pool = await connection();
+    transaction = new sql.Transaction(pool);
+    await transaction.begin();
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 10 * 60000); // 10 minutes from now
+
+    console.log(otp)
+
+    const otpCheckResult = await transaction.request().query(`
+      SELECT COUNT(*) AS count FROM tbl_login_otp WHERE email = '${email}'
+    `);
+    const otpExists = otpCheckResult.recordset[0].count > 0;
+
+    if (otpExists) {
+      // Update existing OTP
+      await transaction.request().query(`
+        UPDATE tbl_login_otp 
+        SET otp = '${otp}', expires_at = '${expiresAt.toISOString()}' 
+        WHERE email = '${email}'
+      `);
+    } else {
+      // Insert new OTP record
+      await transaction.request().query(`
+        INSERT INTO tbl_login_otp (email, otp, expires_at) 
+        VALUES ('${email}', '${otp}', '${expiresAt.toISOString()}')
+      `);
+    }
+
+    await sendWelcomeMsg(email, otp);
+    await transaction.commit();
+
+    return res.status(200).json({ msg: true, exists: true, otp });
+
+   
+  } catch (error) {
+    if (transaction) await transaction.rollback();
+    console.error("error ->", error.message);
+    res.render('kil500', { output: `${error}` });
+  } finally {
+    if (pool) pool.close();
+  }
+};
+
+
+
+
+const verifyOTP = async (req, res, next) => {
+  console.log(req.body,"verify")
+  const { email, otp } = req.body;
+  let pool;
+
+  try {
+    pool = await connection();
+    const request = new sql.Request(pool);
+    request.input('email', sql.VarChar, email);
+    request.input('otp', sql.VarChar, otp);
+
+    // Check if OTP is valid and not expired
+    const result = await request.query(
+      'SELECT * FROM tbl_login_otp WHERE email = @email AND otp = @otp AND expires_at > GETDATE()'
+    );
+
+    if (result.recordset.length === 0) {
+      return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
+    }
+
+    // OTP is valid, remove it from the database
+    await request.query('DELETE FROM tbl_login_otp WHERE email = @email');
+
+    res.status(200).json({ success: true , valid: true  });
+  } catch (error) {
+    console.log("error in booing OTP ", error)
+    res.status(500).json({ success: false, message: 'Internal Server Error', valid: false });
+  } finally {
+    if (pool) pool.close(); // Close the pool
+  }
+};
+
+
+
+
+
+
+const confirmbooking = async (req, res, next) => {
+
+  console.log("new booking request ", req.body)
+
+  try {
+
+    res.status(200).json({ success: true , valid: true  });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Internal Server Error', valid: false });
+  } 
+};
+
 
 
 
@@ -185,7 +361,7 @@ const book = async(req,res,next)=>{
 
 
  const getLoginOtp = async (req, res, next) => {
-  console.log("sending OTP")
+  console.log("sending OTP", req.body)
   let pool;
   let transaction;
   const { email } = req.body;
@@ -198,10 +374,13 @@ const book = async(req,res,next)=>{
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const expiresAt = new Date(Date.now() + 10 * 60000); // 10 minutes from now
 
+    console.log(otp)
+
     // Check if email exists in tbl_bookings
     const userResult = await transaction.request().query(`
       SELECT COUNT(*) AS count FROM tbl_bookings WHERE user_email = '${email}'
     `);
+    
     const emailExists = userResult.recordset[0].count > 0;
 
     if (emailExists) {
@@ -226,7 +405,7 @@ const book = async(req,res,next)=>{
         `);
       }
 
-      //await sendWelcomeMsg(email, otp);
+      await sendWelcomeMsg(email, otp);
       await transaction.commit();
 
       return res.status(200).json({ msg: true, exists: true, otp });
@@ -242,6 +421,12 @@ const book = async(req,res,next)=>{
     if (pool) pool.close();
   }
 };
+
+
+
+
+
+
 
 
 
@@ -343,6 +528,9 @@ const verifyLoginOtp = async (req, res, next) => {
 
 
 
+
+
+
 const login = async (req, res, next) => {
   let pool;
   let transaction;
@@ -403,7 +591,7 @@ const logout = async (req, res) => {
 
 //--------------------- Export Start ------------------------------------------
 export { home , book , booking_availability , viewBookings , getLoginOtp ,verifyLoginOtp   , login , logout ,
-  dates_availability
+  dates_availability , appointment_types , time_availability , getBookingOtp , verifyOTP , confirmbooking
 
  }
 

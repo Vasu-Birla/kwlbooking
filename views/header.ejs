@@ -26,6 +26,10 @@
   <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
 
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css" >
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
 
     <!-- Databale css -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css" rel="stylesheet">
@@ -38,6 +42,12 @@
 
 
 <style>
+
+.calendar-day.disabled {
+    color: #ccc !important;
+    pointer-events: none !important; /* Prevent clicking */
+}
+
 
 .overlay {
     visibility: hidden; 
@@ -122,7 +132,7 @@
               </li>
           <% } else { %>
               <li class="login-css dash-right">
-                  <a class="btn-getstarted" href="#popup1">Login</a>
+                  <a class="btn-getstarted" id="loginbutton" href="#popup1">Login</a>
               </li>
           <% } %>
           

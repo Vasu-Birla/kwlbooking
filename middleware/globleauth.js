@@ -32,6 +32,7 @@ const globalAuth = async (req, res, next) => {
       }
   
       req.user = user;
+      console.log("userrrrrrrrrrrrrrrrrrrrr", user)
       res.app.locals.loggeduser = user;
     res.app.locals.dashboard_type = 'User'
   

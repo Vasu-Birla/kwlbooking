@@ -1,5 +1,5 @@
 import express from 'express'
-import { book, booking_availability, dates_availability, getLoginOtp, home, login, logout, verifyLoginOtp, viewBookings } from '../controllers/indexController.js';
+import { appointment_types, book, booking_availability, confirmbooking, dates_availability, getBookingOtp, getLoginOtp, home, login, logout, time_availability, verifyLoginOtp, verifyOTP, viewBookings } from '../controllers/indexController.js';
 
 
 
@@ -14,9 +14,25 @@ router.route('/').get(globalAuth,home)
 
 router.route('/book').get(globalAuth,book)
 
+
+
+
+//----------------- Booking Section -------------
+
 router.route('/booking_availability').get(globalAuth,booking_availability)
 
-router.route('/dates_availability').get(isAuthenticatedUser, dates_availability);
+router.route('/dates_availability').get( dates_availability);
+
+router.use('/appointment_types', appointment_types);
+
+router.route('/time_availability').get( time_availability);
+
+router.route('/getBookingOtp').post(getBookingOtp)
+
+router.route('/verifyOTP').post(verifyOTP)
+
+router.route('/confirmbooking').post(confirmbooking)
+
 
 
 router.route('/viewBookings').get(isAuthenticatedUser,viewBookings)

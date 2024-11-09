@@ -67,6 +67,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap4.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+
 <script>
     new DataTable('#example');
 </script>
@@ -140,103 +144,46 @@
 
 <script>
 //------- login modal script 
-document.addEventListener("DOMContentLoaded", function() {
-  // Get the modal and login button
-  var modal = document.getElementById("popup1");
-  var loginButton = document.querySelector("a.btn-getstarted");
-  
-  // Get the close button
-  var closeBtn = document.querySelector(".popup .close");
-
-  // Function to open the modal
-  function openModal() {
-    modal.classList.add("show"); // Add the "show" class to make it visible
-    window.location.hash = "popup1"; // Update the URL with #popup1
-  }
-
-  // Function to close the modal
-  function closeModal() {
-    modal.classList.remove("show"); // Remove the "show" class to hide it
-    history.pushState("", document.title, window.location.pathname); // Remove the hash from URL
-  }
-
-  // Open the modal when the login button is clicked
-  loginButton.onclick = function(event) {
-    event.preventDefault(); // Prevent default link behavior
-    openModal();
-  };
-
-  // Close the modal only when the close button is clicked
-  closeBtn.onclick = function() {
-    closeModal();
-  };
-});
 
 
 
-</script>
-
-<script>
   document.addEventListener("DOMContentLoaded", function() {
-    var input = document.querySelector("#phone");
-    var iti = window.intlTelInput(input, {
-      preferredCountries: ["us", "gb"], // Customize based on your needs
-      separateDialCode: true,
-      utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.min.js", // Utility script
-    });
-
-// Update hidden input field with full phone number
-input.addEventListener("input", function() {
-  var fullPhoneNumber = iti.getNumber();
-  var countryCode =   '+'+iti.getSelectedCountryData().dialCode;
-
-
-  document.querySelector("#fullPhoneNumber").value = fullPhoneNumber;
-  document.querySelector("#countryCode").value = countryCode;
-
-});
-
-// Initialize hidden field with the current value on page load
-var fullPhoneNumber = iti.getNumber();
-var countryCode =   '+'+iti.getSelectedCountryData().dialCode;
-document.querySelector("#fullPhoneNumber").value = fullPhoneNumber;
-document.querySelector("#countryCode").value = countryCode;
-
-});
-
-
-
-
-document.addEventListener("DOMContentLoaded", function() {
-    var input = document.querySelector("#phone1");
-    var iti = window.intlTelInput(input, {
-      preferredCountries: ["us", "gb"], // Customize based on your needs
-      separateDialCode: true,
-      utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.min.js", // Utility script
-    });
-
-// Update hidden input field with full phone number
-input.addEventListener("input", function() {
-  var fullPhoneNumber = iti.getNumber();
-  var countryCode =   '+'+iti.getSelectedCountryData().dialCode;
-
-
-  document.querySelector("#fullPhoneNumber1").value = fullPhoneNumber;
-  document.querySelector("#countryCode1").value = countryCode;
-
-});
-
-// Initialize hidden field with the current value on page load
-var fullPhoneNumber = iti.getNumber();
-var countryCode =   '+'+iti.getSelectedCountryData().dialCode;
-document.querySelector("#fullPhoneNumber1").value = fullPhoneNumber;
-document.querySelector("#countryCode1").value = countryCode;
-
-});
-
-
-
-
+      // Get the modal and login button
+      var modal = document.getElementById("popup1");
+      var loginButton = document.querySelector("a.btn-getstarted");
+    
+      // Get the close button
+      var closeBtn = document.querySelector(".popup .close");
+  
+      // Function to open the modal
+      function openModal() {
+          modal.classList.add("show"); // Add the "show" class to make it visible
+          window.location.hash = "popup1"; // Update the URL with #popup1
+      }
+  
+      // Function to close the modal
+      function closeModal() {
+          modal.classList.remove("show"); // Remove the "show" class to hide it
+          history.pushState("", document.title, window.location.pathname); // Remove the hash from URL
+      }
+  
+      // Open the modal when the login button is clicked
+      loginButton.onclick = function(event) {
+          event.preventDefault(); // Prevent default link behavior
+          openModal();
+      };
+  
+      // Close the modal only when the close button is clicked
+      closeBtn.onclick = function() {
+          closeModal();
+      };
+  
+      // Check if the URL is specifically "index.html#popup1" on page load
+      if (window.location.href.endsWith("#popup1")) {
+          openModal();
+      }
+  });
+ 
 
 
 
