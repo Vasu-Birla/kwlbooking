@@ -117,11 +117,9 @@
                                         <!-- <input type="email" id="email" class="form-control" name="email" placeholder="Enter the email" required=""> -->
 
                                         <% if (typeof loggeduser !== 'undefined' && loggeduser.user_email) { %>
-                                            <input type="email" id="email" class="form-control" name="user_email 
-                                                   value="<%= loggeduser.user_email %>" readonly>
+                                            <input type="email" id="email" class="form-control" name="user_email"  value="<%= loggeduser.user_email %>" readonly>
                                         <% } else { %>
-                                            <input type="email" id="email" class="form-control" name="user_email 
-                                                   placeholder="Enter the email" required>
+                                            <input type="email" id="email" class="form-control" name="user_email" placeholder="Enter the email" required>
                                         <% } %>
                                     </div>
                                     <div class="col-md-6">
