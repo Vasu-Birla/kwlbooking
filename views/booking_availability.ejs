@@ -86,6 +86,7 @@
                         <div class="tab-content">
                             <form id="kilform">
                                 <div class="row gy-4">
+                                    <input type="text" id="calendarId" name="calendarId" value="" >
                                     <div class="col-md-6">
                                         <label>* TRN</label>
                                         <input type="text" id="trn" name="trn" class="form-control" placeholder="Enter the number" required="">
@@ -319,6 +320,31 @@
     let currentMonth = moment().month();
     let currentYear = 2024;
     let availableDates = []; // Array to store available dates
+    let calendarId =0
+    let appointmentTypeID =0
+
+    let selectedDateTimes=[]
+
+
+
+// Fetch the select element by ID
+const appointmentTypeSelect = document.getElementById('appointmentType');
+
+// Add an event listener to handle changes in the select element
+appointmentTypeSelect.addEventListener('change', function() {
+    // Get the selected option
+    const selectedOption = appointmentTypeSelect.options[appointmentTypeSelect.selectedIndex];
+
+    appointmentTypeID = document.getElementById("appointmentType").value,
+
+    // Fetch the data-calendar-id using getAttribute
+     calendarId = selectedOption.getAttribute('data-calendar-id');
+
+     document.getElementById('calendarId').value = calendarId;
+
+    console.log('Selected Calendar ID:', calendarId);
+});
+
 
     document.addEventListener('DOMContentLoaded', function() {
         showTab(currentTab);
@@ -424,11 +450,17 @@
         try {
             const { data } = await axios.get('/appointment_types');
             const appointmentTypeSelect = document.getElementById('appointmentType');
-            data.forEach(type => {
+            data.forEach(type => {                
                 const option = document.createElement('option');
                 option.value = type.id;
                 option.text = type.name;
+                option.setAttribute('data-calendar-id', type.calendarIDs[0]);
                 appointmentTypeSelect.add(option);
+
+                
+                // document.getElementById('calendarID').value = type.calendarIDs[0]
+                
+
             });
         } catch (error) {
             console.error('Error loading appointment types:', error);
@@ -483,28 +515,111 @@ function renderAvailableDates(data) {
                             return;
                         }        
                  
-                        times.forEach(timeObj => {
 
-                                    const formattedTime = new Date(timeObj.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                                    console.log("formatted time ", formattedTime);
 
-                                    const timeSlotDiv = document.createElement("div");
-                                    timeSlotDiv.classList.add("time-slot");
+                        //----------- working fine without time check ---------------------
 
-                                    document.getElementById('timeSlotsSection').style.display = 'block';
 
-                                    timeSlotDiv.textContent = formattedTime;
+                        // times.forEach(timeObj => {
 
-                                    // Pass formattedTime explicitly to the onclick function
-                                    timeSlotDiv.onclick = function() {
-                                        toggleTimeSelection(formattedTime);
-                                    };
+                        //             const formattedTime = new Date(timeObj.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        //             console.log("formatted time ", formattedTime);
 
-                                    timeContainer.appendChild(timeSlotDiv);
-                         });
+                        //             const timeSlotDiv = document.createElement("div");
+                        //             timeSlotDiv.classList.add("time-slot");
+
+                        //             document.getElementById('timeSlotsSection').style.display = 'block';
+
+                        //             timeSlotDiv.textContent = formattedTime;
+
+                        //             // Pass formattedTime explicitly to the onclick function
+                        //             timeSlotDiv.onclick = function() {
+                        //                 toggleTimeSelection(formattedTime);
+                        //             };
+
+                        //             timeContainer.appendChild(timeSlotDiv);
+                        //  });
+
+                         //------------- end working fine --------------------------------
+
+      
+
+                         times.forEach(async (timeObj) => {
+    // Use timeObj.time (which includes both date and time) for comparison
+    const formattedTime = new Date(timeObj.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    console.log("formatted time ", formattedTime);
+
+    const timeSlotDiv = document.createElement("div");
+    timeSlotDiv.classList.add("time-slot");
+    document.getElementById('timeSlotsSection').style.display = 'block';
+    timeSlotDiv.textContent = formattedTime;
+
+    // Check availability for this time slot
+    const availabilityResponse = await checkAvailability(selectedDate, formattedTime, timeObj.time);
+
+    if (availabilityResponse) {
+        // Now compare the full datetime (date + time)
+        const timeSlot = availabilityResponse.find(slot => {
+            const slotDate = new Date(slot.datetime);
+            const formattedSlotTime = slotDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            return formattedSlotTime === formattedTime && slot.datetime === timeObj.time; // Compare both time and full datetime
+        });
+
+        if (timeSlot && timeSlot.valid) {
+            // Available time slot
+            timeSlotDiv.style.border = "2px solid green";
+            timeSlotDiv.onclick = function() {
+                toggleTimeSelection(formattedTime,timeObj.time);
+            };
+        } else {
+            // Unavailable time slot
+            timeSlotDiv.style.border = "2px solid red";
+            timeSlotDiv.style.pointerEvents = 'none'; // Disable click
+            const unavailableText = document.createElement('div');
+            unavailableText.textContent = timeSlot ? timeSlot.message : "Unavailable";
+            unavailableText.style.color = 'red';
+            timeSlotDiv.appendChild(unavailableText);
+        }
+    }
+
+    timeContainer.appendChild(timeSlotDiv);
+});
+
+
+                         
 
 
     }
+
+
+    async function checkAvailability(selectedDate, formattedTime , datetime) {
+    try {
+        // Make a POST request to check availability
+        const response = await fetch('/check_times', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                date: selectedDate,
+                time: formattedTime,
+                appointmentTypeID: appointmentTypeID,
+                calendarID: calendarId,
+                datetime:datetime
+            })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            return data;
+        } else {
+            console.error("Error checking time:", data);
+            return null;
+        }
+    } catch (error) {
+        console.error("Error with the request:", error);
+        return null;
+    }
+}
+
 
 
     function generateCalendar() {
@@ -558,19 +673,47 @@ function renderAvailableDates(data) {
         });
     }
 
+    function toggleTimeSelection(slot, datetime) {
+    // If the slot is already selected, do nothing
+    if (selectedTimes.length > 0) {
+        // Deselect previously selected slot and datetime
+        selectedTimes = [];
+        selectedDateTimes = [];
+    }
+
+    // Add the new slot and datetime
+    selectedTimes.push(slot);
+    selectedDateTimes.push(datetime);
+
+    // Update the selected-time class for each time slot element
+    document.querySelectorAll(".time-slot").forEach(el => {
+        // Use trim() to remove spaces that may affect matching
+        if (selectedTimes.includes(el.textContent.trim())) {
+            el.classList.add("selected-time");
+        } else {
+            el.classList.remove("selected-time");
+        }
+    });
+}
 
 
-                    function toggleTimeSelection(slot) {
+
+
+                    function toggleTimeSelectionformultiple(slot,datetime) {
                             
                                 // Check if the slot is selected or not
                                 const index = selectedTimes.indexOf(slot);
+                                const index1 = selectedDateTimes.indexOf(datetime);
+                                
                             
                                 if (index > -1) {
                                     // If it is selected, remove it
                                     selectedTimes.splice(index, 1);
+                                    selectedDateTimes.splice(index1,1);
                                 } else {
                                     // If it is not selected, add it
                                     selectedTimes.push(slot);
+                                    selectedDateTimes.push(datetime);
                                 }
 
                                 // Update the selected-time class for each time slot element
@@ -847,14 +990,13 @@ async function verifyOTP() {
         await directConfirmBooking(email);  // Proceed to direct booking after OTP verification
 
     } catch (error) {
-        Swal.fire('Error', 'Failed to confirm booking. Please try again later.', 'error');
+        Swal.fire('Error', 'Failed to Verify OTP Please try again later.', 'error');
     }
 }
 
 // Function to handle direct booking confirmation
 async function directConfirmBooking(email) {
     try {
-
 
 
         const formData = {
@@ -875,32 +1017,48 @@ async function directConfirmBooking(email) {
                 container_number: document.getElementById("cnumber").value,
                 number_of_items: document.getElementById("ppnumber").value,
                 booking_date: selectedDate,  // Add the selected date
-                booking_times: selectedTimes // Add the selected times
+                booking_times: selectedTimes, // Add the selected times
+                appointmentTypeID: document.getElementById("appointmentType").value,
+                calendarID: document.getElementById("calendarId").value,
+                selectedDateTimes :selectedDateTimes
             };
 
 
 
 
         const bookingResponse = await fetch('/confirmBooking', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
-        });
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
         const bookingResult = await bookingResponse.json();
 
-        if (bookingResult.success) {
-            // Final confirmation dialog
-            Swal.fire({
-                title: "Kingston Booking",
-                text: "Your appointment has been successfully booked.",
-                icon: "success",
-                confirmButtonText: "View Booking"
-            }).then(() => {
+            if (bookingResult.success) {
+                Swal.fire({
+                    title: "Kingston Booking",
+                    text: "Your appointment has been successfully booked.",
+                    icon: "success",
+                    confirmButtonText: "View Booking"
+                }).then(() => {
                     window.location.href = '/viewBookings';
-            });
-        }
+                });
+            } else {
+                
+                // Handle error if not successful
+                Swal.fire({
+                    title: "Booking Error",
+                    text: bookingResult.message || 'Failed to confirm booking. Please try again later.',
+                    icon: "error",
+                    confirmButtonText: "Retry"
+                });
+            }
+
+
+
     } catch (error) {
-        Swal.fire('Error', 'Failed to confirm booking. Please try again later.', 'error');
+        console.log("ajax error ",error)
+        Swal.fire('Error', 'Internal Server Error, Please try again later.', 'error');
     }
 }
 
