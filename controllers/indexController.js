@@ -682,7 +682,7 @@ const check_times = async (req, res, next) => {
 };
 
 
-const viewBookings = async (req, res, next) => {
+const viewBookingstest = async (req, res, next) => {
   const pool = await connection();
   const transaction = new sql.Transaction(pool);
   const output = req.cookies.kwl_msg || '';
@@ -714,6 +714,50 @@ const viewBookings = async (req, res, next) => {
   }
 };
 
+
+
+const viewBookings = async (req, res, next) => {
+  const pool = await connection();
+  const transaction = new sql.Transaction(pool);
+  const output = req.cookies.kwl_msg || '';
+
+  try {
+    await transaction.begin(); // Begin the transaction
+
+    const request = transaction.request();
+
+    // Commit the transaction if everything is successful
+    await transaction.commit();
+    // Execute the query directly without wrapping in a transaction for SELECT statements
+    const result = await pool.request().query('SELECT * FROM tbl_bookings ORDER BY booking_id DESC');
+        
+    //const bookings = result.recordset; // Access the result set in `mssql`
+    const bookings = result.recordset.map((booking) => {
+      // Parse and format booking_times if it exists
+      if (booking.booking_times) {
+        booking.booking_times = moment(booking.booking_times, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
+      } else {
+        booking.booking_times = 'N/A';
+      }
+      return booking;
+    });
+    
+    console.log('bookings:', bookings);
+    res.render('viewBookings', { output: output , bookings:bookings});
+  } catch (error) {
+    // Rollback if an error occurs
+    if (transaction) {
+      await transaction.rollback();
+    }
+    console.error('Error:', error);
+    res.render('kil500', { output: `${error}` });
+  } finally {
+    // Always close the pool to release resources
+    if (pool) {
+      pool.close();
+    }
+  }
+};
 
 
 
