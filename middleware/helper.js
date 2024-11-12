@@ -213,8 +213,109 @@ let transaction;
 
 
 
+  
+const sendBookingOTP = async (email, otp) => {
+    const con = await connection();
+    let pool;
+let transaction;
+  
+    try {
+
+        pool = await connection();
+
+        // Create a transaction
+        transaction = await pool.transaction();
+        await transaction.begin();
+     
+        const result = await pool.request()
+        .input('id', sql.Int, 1)  // Bind the 'id' parameter with type sql.Int
+        .query('SELECT appEmail, appPassword FROM tbl_apppass WHERE id = @id');
+    
+      // Access the result
+      const AppEmail = result.recordset[0].appEmail;
+      const AppPassword = result.recordset[0].appPassword;
+    
+      // Commit the transaction if needed
+      await transaction.commit();
+  
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: AppEmail,
+                pass: AppPassword
+            }
+        });
+  
+        const mailOptions = {
+            from: AppEmail,
+            to: email,
+            subject: 'Email Verification OTP (Kingston Booking)',
+            html: `
+            <html>
+            <head>
+                <style>
+                    /* Add your CSS styles here */
+                    body {
+                        font-family: Arial, sans-serif;
+                        background-color: #f5f5f5;
+                    }
+                    .container {
+                        max-width: 800px;
+                        margin: 0 auto;
+                        padding: 20px;
+                        background-color: #f4f4f4;
+                        border: 1px solid #e0e0e0;
+                        border-radius: 5px;
+                    }
+                    h1 {
+                        color: #333;
+                    }
+                    p {
+                        font-size: 16px;
+                        line-height: 1.5;
+                        color: #666;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>OTP for Booking </h1>
+                    <p>Dear User,</p>
+                       <div style="background-color: #ffffff; padding: 10px; border: 1px solid #dddddd; border-radius: 5px; margin-top: 15px;">
+                      <h3 style="color: #333333;">Your One Time Password (OTP): <span style="color: #007BFF;">${otp}</span></h3>
+                  </div>
+           <p>To confirm your booking, we have sent you a One-Time Password (OTP). Please use the OTP below to complete your booking:</p>
+<p><strong>OTP: 123456</strong></p>
+<p>If you didn't request a booking or need assistance, please contact our support team immediately.</p>
+<p>Your OTP is valid for a limited time, so please use it promptly to confirm your appointment.</p>
+<p>Thank you for using Kingston Booking!</p>
+<p>Best regards,</p>
+<p>Your Kingston Booking Team</p>
+<p>Kilvish Birla</p>
+                </div>
+            </body>
+            </html>
+        `
+        };
+  
+        await transporter.sendMail(mailOptions);
+        console.log("Email sent successfully.");
+    } catch (error) {
+        console.error('Error in sendMailOTP:', error);
+        throw new Error('Error in sending Welcome email');
+    } finally {
+        if (pool) {
+            pool.close();
+          }
+    }
+  };
+  
 
 
 
-export { hashPassword , comparePassword ,encrypt,decrypt , encrypt64 ,decrypt64 , sendWelcomeMsg };
+
+
+
+
+export { hashPassword , comparePassword ,encrypt,decrypt , encrypt64 ,decrypt64 , sendWelcomeMsg, sendBookingOTP };
 

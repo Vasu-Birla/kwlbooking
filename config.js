@@ -18,7 +18,7 @@ const config = {
 const connection = async () => {
   try {
     const pool = await sql.connect(config);
-    console.log('Connected to MSSQL database successfully');
+   // console.log('Connected to MSSQL database successfully');
     return pool; // return pool object to use later for queries
   } catch (err) {
     console.error('Error connecting to MSSQL database:', err.message);

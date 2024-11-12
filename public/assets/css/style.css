@@ -424,3 +424,54 @@ tfoot th {
   .close:hover {
     color: #ff0000;
   }
+
+  
+
+/* ==================================== kilCss start  (common in every project ) ======================== */
+
+
+
+.success-text {
+	color: rgb(82, 190, 82);
+  font-size: medium;
+}
+
+/* .error-text {
+	color: rgb(255, 69, 69);
+  font-size: large;
+} */
+
+.error-text {
+  font-size: medium;
+	font-weight: bold;
+	color: rgb(255, 0, 0);
+	background: linear-gradient(45deg, #ff0707, #fe475f);
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
+	animation: heartbeat 1s infinite;
+	text-align: center;
+  }
+  
+  @keyframes heartbeat {
+	0% {
+	  transform: scale(1);
+	}
+	50% {
+	  transform: scale(1.05);
+	}
+	100% {
+	  transform: scale(1);
+	}
+  }
+
+
+
+  .iti__selected-flag {
+    z-index: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: auto !important;
+    padding: 5px 6px 5px 8px !important;
+}

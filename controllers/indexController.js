@@ -6,7 +6,7 @@ import axios from 'axios';
 import moment from 'moment-timezone';
 
 
-import { sendWelcomeMsg } from '../middleware/helper.js';
+import { sendWelcomeMsg, sendBookingOTP } from '../middleware/helper.js';
 
 
 
@@ -102,6 +102,123 @@ const booking_availability = async (req, res, next) => {
   }
 };
 
+
+
+const reschedule = async (req, res, next) => {
+  let pool;
+  let transaction;
+
+  try {
+    const output = req.cookies.kwl_msg || '';
+    const booking_id = req.cookies.kwl_booking_id || 0;
+    pool = await connection(); // Establish database connection
+    transaction = new sql.Transaction(pool); // Create a new transaction instance
+
+    await transaction.begin(); // Begin the transaction
+
+    // Step 1: Fetch booking data from internal database
+    const request = transaction.request();
+    const result = await request
+      .input('booking_id', sql.Int, booking_id)
+      .query(`SELECT * FROM tbl_bookings WHERE booking_id = @booking_id`);
+
+    if (result.recordset.length === 0) {
+      throw new Error('Booking not found in the database');
+    }
+
+    const internalBooking = result.recordset[0];
+
+
+    // Step 2: Fetch booking data from Acuity API
+    const acuityResponse = await axios.get(
+      `https://acuityscheduling.com/api/v1/appointments/${booking_id}?pastFormAnswers=false`,
+      {
+        auth: {
+          username: '19354905', // Use actual username
+          password: 'b0a1d960446f9efab07df16c4c16b444' // Use actual password
+        }
+      }
+    );
+
+    // Check if the Acuity API request was successful
+    if (acuityResponse.status !== 200) {
+      throw new Error('Failed to fetch booking details from Acuity');
+    }
+
+    const acuityBooking = acuityResponse.data;
+   
+
+    // Step 3: Merge Acuity data into internal booking data, adding `appointmentTypeID` and `calendarID`
+    const booking = {
+      ...internalBooking,
+      appointmentTypeID: acuityBooking.appointmentTypeID,
+      calendarID: acuityBooking.calendarID,
+      acuityData: acuityBooking // Optionally, store other Acuity details if needed
+    };
+
+    
+
+    console.log(booking)
+
+    await transaction.commit(); // Commit the transaction if successful
+
+    // Render the reschedule page with merged booking data
+    res.render('reschedule', { output, booking });
+  } catch (error) {
+    // Rollback transaction if an error occurs
+    if (transaction && transaction._aborted !== true) {
+      await transaction.rollback();
+    }
+    console.error('Error:', error);
+    res.render('kil500', { output: `${error}` });
+  } finally {
+    // Always close the pool to release resources
+    if (pool) {
+      pool.close();
+    }
+  }
+};
+
+
+const rescheduleinternal = async (req, res, next) => {
+  let pool;
+  let transaction;
+
+  try {
+    const output = req.cookies.kwl_msg || '';
+    const booking_id = req.cookies.kwl_booking_id || 0;
+    pool = await connection(); // Establish database connection
+    transaction = new sql.Transaction(pool); // Create a new transaction instance
+
+    await transaction.begin(); // Begin the transaction
+
+    const request = transaction.request();
+    
+  
+    const result = await request
+    .input('booking_id', sql.Int, booking_id)
+    .query(`SELECT * FROM tbl_bookings WHERE booking_id = @booking_id`);
+
+
+    console.log("selected booking ",result.recordset[0] )
+
+    await transaction.commit(); // Commit the transaction if successful
+
+    res.render('reschedule', { output , booking: result.recordset[0] });
+  } catch (error) {
+    // Rollback transaction if an error occurs
+    if (transaction && transaction._aborted !== true) { 
+      await transaction.rollback();
+    }
+    console.error('Error:', error);
+    res.render('kil500', { output: `${error}` });
+  } finally {
+    // Always close the pool to release resources
+    if (pool) {
+      pool.close();
+    }
+  }
+};
 
 
 
@@ -240,7 +357,7 @@ const getBookingOtp = async (req, res, next) => {
       `);
     }
 
-    await sendWelcomeMsg(email, otp);
+    await sendBookingOTP(email, otp);
     await transaction.commit();
 
     return res.status(200).json({ msg: true, exists: true, otp });
@@ -605,7 +722,7 @@ const confirmbooking = async (req, res, next) => {
             ${bookingId}, '${trn}', '${firstname}', '${lastname}', '${contact}', '${country_code}', '${user_email}',
             '${agent_forwarder}', '${appointment_by}', '${appointment_type}', '${bol_number}',
             '${vessel_name}', '${vessel_reported_date}', '${chassis_number}', '${declaration_number}',
-            '${container_number}', '${number_of_items}', '${booking_date}', '${formattedDatetime}'
+            '${container_number}', '${number_of_items}', '${booking_date}', '${datetime}'
           )
         `;
 
@@ -676,7 +793,7 @@ const check_times = async (req, res, next) => {
     res.status(200).json(response.data);
 
   } catch (error) {
-    console.error("Error checking times: ", error);
+   // console.error("Error checking times: ", error);
     res.status(500).json({ error: 'Internal Server Error', message: error.message });
   }
 };
@@ -742,7 +859,7 @@ const viewBookings = async (req, res, next) => {
       return booking;
     });
     
-    console.log('bookings:', bookings);
+   // console.log('bookings:', bookings);
     res.render('viewBookings', { output: output , bookings:bookings});
   } catch (error) {
     // Rollback if an error occurs
@@ -762,6 +879,308 @@ const viewBookings = async (req, res, next) => {
 
 
 
+
+
+const cancelBooking = async (req, res, next) => {
+  console.log("cancelling", req.body);
+  let pool;
+  let transaction;
+  let acuityResponse;
+  const { id, status, cancelNote } = req.body;
+
+  try {
+    // Step 1: Cancel booking in Acuity
+     acuityResponse = await axios.put(
+      `https://acuityscheduling.com/api/v1/appointments/${id}/cancel`, 
+      {
+        noShow: false,
+        cancelNote: cancelNote || "Your appointment has been cancelled"
+      },
+      {
+        auth: {
+          username: '19354905', // Use the actual username
+          password: 'b0a1d960446f9efab07df16c4c16b444' // Use the actual password
+        }
+      }
+    );
+
+    // Step 2: Check if Acuity response is successful (status 200)
+    if (acuityResponse.status === 200) {
+      // Step 3: Proceed to update internal database if Acuity cancellation is successful
+      pool = await connection();
+      transaction = new sql.Transaction(pool);
+      await transaction.begin();
+
+      // Update the status in the internal database to reflect cancellation
+      const updateSql = `UPDATE tbl_bookings SET booking_status = @booking_status WHERE booking_id = @id`;
+      const request = new sql.Request(transaction);
+      request.input('booking_status', sql.NVarChar, status); // Use 'Cancelled' or 'No Show'
+      request.input('id', sql.Int, id); // Use dynamic booking ID
+      await request.query(updateSql);
+
+      await transaction.commit();
+
+      res.json({ success: true, msg: `Booking has been cancelled` });
+    } else {
+      console.log("Failed to cancel booking in Acuity");
+  
+      return res.status(200).json({
+        success: false,
+        msg: acuityResponse.data.message || 'Failed to cancel appointment on Acuity'
+    
+      });
+    }
+  } catch (error) {
+    if (transaction) await transaction.rollback();
+    console.error('Errorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr:', error.response.data);
+    //res.status(error.status).json({ success: false, msg: 'Internal Server Error' });
+          if(error.response.data){
+            acuityResponse = error.response.data;
+          }
+            
+
+        return res.status(200).json({
+      success: false,
+      msg: acuityResponse.message || 'Failed to cancel appointment on Acuity'
+    });
+
+  } finally {
+    if (pool) pool.close(); // Close the pool
+  }
+};
+
+
+
+const cancelBookindirect = async (req, res, next) => {
+  console.log("cancelling", req.body);
+  let pool;
+  let transaction;
+  const { id, status } = req.body;
+
+  try {
+      pool = await connection();
+      transaction = new sql.Transaction(pool);
+      await transaction.begin();
+
+      // Update the status in the database
+      const updateSql = `UPDATE tbl_bookings SET booking_status = @booking_status WHERE booking_id = @id`;
+      const request = new sql.Request(transaction);
+      request.input('booking_status', sql.NVarChar, status);
+      request.input('id', sql.Int, id);
+      await request.query(updateSql);
+
+      await transaction.commit();
+
+      res.json({ success: true, msg: `${status === 'Approve' ? 'Approving' : 'Cancelling'} Booking` });
+  } catch (error) {
+      if (transaction) await transaction.rollback();
+      console.error('Error:', error);
+      res.status(500).json({ success: false, msg: 'Internal Server Error' });
+  } finally {
+      if (pool) pool.close(); // Close the pool
+  }
+};
+
+
+const cancelBookingsimple = async (req, res, next) => {
+  console.log("new booking request", req.body);
+  let pool;
+  let transaction;
+  const { id, status } = req.body;
+
+  try {
+      pool = await connection();
+      transaction = new sql.Transaction(pool);
+      await transaction.begin();
+
+      // Simple, inline parameterized query for updating the status
+      await transaction.request()
+          .query(`UPDATE tbl_bookings SET status = '${status}' WHERE booking_id = ${id}`);
+
+      await transaction.commit();
+
+      res.json({ success: true, msg: `${status === 'Approve' ? 'Approving' : 'Cancelling'} Booking` });
+  } catch (error) {
+      if (transaction) await transaction.rollback();
+      console.error('Error:', error);
+      res.status(500).json({ success: false, msg: 'Internal Server Error' });
+  } finally {
+      if (pool) pool.close(); // Close the pool
+  }
+};
+
+
+
+
+
+
+
+
+const rescheduleBooking = async (req, res, next) => {
+  console.log(req.body)
+  const { booking_id, selectedDateTimes, booking_date } = req.body;
+
+  let pool;
+  let transaction;
+
+  try {
+    // Initialize the database connection
+    pool = await connection();
+    transaction = new sql.Transaction(pool);
+    await transaction.begin();
+
+    // Loop through each selected date/time to reschedule the appointment
+    for (const datetime of selectedDateTimes) {
+      // Format datetime to ensure it's correctly formatted for the Acuity API
+      const formattedDatetime = moment(datetime).format('YYYY-MM-DDTHH:mm:ssZ').replace(':', '').replace('Z', '');
+
+      var reurl = `https://acuityscheduling.com/api/v1/appointments/${booking_id}/reschedule`;
+
+
+
+      // Send a request to Acuity to reschedule the appointment
+      const acuityResponse = await axios.put(
+        reurl, // Make sure `booking_id` is correctly passed
+        {
+          datetime: datetime // New appointment time in ISO 8601 format
+        },
+        {
+          auth: {
+            username: '19354905', // Your Acuity API username
+            password: 'b0a1d960446f9efab07df16c4c16b444' // Your Acuity API password
+          }
+        }
+      );
+
+      // Insert the updated booking details into the database if Acuity rescheduling is successful
+      if (acuityResponse.status === 200) {
+        const newBookingId = acuityResponse.data.id;
+
+        // Inline query string to update the booking in the database
+        const query11 = `
+          UPDATE tbl_bookings
+          SET 
+            booking_date = '${booking_date}', 
+            booking_times = '${formattedDatetime}'
+          WHERE booking_id = ${booking_id}
+        `;
+
+
+        const query = `
+    UPDATE tbl_bookings
+    SET 
+        booking_date = '${booking_date}', 
+        booking_times = '${formattedDatetime}',
+        booking_status = 'Rescheduled'
+    WHERE booking_id = ${booking_id}
+`;
+
+
+        // Perform the update query
+        await transaction.request().query(query);
+      } else {
+        throw new Error('Failed to reschedule appointment on Acuity for datetime: ' + formattedDatetime);
+      }
+    }
+
+    // Commit the transaction after all reschedules are successful
+    await transaction.commit();
+
+    // Respond with success
+    res.status(200).json({
+      success: true,
+      valid: true,
+      message: 'All appointments rescheduled successfully.'
+    });
+
+  } catch (error) {
+    // Rollback transaction in case of error
+    if (transaction) await transaction.rollback();
+    console.error("Error during rescheduling:", error.response?.data || error.message);
+    res.status(400).json({
+      success: false,
+      message: error.response?.data?.message || 'Failed to reschedule appointments with Acuity',
+    });
+  } finally {
+    if (pool) pool.close();
+  }
+};
+
+
+
+
+
+
+
+
+const updateBooking = async (req, res) => {
+  console.log("update data ", req.body);
+  const { booking_id, firstname, lastname, country_code, contact } = req.body;
+
+  // Validate required fields
+  if (!booking_id || !firstname || !lastname || !country_code || !contact) {
+    return res.status(400).json({
+      success: false,
+      message: 'All fields are required.'
+    });
+  }
+
+  let pool;
+  let transaction;
+
+  try {
+    // Initialize the database connection
+    pool = await connection();
+    transaction = new sql.Transaction(pool);
+    await transaction.begin();
+
+    // Sanitize inputs (e.g., strip spaces, check null/empty values)
+    const sanitizedFirstname = firstname.trim();
+    const sanitizedLastname = lastname.trim();
+    const sanitizedCountryCode = country_code.trim();
+    const sanitizedContact = contact.trim();
+
+    // Use parameterized query to avoid SQL injection
+    const query = `
+      UPDATE tbl_bookings
+      SET
+        firstname = @firstname,
+        lastname = @lastname,
+        country_code = @country_code,
+        contact = @contact
+      WHERE booking_id = @booking_id
+    `;
+
+    // Log query for debugging
+    console.log("Executing query: ", query);
+
+    // Perform the update query with parameters
+    const request = transaction.request();
+    request.input('firstname', sql.NVarChar, sanitizedFirstname);
+    request.input('lastname', sql.NVarChar, sanitizedLastname);
+    request.input('country_code', sql.NVarChar, sanitizedCountryCode);
+    request.input('contact', sql.NVarChar, sanitizedContact);
+    request.input('booking_id', sql.Int, booking_id);
+
+    // Execute the query with parameters
+    await request.query(query);
+
+    // Commit the transaction after successful update
+    await transaction.commit();
+
+    res.cookie('kwl_msg', 'Booking updated successfully!');
+    res.redirect('/viewBookings');
+  } catch (error) {
+    // Rollback transaction in case of error
+    if (transaction) await transaction.rollback();
+    console.error("Error during booking update:", error);
+
+    res.cookie('kwl_msg', `Failed to Update! ${error}`);
+    res.redirect('/viewBookings');
+  } finally {
+    if (pool) pool.close();
+  }
+};
 
 
 
@@ -1011,7 +1430,7 @@ const logout = async (req, res) => {
 //--------------------- Export Start ------------------------------------------
 export { home , book , booking_availability , viewBookings , getLoginOtp ,verifyLoginOtp   , login , logout ,
   dates_availability , appointment_types , time_availability , getBookingOtp , verifyOTP , confirmbooking ,
-  check_times
+  check_times , cancelBooking , reschedule ,rescheduleBooking ,updateBooking
 
  }
 
