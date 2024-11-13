@@ -18,6 +18,7 @@
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
                             <li class="breadcrumb-item active">Audit Logs</li>
+                            
                         </ol>
                     </div>
                 </div>
@@ -33,6 +34,16 @@
                         <div class="invoice p-3 mb-3">
                             <div class="row">
                                 <div class="col-12 table-responsive">
+                                    <div style="width: max-content;" >
+                                    
+                                        <a class="custom-control custom-switchAging btn btn-success" href="#" onclick="downloadlogs('auditLogs.txt')">
+                                        Download Text Logs
+                                        </a>
+                                      
+                                      </div> <br>
+                           
+
+
                                     <table id="example1" class="table table-striped table-bordered" style="width:100%">
                                         <thead>
                                             <tr>
@@ -68,3 +79,17 @@
     </div>
 
     <%- include ("footer.ejs") %>
+
+
+    <script>
+        
+      function downloadlogs(reportName) {
+
+const ExcelUrl = `/logs/auditLogs.txt`;
+const link = document.createElement('a');
+link.href = ExcelUrl;
+link.download = `${reportName}`;
+link.click();
+}
+
+    </script>

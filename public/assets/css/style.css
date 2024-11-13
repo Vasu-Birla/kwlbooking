@@ -475,3 +475,46 @@ tfoot th {
     height: auto !important;
     padding: 5px 6px 5px 8px !important;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+.menuhide {
+    display: none;
+    }
+
+
+  @media screen and (min-width: 320px) and (max-width: 768px)
+ { 
+    .tabs {
+        display: block;
+        justify-content: space-around;
+        margin-bottom: 20px;
+        background: #f7f9fc;
+        border-radius: 10px;
+        padding: 5px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .calendar-days {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 4px;
+        margin-top: 15px;
+    }
+    #timeSlots {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .menuhide {
+        display: block;
+    }
+ }
