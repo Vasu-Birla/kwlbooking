@@ -1,0 +1,235 @@
+
+
+/* Tabs Styling */
+.tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    background: #f7f9fc;
+    border-radius: 10px;
+    padding: 5px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.tab {
+    flex: 1;
+    padding: 12px 0;
+    text-align: center;
+    cursor: pointer;
+    background-color: #3875c6;
+    color: #fff;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+/* .tab:hover {
+    background-color: #d0eaff;
+    color: #1977cc;
+} */
+
+.tab.active {
+    background-color: #133590;
+    color: #ffffff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Calendar and Container Styling */
+.colcontainer {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 25px;
+    background-color: #fafafa;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.calendar {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.calendaricon {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #1977cc;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.calendar-day {
+    padding: 12px;
+    background-color: #f0f4f8;
+    border-radius: 6px;
+    font-weight: bold;
+    color: #666;
+    transition: background-color 0.3s, color 0.3s;
+    cursor: pointer;
+}
+
+.day:hover {
+    background-color: #1977cc;
+    color: #ffffff;
+}
+
+.selected-day {
+    background-color: #1977cc;
+    color: #ffffff;
+}
+
+/* Time Slots Styling */
+.time-slots {
+    margin-top: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+}
+
+#timeSlots {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.time-slot {
+    padding: 10px;
+    background-color: #f0f4f8;
+    text-align: center;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.time-slot:hover {
+    background-color: #1977cc;
+    color: #ffffff;
+}
+
+.selected-time {
+    background-color: #1977cc;
+    color: #ffffff;
+}
+
+/* Button Styling */
+.button-container {
+    /* display: flex; */
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.button {
+    padding: 10px 25px;
+    border: none;
+    background-color: #1977cc;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.3s;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.button:hover {
+    background-color: #004a8f;
+    transform: scale(1.05);
+}
+
+/* Animation for Smooth Transitions */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.5s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+label {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+input.form-control {
+    border: 1px solid #ccc;
+    padding: 8px;
+    border-radius: 5px;
+    transition: border-color 0.3s;
+}
+
+input.form-control:focus {
+    border-color: #1977cc;
+    outline: none;
+}
+
+
+/* ==================================== kilCss start  (common in every project ) ======================== */
+
+
+
+.success-text {
+	color: rgb(82, 190, 82);
+  font-size: medium;
+}
+
+/* .error-text {
+	color: rgb(255, 69, 69);
+  font-size: large;
+} */
+
+.error-text {
+  font-size: medium;
+	font-weight: bold;
+	color: rgb(255, 0, 0);
+	background: linear-gradient(45deg, #ff0707, #fe475f);
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
+	animation: heartbeat 1s infinite;
+	text-align: center;
+  }
+  
+  @keyframes heartbeat {
+	0% {
+	  transform: scale(1);
+	}
+	50% {
+	  transform: scale(1.05);
+	}
+	100% {
+	  transform: scale(1);
+	}
+  }
+
+
+
+  .iti__selected-flag {
+    z-index: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: auto !important;
+    padding: 5px 6px 5px 8px !important;
+}

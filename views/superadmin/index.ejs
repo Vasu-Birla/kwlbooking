@@ -33,13 +33,13 @@
                     <div class="col-lg-3 col-6">
                         <div class="small-box bg-info">
                             <div class="inner">
-                                <h3>10</h3>
+                                <h3><%= counts.totalAppointments %></h3>
                                 <p>Total Appointment</p>
                             </div>
                             <div class="icon">
                                 <i class="fas fa-calendar"></i>
                             </div>
-                            <a href="appointment.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                            <a href="/superadmin/appointments" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
                     <!-- // col -->
@@ -47,13 +47,13 @@
                     <div class="col-lg-3 col-6">
                         <div class="small-box bg-success">
                             <div class="inner">
-                                <h3>4</h3>
-                                <p>Complete Appointment</p>
+                                <h3><%= counts.todaysAppointments %></h3>
+                                <p>Today's Appointment</p>
                             </div>
                             <div class="icon">
                                 <i class="fas fa-check"></i>
                             </div>
-                            <a href="appointment.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                            <a href="/superadmin/appointments" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
                     <!-- // col -->
@@ -61,29 +61,32 @@
                     <div class="col-lg-3 col-6">
                         <div class="small-box bg-warning">
                             <div class="inner">
-                                <h3>1</h3>
-                                <p>Pending Appointment</p>
+                                <h3><%= counts.upcomingAppointments %></h3>
+
+                                <p>Upcoming Appointment</p>
                             </div>
                             <div class="icon">
                                 <i class="fa fa-history"></i>
                             </div>
-                            <a href="appointment.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                            <a href="/superadmin/appointments" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
                     <!-- // col -->
+
       
                     <div class="col-lg-3 col-6">
                         <div class="small-box bg-danger">
                             <div class="inner">
-                                <h3>1</h3>
+                                <h3><%= counts.cancelledAppointments %></h3>
                                 <p>Cancel Appointment</p>
                             </div>
                             <div class="icon">
                                 <i class="fa fa-times"></i>
                             </div>
-                            <a href="appointment.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                            <a href="/superadmin/appointments" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
+
                     <!-- // col -->
                 </div><br>
                 

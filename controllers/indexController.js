@@ -5,8 +5,107 @@ import {sendTokenUser} from "../utils/jwtToken.js";
 import axios from 'axios';
 import moment from 'moment-timezone';
 
+import fs from 'fs';
+import path from 'path';
 
 import { sendWelcomeMsg, sendBookingOTP } from '../middleware/helper.js';
+
+
+
+
+
+
+//=================================== APIs Started ========================================================
+
+
+
+
+// Utility function to log Acuity API requests
+const logAcuityRequestonlytextfile = (url, userRole, userName, reason) => {
+  // Define the file path
+  const logFilePath = path.join(process.cwd(), 'public', 'logs', 'auditLogs.txt');
+  
+  // Get the current date and time
+  const currentDateTime = new Date().toISOString().replace('T', ' ').substring(0, 19);
+  
+  // Format the log entry
+  const logEntry = `
+------------------------------
+Date and Time: ${currentDateTime}
+URL Hit: ${url}
+Accessed By: ${userRole} - ${userName}
+Purpose: ${reason}
+------------------------------
+`;
+
+  // Append the log entry to the file
+  fs.appendFile(logFilePath, logEntry, (err) => {
+      if (err) {
+          console.error("Failed to log Acuity request:", err);
+      } else {
+          console.log("Acuity request logged successfully.");
+      }
+  });
+
+
+
+};
+
+
+
+const logAcuityRequest = async (url, userRole, userName, reason) => {
+  let pool;
+  let transaction;
+
+  // Define the file path for the text log
+  const logFilePath = path.join(process.cwd(), 'public', 'logs', 'auditLogs.txt');
+  
+  // Get the current date and time in a readable format
+  const currentDateTime = new Date().toISOString().replace('T', ' ').substring(0, 19);
+  
+  // Format the log entry for both text file and database
+  const logEntry = `
+------------------------------
+Date and Time: ${currentDateTime}
+URL Hit: ${url}
+Accessed By: ${userRole} - ${userName}
+Purpose: ${reason}
+------------------------------
+`;
+
+  try {
+      pool = await connection();
+      transaction = new sql.Transaction(pool);
+      await transaction.begin();
+
+      // Insert log into tbl_logs in the database
+      await transaction.request().query(`
+          INSERT INTO tbl_logs (user_role, user_name, reason, acuity_url)
+          VALUES (N'${userRole}', N'${userName}', N'${reason}', N'${url}')
+      `);
+
+      // Commit the transaction
+      await transaction.commit();
+      console.log("Acuity request logged to database successfully.");
+
+      // Append the log entry to the text file after successful database insertion
+      fs.appendFile(logFilePath, logEntry, (err) => {
+          if (err) {
+              console.error("Failed to log Acuity request to text file:", err);
+          } else {
+              console.log("Acuity request logged successfully to text file.");
+          }
+      });
+  } catch (error) {
+      if (transaction) await transaction.rollback();
+      console.error("Failed to log Acuity request:", error);
+  } finally {
+      if (pool) pool.close();
+  }
+};
+
+
+
 
 
 
@@ -111,6 +210,19 @@ const reschedule = async (req, res, next) => {
   try {
     const output = req.cookies.kwl_msg || '';
     const booking_id = req.cookies.kwl_booking_id || 0;
+
+
+    //----------------------   audit Logging -------------------------- 
+
+    const acuityUrl =  `https://acuityscheduling.com/api/v1/appointments/${booking_id}?pastFormAnswers=false`
+    const reason = "Fetching Single Appointment Details"
+    const userName = req.user.user_email; 
+    const userRole = 'User';
+
+   await logAcuityRequest(acuityUrl, userRole, userName, reason);
+
+    //----------------------   audit Logging -------------------------- 
+    
     pool = await connection(); // Establish database connection
     transaction = new sql.Transaction(pool); // Create a new transaction instance
 
@@ -144,6 +256,8 @@ const reschedule = async (req, res, next) => {
     if (acuityResponse.status !== 200) {
       throw new Error('Failed to fetch booking details from Acuity');
     }
+
+  
 
     const acuityBooking = acuityResponse.data;
    
@@ -233,10 +347,21 @@ const dates_availability = async (req, res, next) => { console.log("............
       return res.status(400).json({ error: 'appointmentTypeID and month are required' });
     }
 
+        //----------------------   audit Logging -------------------------- 
+
+        const acuityUrl =  `https://acuityscheduling.com/api/v1/availability/dates?month=${month}&appointmentTypeID=${appointmentTypeID}&timezone=`
+        const reason = "Fetching Date Aailabilities"
+        const userName = req.user ? req.user.user_email : 'Guest Mode';
+        const userRole = 'User';
+    
+       await logAcuityRequest(acuityUrl, userRole, userName, reason);
+    
+        //----------------------   audit Logging -------------------------- 
+
     var appointmentTypeID1 =  18478069
 
     const response = await axios.get(
-      `https://acuityscheduling.com/api/v1/availability/dates?month=${month}&appointmentTypeID=${appointmentTypeID1}&timezone=`,
+      `https://acuityscheduling.com/api/v1/availability/dates?month=${month}&appointmentTypeID=${appointmentTypeID}&timezone=`,
       {
         auth: {
           username: '19354905',
@@ -258,6 +383,19 @@ const appointment_types = async (req, res, next) => {
 
 
   try {
+
+
+    
+        //----------------------   audit Logging -------------------------- 
+
+        const acuityUrl =  `https://acuityscheduling.com/api/v1/appointment-types`
+        const reason = "Fetching Date Appointment Types"
+        const userName = req.user ? req.user.user_email : 'Guest Mode';
+        const userRole = 'User';
+    
+       await logAcuityRequest(acuityUrl, userRole, userName, reason);
+    
+        //----------------------   audit Logging -------------------------- 
     // Make a request to the third-party API
     const response = await axios.get('https://acuityscheduling.com/api/v1/appointment-types', {
       auth: {
@@ -672,6 +810,19 @@ const confirmbooking = async (req, res, next) => {
 
   try {
     // Initialize the database connection
+
+    
+        //----------------------   audit Logging -------------------------- 
+
+        const acuityUrl =  `https://acuityscheduling.com/api/v1/appointments`
+        const reason = "Creating New Booking"
+        const userName = req.user ? req.user.user_email : user_email;
+        const userRole = 'User';
+    
+       await logAcuityRequest(acuityUrl, userRole, userName, reason);
+    
+        //----------------------   audit Logging -------------------------- 
+    
     pool = await connection();
     transaction = new sql.Transaction(pool);
     await transaction.begin();
@@ -831,22 +982,75 @@ const viewBookingstest = async (req, res, next) => {
   }
 };
 
-
-
 const viewBookings = async (req, res, next) => {
-  const pool = await connection();
-  const transaction = new sql.Transaction(pool);
+  let pool;
+  const output = req.cookies.kwl_msg || '';
+  const userEmail = req.user.user_email; // Get the email from req.user
+
+  try {
+    pool = await connection();
+    
+    // Execute the general query for all bookings
+    const result1 = await pool.request().query('SELECT * FROM tbl_bookings ORDER BY booking_id DESC');
+
+    // Execute the query with the user's email
+    const result = await pool
+      .request()
+      .input('userEmail', sql.NVarChar, userEmail) // Bind the email parameter
+      .query('SELECT * FROM tbl_bookings WHERE user_email = @userEmail ORDER BY created_at  DESC');
+
+    // Map and format the bookings
+    const bookings = result.recordset.map((booking) => {
+      // Parse and format booking_times if it exists
+      if (booking.booking_times) {
+        booking.booking_times = moment(booking.booking_times, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
+      } else {
+        booking.booking_times = 'N/A';
+      }
+      return booking;
+    });
+
+    // Render the view with bookings
+    res.render('viewBookings', { output: output, bookings: bookings });
+  } catch (error) {
+    console.error('Error:', error);
+    res.render('kil500', { output: `${error}` });
+  } finally {
+    // Always close the pool to release resources
+    if (pool) {
+      pool.close();
+    }
+  }
+};
+
+
+const viewBookingsold = async (req, res, next) => {
+
+  let pool;
+  let transaction;
   const output = req.cookies.kwl_msg || '';
 
   try {
-    await transaction.begin(); // Begin the transaction
+    
+
+    pool = await connection();
+    transaction = new sql.Transaction(pool);
+    await transaction.begin();
 
     const request = transaction.request();
 
     // Commit the transaction if everything is successful
     await transaction.commit();
     // Execute the query directly without wrapping in a transaction for SELECT statements
-    const result = await pool.request().query('SELECT * FROM tbl_bookings ORDER BY booking_id DESC');
+    const result1 = await pool.request().query('SELECT * FROM tbl_bookings ORDER BY booking_id DESC');
+
+    const result = await pool
+    .request()
+    .input('userEmail', sql.NVarChar, userEmail) // Bind the email parameter
+    .query('SELECT * FROM tbl_bookings WHERE user_email = @userEmail ORDER BY booking_id DESC');
+
+
+    req.user.user_email
         
     //const bookings = result.recordset; // Access the result set in `mssql`
     const bookings = result.recordset.map((booking) => {
@@ -889,6 +1093,19 @@ const cancelBooking = async (req, res, next) => {
   const { id, status, cancelNote } = req.body;
 
   try {
+
+    
+        //----------------------   audit Logging -------------------------- 
+
+        const acuityUrl =  `https://acuityscheduling.com/api/v1/appointments/${id}/cancel`
+        const reason = "Cancelling Booking"
+        const userName = req.user ? req.user.user_email : 'Guest Mode';
+        const userRole = 'User';
+    
+       await logAcuityRequest(acuityUrl, userRole, userName, reason);
+    
+        //----------------------   audit Logging -------------------------- 
+
     // Step 1: Cancel booking in Acuity
      acuityResponse = await axios.put(
       `https://acuityscheduling.com/api/v1/appointments/${id}/cancel`, 
@@ -1024,6 +1241,19 @@ const rescheduleBooking = async (req, res, next) => {
   let transaction;
 
   try {
+
+    
+        //----------------------   audit Logging -------------------------- 
+
+        const acuityUrl =  `https://acuityscheduling.com/api/v1/appointments/${booking_id}/reschedule`
+        const reason = "Rescheduling Booking"
+        const userName = req.user ? req.user.user_email : 'Guest Mode';
+        const userRole = 'User';
+    
+       await logAcuityRequest(acuityUrl, userRole, userName, reason);
+    
+        //----------------------   audit Logging -------------------------- 
+
     // Initialize the database connection
     pool = await connection();
     transaction = new sql.Transaction(pool);
@@ -1061,7 +1291,7 @@ const rescheduleBooking = async (req, res, next) => {
           UPDATE tbl_bookings
           SET 
             booking_date = '${booking_date}', 
-            booking_times = '${formattedDatetime}'
+            booking_times = '${datetime}'
           WHERE booking_id = ${booking_id}
         `;
 
@@ -1114,6 +1344,103 @@ const rescheduleBooking = async (req, res, next) => {
 
 
 const updateBooking = async (req, res) => {
+
+  const { booking_id, firstname, lastname, country_code, contact  } = req.body;
+
+  if (!booking_id || !firstname || !lastname || !country_code || !contact) {
+    return res.status(400).json({
+      success: false,
+      message: 'All fields are required.'
+    });
+  }
+
+  let pool;
+  let transaction;
+
+  try {
+
+
+    
+        //----------------------   audit Logging -------------------------- 
+
+        const acuityUrl =  `https://acuityscheduling.com/api/v1/appointments/${booking_id}`
+        const reason = "Updating Booking Deatils"
+        const userName = req.user ? req.user.user_email : 'Guest Mode';
+        const userRole = 'User';
+    
+       await logAcuityRequest(acuityUrl, userRole, userName, reason);
+    
+        //----------------------   audit Logging -------------------------- 
+
+    // Step 1: Update the booking on Acuity
+    const reurl = `https://acuityscheduling.com/api/v1/appointments/${booking_id}`;
+
+    const acuityResponse = await axios.put(
+      reurl,
+      {
+        firstName: firstname,
+        lastName: lastname,
+        phone: contact
+      
+      },
+      {
+        auth: {
+          username: '19354905', // Your Acuity API username
+          password: 'b0a1d960446f9efab07df16c4c16b444' // Your Acuity API password
+        }
+      }
+    );
+
+    // If the Acuity update is successful, proceed with the database update
+    pool = await connection();
+    transaction = new sql.Transaction(pool);
+    await transaction.begin();
+
+    const sanitizedFirstname = firstname.trim();
+    const sanitizedLastname = lastname.trim();
+    const sanitizedCountryCode = country_code.trim();
+    const sanitizedContact = contact.trim();
+
+    const query = `
+      UPDATE tbl_bookings
+      SET
+        firstname = @firstname,
+        lastname = @lastname,
+        country_code = @country_code,
+        contact = @contact
+      WHERE booking_id = @booking_id
+    `;
+
+    const request = transaction.request();
+    request.input('firstname', sql.NVarChar, sanitizedFirstname);
+    request.input('lastname', sql.NVarChar, sanitizedLastname);
+    request.input('country_code', sql.NVarChar, sanitizedCountryCode);
+    request.input('contact', sql.NVarChar, sanitizedContact);
+    request.input('booking_id', sql.Int, booking_id);
+
+    await request.query(query);
+    await transaction.commit();
+
+    res.cookie('kwl_msg', 'Booking updated successfully!');
+    res.redirect('/viewBookings');
+
+  } catch (error) {
+    // Rollback if any error occurs
+    if (transaction) await transaction.rollback();
+    console.error("Error during booking update:", error);
+
+    res.cookie('kwl_msg', `Failed to Update! ${error}`);
+    res.redirect('/viewBookings');
+  } finally {
+    if (pool) pool.close();
+  }
+};
+
+
+
+
+
+const updateBookingworking = async (req, res) => {
   console.log("update data ", req.body);
   const { booking_id, firstname, lastname, country_code, contact } = req.body;
 

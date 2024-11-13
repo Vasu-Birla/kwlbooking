@@ -31,16 +31,16 @@
 
 <!-- daterangepicker -->
 <script src="../adminassets/plugins/moment/moment.min.js"></script>
-<script src="../adminassets/plugins/daterangepicker/daterangepicker.js"></script>
+<!-- <script src="../adminassets/plugins/daterangepicker/daterangepicker.js"></script> -->
 
 <!-- Tempusdominus Bootstrap 4 -->
 <script src="../adminassets/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
 
 <!-- Summernote -->
-<script src="../adminassets/plugins/summernote/summernote-bs4.min.js"></script>
+<!-- <script src="../adminassets/plugins/summernote/summernote-bs4.min.js"></script> -->
 
 <!-- overlayScrollbars -->
-<script src="../adminassets/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+<!-- <script src="../adminassets/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script> -->
 
 <!-- AdminLTE App -->
 <script src="../adminassets/dist/js/adminlte.js"></script>
@@ -48,8 +48,8 @@
 <!-- AdminLTE for demo purposes -->
 <script src="../adminassets/dist/js/demo.js"></script>
 
-<!-- AdminLTE -->
-<script src="../adminassets/dist/js/adminlte.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 
@@ -67,6 +67,16 @@
 <script src="../adminassets/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
 <script src="../adminassets/plugins/datatables-buttons/js/buttons.print.min.js"></script>
 <script src="../adminassets/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+
+                                <!-- Flatpickr CSS -->
+                                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+                                <!-- Flatpickr JS -->
+                                <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 </body>
 </html>
 
@@ -89,4 +99,26 @@
         "responsive": true,
       });
     });
+
+
+
+
+          // Initialize Flatpickr with yyyy-mm-dd format
+        //   flatpickr("#dp4", { dateFormat: "Y-m-d" });
+        //  flatpickr("#dp5", { dateFormat: "Y-m-d" });
+                                      
+            
+        
+   
+  document.addEventListener("DOMContentLoaded", function () {
+    const dateInputs = document.querySelectorAll('input[type="date"]');
+    dateInputs.forEach(input => {
+      // Set the current date if needed
+      input.value = input.value || new Date().toISOString().split("T")[0];
+    });
+  });
+
+
+
+
   </script>

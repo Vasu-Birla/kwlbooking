@@ -1,6 +1,7 @@
 
 
 <%- include ("header.ejs") %>
+<%- include ("sidebar.ejs") %>
 
 
 
@@ -16,23 +17,34 @@
 
 </style>
 
-<main class="main">
-    <!-- Stats Section -->
-    <section id="stats" class="section light-background" style="background-image: url('assets/img/kwl-bg.jpg'); background-size: inherit; background-position: inherit;">
-        <div class="container section-title" data-aos="fade-up" style="padding-bottom: 0px;">
-            <h2>Schedule Your Appointment</h2>
-            <p>Effortlessly book your cargo pickup appointments and ensure a smooth collection process.</p>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+        
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Dashboard</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Dashboard</li>
+                    </ol>
+                </div>
+            </div>
         </div>
-    </section>
-    <!-- /Stats Section -->
+    </div>
+    <!-- // content-header -->
 
     
     <!-- calendar Section -->
     <section class="appointment section">
         <div class="container">
             <div class="row">
-                <div class="col-md-1"></div>
-                <div class="col-md-10 colcontainer">
+            
+                <div class="col-md-12 colcontainer">
 
                     <!-- Tab Headers -->
                     <div class="tabs">
@@ -49,9 +61,19 @@
                                 <div class="col-md-6">
                                     <label>* Appointment Type</label>
                    
-                                    <select name="option1" id="appointmentType" class="form-control select2" required>
+                                    <!-- <select name="option1" id="appointmentType" class="form-control select2" required>
                                         <option value="">Select Service</option>
-                                    </select>
+                                    </select> -->
+
+                                    <select name="option1" id="appointmentType" class="form-control select2" required aria-readonly="">
+                                        <option value="">Select Service</option>
+                                        <% if (booking) { %>
+                                          <option value="<%= booking.appointmentTypeID %>" data-calendar-id="<%= booking.calendarID %>" selected readonly>
+                                            Your Click N Collect Appointment
+                                          </option>
+                                        <% } %>
+                                      </select>
+
                                     <br>
                                     <label>Select Date</label>
                                     <!-- Calendar Section -->
@@ -86,85 +108,82 @@
                         <div class="tab-content">
                             <form id="kilform">
                                 <div class="row gy-4">
-                                    <input type="hidden" id="calendarId" name="calendarId" value="" >
+                                    <input type="hidden" id="calendarId" name="calendarId" value="<%= booking.calendarID %>">
+                                    
+                                    <input type="hidden" name="booking_id" id="booking_id" value="<%= booking.booking_id %>">
                                     <div class="col-md-6">
                                         <label>* TRN</label>
-                                        <input type="text" id="trn" name="trn" class="form-control" placeholder="Enter the number" required="">
+                                        <input type="text" id="trn" name="trn" class="form-control" value="<%= booking.trn %>" readonly>
                                     </div>
                                     <div class="col-md-6"></div>
                                     <div class="col-md-6">
                                         <label>* First Name</label>
-                                        <input type="text" id="fname" class="form-control" name="firstname" placeholder="Enter the name" required="">
+                                        <input type="text" id="fname" class="form-control" name="firstname" value="<%= booking.firstname %>" readonly>
                                     </div>
                                     <div class="col-md-6">
                                         <label>Last Name</label>
-                                        <input type="text" id="lname" class="form-control" name="lastname"  placeholder="Last Name" required="">
+                                        <input type="text" id="lname" class="form-control" name="lastname" value="<%= booking.lastname %>" readonly>
                                     </div>
                                     <div class="col-md-6">
                                         <label>* Mobile Number</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
-                                                <select id="countrycode" class="form-control" name="country_code" required>
-                                                    <option value="+1">+1 (USA)</option>
-                                                    <option value="+44">+44 (UK)</option>
-                                                    <option value="+91">+91 (India)</option>
+                                                <select id="countrycode" class="form-control" name="country_code" readonly>
+                                                    <option value="+1" <%= booking.country_code === '+1' ? 'selected' : '' %>>+1 (USA)</option>
+                                                    <option value="+44" <%= booking.country_code === '+44' ? 'selected' : '' %>>+44 (UK)</option>
+                                                    <option value="+91" <%= booking.country_code === '+91' ? 'selected' : '' %>>+91 (India)</option>
                                                 </select>
                                             </div>
-                                            <input type="number" id="phone4" class="form-control" name="contact" placeholder="Enter contact number" required>
+                                            <input type="number" id="phone4" class="form-control" name="contact" value="<%= booking.contact %>" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <label>* Email Address</label>
-                                        <!-- <input type="email" id="email" class="form-control" name="email" placeholder="Enter the email" required=""> -->
-
-                                        <% if (typeof loggeduser !== 'undefined' && loggeduser.user_email) { %>
-                                            <input type="email" id="email" class="form-control" name="user_email"  value="<%= loggeduser.user_email %>" readonly>
-                                        <% } else { %>
-                                            <input type="email" id="email" class="form-control" name="user_email" placeholder="Enter the email" required>
-                                        <% } %>
+                                       <input type="email" id="email" class="form-control" name="user_email" value="<%= booking.user_email %>" readonly>
                                     </div>
                                     <div class="col-md-6">
                                         <label>* Agent/Freight Forwarder</label>
-                                        <input type="text" id="agent" class="form-control" name="agent_forwarder" placeholder="Enter the name" required="">
+                                        <input type="text" id="agent" class="form-control" name="agent_forwarder" value="<%= booking.agent_forwarder %>" readonly>
                                     </div>
                                     <div class="col-md-6">
                                         <label>* Name of Individual Making Appointment</label>
-                                        <input type="text" id="appname" class="form-control" name="appointment_by" placeholder="Enter the name" required="">
+                                        <input type="text" id="appname" class="form-control" name="appointment_by" value="<%= booking.appointment_by %>" readonly>
                                     </div>
                                     <div class="col-md-6">
                                         <label>* Appointment Type (Personal/Commercial)</label>
-                                        <input type="text" id="apppersonal" class="form-control" name="appointment_type" placeholder="Enter the appointment type" required="">
+                                        <input type="text" id="apppersonal" class="form-control" name="appointment_type" value="<%= booking.appointment_type %>" readonly>
                                     </div>
                                     <div class="col-md-6">
                                         <label>* Bill of Lading Number</label>
-                                        <input type="text" id="blnumber" class="form-control" name="bol_number" placeholder="Enter the number" required="">
+                                        <input type="text" id="blnumber" class="form-control" name="bol_number" value="<%= booking.bol_number %>" readonly>
                                     </div>
                                     <div class="col-md-12">
                                         <label>* Vessel Name</label>
-                                        <input type="text" id="vname" class="form-control" name="vessel_name" placeholder="Enter the vessel name" required="">
+                                        <input type="text" id="vname" class="form-control" name="vessel_name" value="<%= booking.vessel_name %>" readonly>
                                     </div>
                                     <div class="col-md-12">
                                         <label>* Vessel Reported Date</label>
-                                        <input type="date" id="vreport" class="form-control" name="vessel_reported_date" placeholder="Vessel Reported Date" required="">
+                                        <input type="date" id="vreport" class="form-control" name="vessel_reported_date" value="<%= booking.vessel_reported_date %>" readonly>
                                     </div>
                                     <div class="col-md-6">
                                         <label>* Chassis No (in the case of Motor Unit Appointments)</label>
-                                        <input type="text" id="chassis" class="form-control" name="chassis_number" placeholder="Enter the number" required="">
+                                        <input type="text" id="chassis" class="form-control" name="chassis_number" value="<%= booking.chassis_number %>" readonly>
                                     </div>
                                     <div class="col-md-6">
                                         <label>* Customs Release/IMS4 Declaration Number</label>
-                                        <input type="text" id="ims" class="form-control" name="declaration_number" placeholder="Customs Release/IMS4 Declaration Number" required="">
+                                        <input type="text" id="ims" class="form-control" name="declaration_number" value="<%= booking.declaration_number %>" readonly>
                                     </div>
                                     <div class="col-md-6">
                                         <label>Container Number</label>
-                                        <input type="text" id="cnumber" class="form-control" name="container_number" placeholder="Enter the data" required="">
+                                        <input type="text" id="cnumber" class="form-control" name="container_number" value="<%= booking.container_number %>" readonly>
                                     </div>
                                     <div class="col-md-6">
                                         <label>* Number of Pieces/Packages</label>
-                                        <input type="number" id="ppnumber" class="form-control" name="number_of_items" placeholder="Enter the packages" required="">
+                                        <input type="number" id="ppnumber" class="form-control" name="number_of_items" value="<%= booking.number_of_items %>" readonly>
                                     </div>
                                 </div>
                             </form>
+                            
                             <div class="button-container">
                                 <center>
                                     <button class="btn btn-warning" id="prevBtn" onclick="changeTab(-1)">Previous</button>
@@ -297,14 +316,16 @@
                     </div>
 
                 </div>
-                <div class="col-md-1"></div>
+    
             </div>
         </div>
     </section>
     <!-- calendar Section -->
     <input type="hidden" id="loggeduserData" value="<%= JSON.stringify(loggeduser) %>">
+    <input type="hidden" id="bookingDate" value="<%= booking.booking_date %>">
+<input type="hidden" id="bookingTimes" value="<%= booking.booking_times %>">
 
-</main>
+
     
 <%- include ("footer.ejs") %>
 
@@ -320,10 +341,14 @@
     let currentMonth = moment().month();
     let currentYear = 2024;
     let availableDates = []; // Array to store available dates
-    let calendarId =0
-    let appointmentTypeID =0
+    let calendarId =document.getElementById('calendarId').value
+    let appointmentTypeID =document.getElementById("appointmentType").value
 
     let selectedDateTimes=[]
+    let booking = {
+    booking_date: document.getElementById('bookingDate').value,
+    booking_times: document.getElementById('bookingTimes').value
+};
 
 
 
@@ -467,6 +492,38 @@ appointmentTypeSelect.addEventListener('change', function() {
         }
     }
 
+
+
+    async function loadAppointmentTypes() {
+    try {
+  
+
+        storedAppointmentTypeID = document.getElementById("appointmentType").value,
+storedCalendarID = selectedOption.getAttribute('data-calendar-id');
+
+        const { data } = await axios.get('/appointment_types');
+        const appointmentTypeSelect = document.getElementById('appointmentType');
+
+        // Filter and add only the matching stored appointment type
+        data.forEach(type => {
+            if (type.id === storedAppointmentTypeID && type.calendarIDs.includes(storedCalendarID)) {
+                const option = document.createElement('option');
+                option.value = type.id;
+                option.text = type.name;
+                option.setAttribute('data-calendar-id', storedCalendarID);
+                option.selected = true; // Pre-select the option
+                appointmentTypeSelect.add(option);
+                
+                // Optionally, disable the select to prevent changes
+                appointmentTypeSelect.disabled = true;
+            }
+        });
+    } catch (error) {
+        console.error('Error loading appointment types:', error);
+    }
+}
+
+
     // Add this function to define renderAvailableDates
 function renderAvailableDates(data) {
     availableDates = data.map(item => item.date); // Extract dates from the response and store in availableDates array
@@ -503,6 +560,67 @@ function renderAvailableDates(data) {
         //============================ Function to render available times on the page
 
         function renderAvailableTimes(times) {
+    console.log("available Timeslots -> ", times);
+    const timeContainer = document.getElementById("timeSlots");
+    timeContainer.innerHTML = "";
+
+    if (times.length === 0) {
+        timeContainer.textContent = "No available times for this date.";
+        return;
+    }
+
+    times.forEach(async (timeObj) => {
+        // Use timeObj.time (which includes both date and time) for comparison
+        const formattedTime = new Date(timeObj.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        console.log("formatted time ", formattedTime);
+
+        const timeSlotDiv = document.createElement("div");
+        timeSlotDiv.classList.add("time-slot");
+        document.getElementById('timeSlotsSection').style.display = 'block';
+        timeSlotDiv.textContent = formattedTime;
+
+        // Check availability for this time slot
+        const availabilityResponse = await checkAvailability(selectedDate, formattedTime, timeObj.time);
+
+        if (availabilityResponse) {
+            // Now compare the full datetime (date + time)
+            const timeSlot = availabilityResponse.find(slot => {
+                const slotDate = new Date(slot.datetime);
+                const formattedSlotTime = slotDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                return formattedSlotTime === formattedTime && slot.datetime === timeObj.time; // Compare both time and full datetime
+            });
+
+            if (timeSlot && timeSlot.valid) {
+                // Available time slot
+                timeSlotDiv.style.border = "2px solid green";
+                timeSlotDiv.onclick = function() {
+                    toggleTimeSelection(formattedTime, timeObj.time);
+                };
+
+                // Check if this time matches the booking time and pre-select it
+                if (timeObj.time === booking.booking_times) {
+                    timeSlotDiv.classList.add("selected-time");
+                    selectedTimes.push(formattedTime);
+                    selectedDateTimes.push(timeObj.time);
+                }
+
+            } else {
+                // Unavailable time slot
+                timeSlotDiv.style.border = "2px solid red";
+                timeSlotDiv.style.pointerEvents = 'none'; // Disable click
+                const unavailableText = document.createElement('div');
+                unavailableText.textContent = timeSlot ? timeSlot.message : "Unavailable";
+                unavailableText.style.color = 'red';
+                timeSlotDiv.appendChild(unavailableText);
+            }
+        }
+
+        timeContainer.appendChild(timeSlotDiv);
+    });
+}
+
+
+        function renderAvailableTimesold(times) {
 
 
             console.log("available Timeslots -> ",times)
@@ -517,32 +635,9 @@ function renderAvailableDates(data) {
                  
 
 
-                        //----------- working fine without time check ---------------------
-
-
-                        // times.forEach(timeObj => {
-
-                        //             const formattedTime = new Date(timeObj.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                        //             console.log("formatted time ", formattedTime);
-
-                        //             const timeSlotDiv = document.createElement("div");
-                        //             timeSlotDiv.classList.add("time-slot");
-
-                        //             document.getElementById('timeSlotsSection').style.display = 'block';
-
-                        //             timeSlotDiv.textContent = formattedTime;
-
-                        //             // Pass formattedTime explicitly to the onclick function
-                        //             timeSlotDiv.onclick = function() {
-                        //                 toggleTimeSelection(formattedTime);
-                        //             };
-
-                        //             timeContainer.appendChild(timeSlotDiv);
-                        //  });
-
-                         //------------- end working fine --------------------------------
-
+                      
       
+                       
 
                          times.forEach(async (timeObj) => {
     // Use timeObj.time (which includes both date and time) for comparison
@@ -622,24 +717,35 @@ function renderAvailableDates(data) {
 
 
 
-    function generateCalendar() {
-        const daysContainer = document.getElementById("calendarDays");
-        const monthYearLabel = document.getElementById("monthYear");
-        monthYearLabel.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+function generateCalendar() {
+    const daysContainer = document.getElementById("calendarDays");
+    const monthYearLabel = document.getElementById("monthYear");
+    monthYearLabel.textContent = `${monthNames[currentMonth]} ${currentYear}`;
 
-        const date = new Date(currentYear, currentMonth, 1);
-        const firstDay = date.getDay();
-        const lastDate = new Date(currentYear, currentMonth + 1, 0).getDate();
-        let daysHTML = "";
+    const date = new Date(currentYear, currentMonth, 1);
+    const firstDay = date.getDay();
+    const lastDate = new Date(currentYear, currentMonth + 1, 0).getDate();
+    let daysHTML = "";
 
-        for (let i = 0; i < firstDay; i++) daysHTML += `<div class="calendar-day"></div>`;
-        for (let i = 1; i <= lastDate; i++) {
-            const formattedDate = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-            const isAvailable = availableDates.includes(formattedDate);
-            daysHTML += `<div class="calendar-day ${isAvailable ? 'available' : 'disabled'}" onclick="${isAvailable ? `selectDate(${i})` : ''}">${i}</div>`;
-        }
-        daysContainer.innerHTML = daysHTML;
+    for (let i = 0; i < firstDay; i++) daysHTML += `<div class="calendar-day"></div>`;
+    for (let i = 1; i <= lastDate; i++) {
+        const formattedDate = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+        const isAvailable = availableDates.includes(formattedDate);
+        const isSelected = formattedDate === booking.booking_date;
+
+        daysHTML += `<div class="calendar-day ${isAvailable ? 'available' : 'disabled'} ${isSelected ? 'selected-day' : ''}" 
+                      onclick="${isAvailable ? `selectDate(${i})` : ''}">
+                      ${i}</div>`;
     }
+    daysContainer.innerHTML = daysHTML;
+
+    // Automatically load times if the booking date matches the current month/year
+    if (currentYear === new Date(booking.booking_date).getFullYear() && currentMonth === new Date(booking.booking_date).getMonth()) {
+        selectedDate = booking.booking_date;
+        fetchAvailableTimes(selectedDate, document.getElementById('appointmentType').value);
+    }
+}
+
 
     function setupEventListeners() {
         document.getElementById('appointmentType').addEventListener('change', fetchAvailableDates);
@@ -663,6 +769,7 @@ function renderAvailableDates(data) {
 
 
     function generateTimeSlots() {
+        return;
         const timeSlotsContainer = document.getElementById("timeSlots");
         ["09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "01:00 PM", "02:00 PM", "03:00 PM"].forEach(slot => {
             const timeSlotDiv = document.createElement("div");
@@ -1020,13 +1127,14 @@ async function directConfirmBooking(email) {
                 booking_times: selectedTimes, // Add the selected times
                 appointmentTypeID: document.getElementById("appointmentType").value,
                 calendarID: document.getElementById("calendarId").value,
-                selectedDateTimes :selectedDateTimes
+                selectedDateTimes :selectedDateTimes,
+                booking_id:document.getElementById("booking_id").value
             };
 
 
 
 
-        const bookingResponse = await fetch('/confirmBooking', {
+        const bookingResponse = await fetch('/superadmin/rescheduleBooking', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
@@ -1037,11 +1145,11 @@ async function directConfirmBooking(email) {
             if (bookingResult.success) {
                 Swal.fire({
                     title: "Kingston Booking",
-                    text: "Your appointment has been successfully booked.",
+                    text: "Your appointment has been rescheduled successfully.",
                     icon: "success",
                     confirmButtonText: "View Booking"
                 }).then(() => {
-                    window.location.href = '/viewBookings';
+                    window.location.href = '/superadmin/appointments';
                 });
             } else {
                 

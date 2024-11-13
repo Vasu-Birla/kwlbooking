@@ -49,7 +49,11 @@
                             <% bookings.forEach((booking, index) => { %>
                                 <tr>
                                 
-                                    <td><a href="#" onclick="viewDetails('<%= booking.booking_id %>', '<%= JSON.stringify(booking) %>')" ><b><%= booking.booking_id %></b></a></td>
+                                   
+
+
+
+                                    <td><a href="#" onclick="showAppointmentDetails('<%= booking.booking_id %>', '<%= JSON.stringify(booking) %>')" ><b><%= booking.booking_id %></b></a></td>
                                     <td> <%= booking.booking_date  %> </td>
                                     <td> <%= booking.booking_times  %> </td>
                                     <td> <%= booking.trn  %> </td>
@@ -804,6 +808,121 @@ function updateBooking(booking_id, booking) {
     // Add real-time validation for inputs (reuse the existing validation)
     addRealTimeValidation('#kilform'); // Ensure real-time validation works with the new modal form
 }
+
+
+
+
+
+
+function showAppointmentDetails(booking_id, booking) {
+        booking = JSON.parse(booking); // Parse the booking data
+
+
+        let statusColor;
+        switch (booking.booking_status) {
+            case 'Pending':
+                statusColor = '#ffc107'; // warning (yellow)
+                break;
+            case 'Confirmed':
+                statusColor = '#28a745'; // success (green)
+                break;
+            case 'Cancelled':
+                statusColor = '#dc3545'; // danger (red)
+                break;
+            case 'Completed':
+                statusColor = '#007bff'; // info (blue)
+                break;
+            case 'Rescheduled':
+                statusColor = '#6f42c1'; // purple
+                break;
+            default:
+                statusColor = '#17a2b8'; // default info color
+        }
+
+        
+        // Display booking details in the modal
+        Swal.fire({
+            title: `<h4 style="color: #007bff; font-weight: bold; text-align: center; margin-bottom: 15px;">Appointment ID: <span style="color: #000;">${booking_id}</span></h4>`,
+            html: `
+                <div style="text-align: left; font-size: 15px; color: #333; border: 1px solid #ddd; padding: 15px; border-radius: 8px;">
+                    <h5 style="background-color: #f7f9fc; padding: 10px 15px; border-radius: 8px; color: #7a6200; font-weight: bold; text-align: center; margin-bottom: 20px; border-bottom: 2px solid #ddd;">Appointment Details</h5>
+                    
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Date:</strong><span>${booking.booking_date || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Time:</strong><span>${booking.booking_times || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Status:</strong><span style="color: #ffffff; background-color: ${statusColor}; padding: 4px 8px; border-radius: 5px;">${booking.booking_status || 'N/A'}</span>
+                    </div>
+                    
+                    <h5 style="background-color: #f7f9fc; padding: 10px 15px; border-radius: 8px; color: #7a6200; font-weight: bold; text-align: center; margin-top: 20px; margin-bottom: 20px; border-bottom: 2px solid #ddd;">Contact Information</h5>
+                    
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>TRN:</strong><span>${booking.trn || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>First Name:</strong><span>${booking.firstname || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Last Name:</strong><span>${booking.lastname || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Mobile Number:</strong><span>${booking.country_code || ''} ${booking.contact || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Email:</strong><span>${booking.user_email || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Agent/Freight Forwarder:</strong><span>${booking.agent_forwarder || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Appointment By:</strong><span>${booking.appointment_by || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Appointment Type:</strong><span>${booking.appointment_type || 'N/A'}</span>
+                    </div>
+                    
+                    <h5 style="background-color: #f7f9fc; padding: 10px 15px; border-radius: 8px; color: #7a6200; font-weight: bold; text-align: center; margin-top: 20px; margin-bottom: 20px; border-bottom: 2px solid #ddd;">Shipment Details</h5>
+                    
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Vessel Name:</strong><span>${booking.vessel_name || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Vessel Reported Date:</strong><span>${booking.vessel_reported_date || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Bill of Lading Number:</strong><span>${booking.bol_number || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Chassis No:</strong><span>${booking.chassis_number || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>IMS4 Declaration Number:</strong><span>${booking.declaration_number || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Container Number:</strong><span>${booking.container_number || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Number of Pieces/Packages:</strong><span>${booking.number_of_items || 'N/A'}</span>
+                    </div>
+                </div>
+            `,
+            showCloseButton: true,
+            showConfirmButton: false,
+            width: 600,
+            padding: '1em',
+            customClass: {
+                popup: 'popup-custom'
+            }
+        });
+    }
+
+
+
+
+
 
 
 

@@ -9,8 +9,13 @@ import { login , home, error404, error500, loginAdmin,profile,profilePost,logout
   sendOTP,
   verifyOTP,
   resetpassword,
-
-  appointments
+  appointments,
+  cancelBooking,
+  reschedule,
+  rescheduleBooking,
+  updateBooking,
+  reports,
+  auditLogs
 } from "../controllers/superadminController.js";
 import { isAuthenticatedAdmin } from "../middleware/Adminauth.js";
 
@@ -70,7 +75,33 @@ router.route('/updateAdmin').post( isAuthenticatedAdmin,profileUpload.single('pr
 router.route('/changepass').post( isAuthenticatedAdmin,profileUpload.single('profile_image'),changepass)
 
 
+//-------------- booking setion ---------------------------------
 
+
+router.route('/cancelBooking').post(isAuthenticatedAdmin,cancelBooking)
+
+
+router.route('/reschedule').get(isAuthenticatedAdmin,reschedule)
+
+router.route('/rescheduleBooking').post(isAuthenticatedAdmin,rescheduleBooking)
+
+router.route('/updateBooking').post(isAuthenticatedAdmin,updateBooking)
+
+
+
+
+//----------------------
+
+
+
+
+router.route('/reports').get(isAuthenticatedAdmin,reports)
+router.route('/reports').post(isAuthenticatedAdmin,reports)
+
+
+
+router.route('/auditLogs').get(isAuthenticatedAdmin,auditLogs)
+//-----------------
 
 //--------------- Admin section End -------------------------------
 

@@ -1,43 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    
-    <!-- favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="images/favcon-iconr.png">
-    <title>Merchant Report || <?php echo $_SESSION['title']; ?></title>
 
-    <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-  
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
-  
-    <!-- Theme style -->
-    <link rel="stylesheet" href="dist/css/adminlte.min.css">
-    
-    <!-- DataTables -->
-    <link rel="stylesheet" href="plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" href="plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
-    <link rel="stylesheet" href="plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
 
-</head>
+<%- include ("header.ejs") %>
+
+<%- include ("sidebar.ejs") %>
+
+
 <style>
-#dd dl {display: inline;margin-right: 7px;font-size: 18px;color: #dc3545;padding: 0 19px 0 19px;} 
-</style>
-<body class="hold-transition sidebar-mini">
-<div class="wrapper">
-    
-    <!-- // Header -->
-        <?php include('header.php'); ?>
-    <!-- // Header -->
-
-    <!-- // Sidebar -->
-        <?php include('sidebar.php') ?>
-    <!-- // Sidebar -->
-
-    <!-- Content Wrapper. Contains page content -->
+    #dd dl {display: inline;margin-right: 7px;font-size: 18px;color: #dc3545;padding: 0 19px 0 19px;} 
+    </style>
     <div class="content-wrapper">
         
         <!-- Content Header (Page header) -->
@@ -87,24 +57,38 @@
                                 
                                 <form method="post">
                                     <div class="row" style="border-top: 1px solid #8080803b;padding: 15px 0 15px 0px;">
-                                        <div class="col-md-1">
-                                            <b>From </b>
-                                        </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
+                                                 <label>From </label>
                                                 <input type="text" id="dp4" name="startDate" placeholder="From Date" class="form-control" autocomplete="off" style="cursor:default; background-color: #fff" readonly>
                                             </div>
                                         </div>
-                                        <div class="col-md-1">
-                                            <b>To </b>
-                                        </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
+                                                <label>To </label>
                                                 <input type="text" id="dp5" name="endDate" placeholder="To Date" class="form-control" autocomplete="off"  style="cursor:default; background-color: #fff" readonly/>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="form-group">
+                                                <label>Select Type</label>
+                                                <select name="option1" id="option" class="form-control select2 select2-danger select2-hidden-accessible" required>
+                                                    <option value="">Select any one</option>
+
+                                                    
+                                                    <option value="Pending">Pending</option>
+                                                    <option value="Confirmed">Confirmed</option>                                                    
+                                                    <option value="Cancelled">Cancelled</option>
+                                                    <option value="Rescheduled">Rescheduled</option>
+                                                    <option value="Completed">Completed</option>
+
+                                                    
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-3">
+                                            <div class="form-group"><br>
                                                 <center>
                                                     <button type="submit" name="search" class="btn btn-danger">SEARCH</button>
                                                     <button type="button" class="btn btn-info" onclick="this.form.reset();">Reset</button>
@@ -113,6 +97,10 @@
                                         </div>
                                     </div>
                                 </form>
+
+
+
+
                             </div>
                         </div> 
                         
@@ -120,7 +108,7 @@
                         <div class="invoice p-3 mb-3">
                             <div class="row">
                                 <div class="col-12 table-responsive">
-                                    <table id="example2" class="table table-bordered table-striped">
+                                    <table id="example1" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
                                                 <th>Sr. No.</th>
@@ -178,63 +166,12 @@
             </div>
         </section>
     </div>
+
+        <!-- // Footer -->
+        <%- include ("footer.ejs") %>
+    <!-- // Footer -->
+
     
-    <!-- // Footer -->
-        <?php include('footer.php'); ?>
-    <!-- // Footer -->
-
-    <!-- Control Sidebar -->
-    <aside class="control-sidebar control-sidebar-dark">
-        <!-- Control sidebar content goes here -->
-    </aside>
-    <!-- // control-sidebar -->
-</div>
-<!-- // wrapper -->
-
-<!-- DataTables  & Plugins -->
-<script src="plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-<script src="plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-<script src="plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-<script src="plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-
-<!-- jQuery -->
-<script src="plugins/jquery/jquery.min.js"></script>
-
-<!-- Bootstrap 4 -->
-<script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-<!-- AdminLTE App -->
-<script src="dist/js/adminlte.min.js"></script>
-
-<!-- AdminLTE for demo purposes -->
-<script src="dist/js/demo.js"></script>
-
-<!-- Date Related Links --->
-<script type="text/javascript" src="//cdn.jsdelivr.net/jquery/1/jquery.min.js"></script>
-<script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-
-<!-- Page specific script -->
-<script>
-  $(function () {
-    $("#example1").DataTable({
-      "responsive": true, "lengthChange": false, "autoWidth": false,"paging": false,"searching": true,
-      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-      /*"buttons": ["pdf", "print", "colvis"]*/
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-    $('#example2').DataTable({
-      "paging": false,
-      "lengthChange": false,
-      "searching": false,
-      "ordering": true,
-      "info": true,
-      "autoWidth": false,
-      "responsive": true,
-    });
-  });
-</script>
-
 <script>
 $('#dp4').datepicker()
     .on('changeDate', function (ev) {
@@ -281,11 +218,11 @@ $(document).ready(function () {
         $("#dp5").val('');
     }
 });
-$(window).ready(function() {
-    $("body").addClass("sidebar-minize");
-    $("body").addClass("sidebar_hide");
-    $("body").addClass("sidebar-collapse");
-});
+// $(window).ready(function() {
+//     $("body").addClass("sidebar-minize");
+//     $("body").addClass("sidebar_hide");
+//     $("body").addClass("sidebar-collapse");
+// });
 
 function setRideStatus(actionStatus) {
     window.location.href = "trip.php?type=" + actionStatus;
@@ -350,19 +287,7 @@ $(function () {
         }); //theme: 'classic'
     });
 });
-$('#searchCompany').change(function() {
-    var company_id = $(this).val(); //get the current value's option
-    $.ajax({
-        type:'POST',
-        url:'ajax_find_driver_by_company.php',
-        data:{'company_id':company_id},
-        cache: false,
-        success:function(data){
-            $(".driver_container").html(data);
-        }
-    });
-});
+
 </script>
 
-</body>
-</html>
+    

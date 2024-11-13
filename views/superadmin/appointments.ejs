@@ -32,53 +32,132 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <table id="example1" class="table table-bordered table-striped">
+
+                         
+       <!-- alert msgs -->
+       <% if ( output.includes('successfully') ) { %>
+        <p id="kilmessage" class="success-text"><%= output %></p>
+     <% } else { %>
+        <p id="kilmessage" class="error-text"><%= output %></p>
+     <% } %>
+       <!-- /alert msgs -->
+
+                                <table id="example1" class="table table-striped table-bordered" style="width:100%">
                                     <thead>
                                         <tr>
-                                            <th>Sr. No.</th>
+                                            <th>Appointment ID</th>
+                                            <th>Date</th>
+                                            <th>Time</th>
                                             <th>TRN</th>
-                                            <th>First Name</th>
-                                            <th>Last Name</th>
-                                            <th>Mobile Number</th>
-                                            <th>Email Address</th>
-                                            <th>Agent/Freight Forwarder</th>
-                                            <th>Individual Making Appointment</th>
-                                            <th>Appointment Type</th>
-                                            <th>Vessel Name</th>
-                                            <th>Vessel Reported Date </th>
-                                            <th>Bill of Lading Number</th>
-                                            <th>Chassis No </th>
-                                            <th>IMS4 Declaration Number</th>
-                                            <th>Container Number</th>
-                                            <th>Number of Pieces/Packages</th>
-                                            <th>Action</th>
+                                            <th>Customer Name</th>
+                                            <th>Phone Number</th>
+                                            <th>Status</th> <!-- Action column for edit, cancel, close icons -->
+                                            <th> Action </th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>abc</td>
-                                            <td>None</td>
-                                            <td>None</td>
-                                            <td>None</td>
-                                            <td>None</td>
-                                            <td>None</td>
-                                            <td>None</td>
-                                            <td>None</td>
-                                            <td>None</td>
-                                            <td>None</td>
-                                            <td>None</td>
-                                            <td>None</td>
-                                            <td>None</td>
-                                            <td>None</td>
-                                            <td><span class="badge badge-danger"> Inactive </span></td>
-                                            <td> 
-                                                <a href="#" class="btn btn-outline-primary btn-sm" style="margin: 3px;"><i class="fa fa-edit"></i> Edit </a>
-                                                <a href="#" class="btn btn-outline-danger btn-sm" style="margin: 3px;"><i class="fa fa-trash"></i> Delete </a>
-                                            </td>
-                                        </tr>
-                                    </tbody>
+                                        <% bookings.forEach((booking, index) => { %>
+                                            <tr>
+                                            
+                                                <td><a href="#" onclick="showAppointmentDetails('<%= booking.booking_id %>', '<%= JSON.stringify(booking) %>')" ><b><%= booking.booking_id %></b></a></td>
+                                        
+                                                <td> <%= booking.booking_date  %> </td>
+                                                <td> <%= booking.booking_times  %> </td>
+                                                <td> <%= booking.trn  %> </td>
+                                                <td> <%= booking.firstname %> <%= booking.lastname %> </td>
+                                                <td> <%= booking.country_code %> <%= booking.contact %></td>
+                                          
+            
+                                                
+                                                <td class="status-container" data-user-id="<%=  booking.booking_id %>" data-user-status="<%= booking.booking_status %>">
+                                                    <div >
+                                                
+                                              
+                                           
+            
+            
+                                                    <% if (booking.booking_status == 'Confirmed') { %>
+                                                        <img src="../images/icons/active.png" class="status-image" style="width:30px;height:30px;">
+                                                    <% } else if (booking.booking_status == 'Pending') { %>
+                                                        <img src="../images/icons/pending.png" class="status-image" style="width:30px;height:30px;">
+                                                    <% } else if (booking.booking_status == 'Completed') { %>
+                                                        <img src="../images/icons/completed.png" class="status-image" style="width:30px;height:30px;">
+                                                    <% } else if (booking.booking_status == 'Rescheduled') { %>
+                                                        <img src="../images/icons/completed.png" class="status-image" style="width:30px;height:30px;">
+                                                    <% } else { %>
+                                                        <img src="../images/icons/inactive.png" class="status-image" style="width:30px;height:30px;">
+                                                    <% } %>
+            
+                                                      <div class="status-overlay"></div>
+                                                    </div>
+                                                                       
+                                                  
+                                                    <% if (booking.booking_status == 'Confirmed') { %>
+                                                        <p id="msg<%=  booking.booking_id %>" style="color: orange;"></p>
+                                                        <p class="kilstatus" style="color: green;"> Confirmed</p>
+                                                      <% } else if (booking.booking_status == 'Pending') { %>
+                                                        <p id="msg<%=  booking.booking_id %>" style="color: green !important;"></p>
+                                                        <p class="kilstatus" style="color: #a6ad96;"> Pending</p>
+                                                      <% } else if (booking.booking_status == 'Completed') { %>
+                                                        <p id="msg<%=  booking.booking_id %>" style="color: green !important;"></p>
+                                                        <p class="kilstatus" style="color: rgb(12, 185, 238);;"> Completed</p>
+                                                    <% } else if (booking.booking_status == 'Cancelled') { %>
+                                                            <p id="msg<%=  booking.booking_id %>" style="color: green !important;"></p>
+                                                            <p class="kilstatus" style="color: red;"> Cancelled</p>
+                                                      <% } else { %>
+                                                        <p id="msg<%=  booking.booking_id %>" style="color: rgb(0, 56, 141) !important;"></p>
+                                                        <p class="kilstatus" style="color: rgb(9, 255, 0);"> Rescheduled</p>
+                                                      <% } %>                  
+                                                
+                            
+                                                  </td> 
+            
+            
+            
+            
+            
+                                                  <td>
+            
+                                                
+            
+                  
+              
+                                                   <% if (booking.booking_status !== 'Completed' && booking.booking_status !== 'Cancelled' ) { %>                                                    
+                                                     
+            
+                                                 
+            
+                                                    <a href="#" onclick="updateBooking('<%= booking.booking_id %>', '<%= JSON.stringify(booking) %>')" class="btn btn-info" data-toggle="tooltip" title="Update"> <i class="fa fa-edit" aria-hidden="true"></i> </a>
+            
+                                                    <a href="#" onclick="reschedule('<%= booking.booking_id %>')" class="btn btn-warning" data-toggle="tooltip" title="Reschedule"><i class="fa fa-history" aria-hidden="true"></i>          </a>
+            
+                                                    <a href="#"  onclick="cancelBooking('<%= booking.booking_id %>','Cancelled')" class="btn btn-danger" data-toggle="tooltip" title="Cancel Booking"><i class="fa fa-times" aria-hidden="true"></i></a>                                        
+                                                      
+            
+                                                    <% } else { %>                                             
+                                                        
+                                                                <% if (booking.booking_status == 'Completed' ) { %>                                           
+                                                                <p class="kilstatus" style="color: rgb(12, 185, 238);"> Completed</p> 
+                                                                <% } else { %> 
+                                                                    <p class="kilstatus" style="color: red;"> Cancelled</p>
+                                                                                                       
+                                                                <% } %>
+            
+            
+                                                    <% } %>
+              
+                                                
+                                                 
+                                               </td>
+                                                  
+            
+                                            </tr>
+                                            <% }) %>
+                                        <!-- Add more rows as needed -->
+                                    </tbody>                  
                                 </table>
+
+
                             </div>
                         </div>
                     </div>
@@ -88,5 +167,870 @@
     </div>
 
 <%- include ("footer.ejs") %>
+
+<script>
+
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+            document.cookie = 'kwl_msg'+'=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/';
+            document.cookie = 'kwl_msg'+'=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+            document.cookie = 'kwl_booking_id'+'=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+       
+    });
+
+
+    function showAppointmentDetails(booking_id, booking) {
+        booking = JSON.parse(booking); // Parse the booking data
+
+
+        let statusColor;
+        switch (booking.booking_status) {
+            case 'Pending':
+                statusColor = '#ffc107'; // warning (yellow)
+                break;
+            case 'Confirmed':
+                statusColor = '#28a745'; // success (green)
+                break;
+            case 'Cancelled':
+                statusColor = '#dc3545'; // danger (red)
+                break;
+            case 'Completed':
+                statusColor = '#007bff'; // info (blue)
+                break;
+            case 'Rescheduled':
+                statusColor = '#6f42c1'; // purple
+                break;
+            default:
+                statusColor = '#17a2b8'; // default info color
+        }
+
+        
+        // Display booking details in the modal
+        Swal.fire({
+            title: `<h4 style="color: #007bff; font-weight: bold; text-align: center; margin-bottom: 15px;">Appointment ID: <span style="color: #000;">${booking_id}</span></h4>`,
+            html: `
+                <div style="text-align: left; font-size: 15px; color: #333; border: 1px solid #ddd; padding: 15px; border-radius: 8px;">
+                    <h5 style="background-color: #f7f9fc; padding: 10px 15px; border-radius: 8px; color: #7a6200; font-weight: bold; text-align: center; margin-bottom: 20px; border-bottom: 2px solid #ddd;">Appointment Details</h5>
+                    
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Date:</strong><span>${booking.booking_date || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Time:</strong><span>${booking.booking_times || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Status:</strong><span style="color: #ffffff; background-color: ${statusColor}; padding: 4px 8px; border-radius: 5px;">${booking.booking_status || 'N/A'}</span>
+                    </div>
+                    
+                    <h5 style="background-color: #f7f9fc; padding: 10px 15px; border-radius: 8px; color: #7a6200; font-weight: bold; text-align: center; margin-top: 20px; margin-bottom: 20px; border-bottom: 2px solid #ddd;">Contact Information</h5>
+                    
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>TRN:</strong><span>${booking.trn || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>First Name:</strong><span>${booking.firstname || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Last Name:</strong><span>${booking.lastname || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Mobile Number:</strong><span>${booking.country_code || ''} ${booking.contact || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Email:</strong><span>${booking.user_email || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Agent/Freight Forwarder:</strong><span>${booking.agent_forwarder || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Appointment By:</strong><span>${booking.appointment_by || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Appointment Type:</strong><span>${booking.appointment_type || 'N/A'}</span>
+                    </div>
+                    
+                    <h5 style="background-color: #f7f9fc; padding: 10px 15px; border-radius: 8px; color: #7a6200; font-weight: bold; text-align: center; margin-top: 20px; margin-bottom: 20px; border-bottom: 2px solid #ddd;">Shipment Details</h5>
+                    
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Vessel Name:</strong><span>${booking.vessel_name || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Vessel Reported Date:</strong><span>${booking.vessel_reported_date || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Bill of Lading Number:</strong><span>${booking.bol_number || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Chassis No:</strong><span>${booking.chassis_number || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>IMS4 Declaration Number:</strong><span>${booking.declaration_number || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Container Number:</strong><span>${booking.container_number || 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Number of Pieces/Packages:</strong><span>${booking.number_of_items || 'N/A'}</span>
+                    </div>
+                </div>
+            `,
+            showCloseButton: true,
+            showConfirmButton: false,
+            width: 600,
+            padding: '1em',
+            customClass: {
+                popup: 'popup-custom'
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function reschedule(booking_id) {
+  document.cookie = `kwl_booking_id=${booking_id}`;
+  var msg = 'Booking '+booking_id+' Updated successfully'
+  document.cookie = `kwl_msg=${msg}`;
+// Redirect to the viewUser route
+window.location.href = '/superadmin/reschedule';
     
-  
+}
+
+
+function cancelBooking(booking_id, newStatus) {
+    event.preventDefault();
+    var action = (newStatus === 'Cancelled') ? 'Cancelled' : 'approved';
+
+    // SweetAlert confirmation dialog with input field for cancel note
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you really want to cancel your booking? This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, cancel it!',
+        cancelButtonText: 'No, keep it',
+        input: 'textarea', // Adding a textarea for the cancel note
+        inputPlaceholder: 'Enter a cancellation note...',
+        inputAttributes: {
+            'aria-label': 'Cancellation note'
+        },
+        showLoaderOnConfirm: true,
+        preConfirm: (cancelNote) => {
+            // If the user provided a cancel note, proceed with AJAX
+            if (cancelNote) {
+                return $.ajax({
+                    url: '/superadmin/cancelBooking',
+                    type: 'POST',
+                    data: {
+                        id: booking_id,
+                        status: newStatus,
+                        cancelNote: cancelNote // Send the cancel note
+                    }
+                });
+            } else {
+                // If no cancel note is provided, show an error
+                Swal.showValidationMessage('Please enter a cancellation note');
+            }
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const pmsgElement = document.getElementById(`msg${booking_id}`);
+            const response = result.value; // Response from the server
+
+            if (response.success === true) {
+                $('[data-user-id="' + booking_id + '"]').attr('data-user-status', newStatus);
+
+                // Update image source and tooltip based on new status
+                var imgSrc = (newStatus === 'Approve') ? '../images/icons/active.png' : '../images/icons/inactive.png';
+                $('[data-user-id="' + booking_id + '"] .status-image').attr('src', imgSrc);
+                $('[data-user-id="' + booking_id + '"] .status-tooltip').attr('title', (newStatus === 'Approve') ? 'deactive' : 'active');
+
+                // Add fade in overlay and change background color based on new status
+                var bgColor = (newStatus === 'Cancelled') ? 'rgba(163,209,121,0.5)' : 'rgba(227,99,99,0.5)';
+                var textColor = (newStatus === 'Cancelled') ? '#3c763d' : '#ffffff';
+
+                $('[data-user-id="' + booking_id + '"] .status-overlay').css({
+                    'background-color': bgColor,
+                    'color': textColor + ' !important'
+                }).fadeIn();
+
+                pmsgElement.innerHTML = response.msg;
+                var msg = 'Booking (' + booking_id + ') ' + action + ' successfully';
+                document.cookie = `kwl_msg=${msg}`;
+
+                // Fade out the overlay after a delay and redirect
+                setTimeout(function() {
+                    $('[data-user-id="' + booking_id + '"] .status-overlay').fadeOut();
+                    window.location.href = '/superadmin/appointments';
+                }, 1500);
+            } else {
+                console.error('Error:', response.msg);
+                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.msg || 'An error occurred while cancelling your booking.'
+                                });
+            }
+        }
+    });
+}
+
+async function updateBooking(booking_id, booking) {
+    booking = JSON.parse(booking);
+    console.log("booking ", booking);
+
+    // Step 1: Prompt the admin for an admin note
+    const { value: adminNote } = await Swal.fire({
+        title: 'Enter Admin Note',
+        input: 'textarea',
+        inputPlaceholder: 'To Update Booking add any Note',
+        inputAttributes: {
+            'aria-label': 'Type your note here'
+        },
+        showCancelButton: true
+    });
+
+    // If no note is entered or prompt is cancelled, return early
+    if (!adminNote) {
+        Swal.fire('No note entered', 'Please enter a note to proceed.', 'info');
+        return;
+    }
+
+    // Step 2: Create the form structure for editing inside SweetAlert with adminNote included
+    const htmlForm = `
+        <form id="kilform" action="/superadmin/updateBooking" method="POST">
+            <div class="row gy-4">
+                <!-- Hidden inputs -->
+                <input type="hidden" id="calendarId" name="calendarId" value="${booking.calendarID}">
+                <input type="hidden" id="booking_id" name="booking_id" value="${booking_id}">
+                <input type="hidden" id="admin_note" name="admin_note" value="${adminNote}">
+
+                <!-- First Name field -->
+                <div class="col-md-6">
+                    <label>* First Name</label>
+                    <input type="text" id="fname" class="form-control" name="firstname" value="${booking.firstname}" >
+                </div>
+                
+                <!-- Last Name field -->
+                <div class="col-md-6">
+                    <label>Last Name</label>
+                    <input type="text" id="lname" class="form-control" name="lastname" value="${booking.lastname}" >
+                </div>
+                
+                <!-- Country Code and Mobile Number fields -->
+                <div class="col-md-6">
+                    <label>* Mobile Number</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <select id="countrycode" class="form-control" name="country_code" >
+                                <option value="+1" ${booking.country_code === '+1' ? 'selected' : ''}>+1 (USA)</option>
+                                <option value="+44" ${booking.country_code === '+44' ? 'selected' : ''}>+44 (UK)</option>
+                                <option value="+91" ${booking.country_code === '+91' ? 'selected' : ''}>+91 (India)</option>
+                            </select>
+                        </div>
+                        <input type="number" id="phone4" class="form-control" name="contact" value="${booking.contact}" >
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="row gy-4">
+                <div class="col-md-12 text-right">
+                    <button type="submit" class="btn btn-success">Submit</button>
+                    <button type="button" class="btn btn-secondary" onclick="Swal.close()">Cancel</button>
+                </div>
+            </div>
+        </form>
+    `;
+
+    // Step 3: Open SweetAlert with the form
+    Swal.fire({
+        title: `<span style="font-size: 16px;">Update User : ${booking.firstname}</span>`,
+        html: htmlForm,
+        showConfirmButton: false, // Disable default SweetAlert buttons, use form's submit buttons instead
+        focusCancel: true,
+        customClass: {
+            popup: 'my-popup-class' // Add a custom class for the popup
+        },
+        allowOutsideClick: false // Disable closing by clicking outside
+    });
+
+    // Step 4: Add real-time validation for inputs (reuse the existing validation)
+    addRealTimeValidation('#kilform'); // Ensure real-time validation works with the new modal form
+}
+
+
+
+
+
+function updateBookingold(booking_id, booking) {
+    booking = JSON.parse(booking);
+    console.log("booking ",booking)
+
+    // Create the form structure for editing inside SweetAlert
+    const htmlForm = `
+        <form id="kilform" action="/superadmin/updateBooking" method="POST">
+            <div class="row gy-4">
+                <!-- Hidden input for calendarId -->
+                <input type="hidden" id="calendarId" name="calendarId" value="${booking.calendarID}">
+                 <input type="hidden" id="booking_id" name="booking_id" value="${booking_id}">
+                <!-- Hidden input for booking_id -->
+
+                
+                <!-- First Name field -->
+                <div class="col-md-6">
+                    <label>* First Name</label>
+                    <input type="text" id="fname" class="form-control" name="firstname" value="${booking.firstname}" required>
+                </div>
+                
+                <!-- Last Name field -->
+                <div class="col-md-6">
+                    <label>Last Name</label>
+                    <input type="text" id="lname" class="form-control" name="lastname" value="${booking.lastname}" required>
+                </div>
+                
+                <!-- Country Code and Mobile Number fields -->
+                <div class="col-md-6">
+                    <label>* Mobile Number</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <select id="countrycode" class="form-control" name="country_code" >
+                                <option value="+1" ${booking.country_code === '+1' ? 'selected' : ''}>+1 (USA)</option>
+                                <option value="+44" ${booking.country_code === '+44' ? 'selected' : ''}>+44 (UK)</option>
+                                <option value="+91" ${booking.country_code === '+91' ? 'selected' : ''}>+91 (India)</option>
+                            </select>
+                        </div>
+                        <input type="number" id="phone4" class="form-control" name="contact" value="${booking.contact}" required>
+                    </div>
+                </div>
+            </div>
+
+              <!-- Last Name field 
+           
+                        <div class="col-md-3">
+                            <label>Update Note(Optional)</label>
+                            <textarea class="form-control" name="admin_note"></textarea>
+                        </div>
+
+-->
+
+            <!-- Action buttons -->
+            <div class="row gy-4">
+                <div class="col-md-12 text-right">
+                    <button type="submit" class="btn btn-success">Submit</button>
+                    <button type="button" class="btn btn-secondary" onclick="Swal.close()">Cancel</button>
+                </div>
+            </div>
+        </form>
+    `;
+
+    // Open SweetAlert with the form
+    Swal.fire({
+        title: `<span style="font-size: 16px;">Update User : ${booking.firstname}</span>`,
+        html: htmlForm,
+        showConfirmButton: false, // Disable default SweetAlert buttons, use form's submit buttons instead
+        focusCancel: true,
+        customClass: {
+            popup: 'my-popup-class' // Add a custom class for the popup
+        },
+        allowOutsideClick: false // Disable closing by clicking outside
+    });
+
+    // Add real-time validation for inputs (reuse the existing validation)
+    addRealTimeValidation('#kilform'); // Ensure real-time validation works with the new modal form
+}
+
+
+
+
+</script>
+
+
+<script>
+
+
+    
+
+   //==================== Comman Kilvalidation start =====================
+   
+      
+   function validateRequiredFields(kil) {
+   
+   
+   const form = document.querySelector(`${kil}`); 
+   
+   const inputs = form.querySelectorAll('input[required], select[required], textarea[required]'); // Get only required inputs
+   
+   
+   let isValid = true;
+   let kilerror = 'This Field is Required.'
+   
+   
+   
+   // Remove previous error messages and borders
+   form.querySelectorAll('.error-message').forEach(errorMsg => errorMsg.remove());
+   inputs.forEach(input => {
+    
+       input.style.border = ''; // Reset borders
+   });
+   
+   inputs.forEach(input => {
+   
+   
+   
+                    if(input.type == 'date'){
+                        
+                        kilerror = "Please Select Date"
+                        input.style.border = '1px solid red';
+                    }else if(input.name == 'comments'){
+                    
+                        kilerror = 'Please Enter Comments'
+                    }else if(input.type == 'email'){
+                    
+                    kilerror = 'Please Enter Email'
+                }else if(input.type == 'password'){
+                    
+                    kilerror = 'Please Enter Password'
+                }else{
+                    kilerror = 'This Field is Required.'
+                }
+     
+   
+       if (!input.value.trim()) {  // If the required field is empty      
+           isValid = false;
+           input.style.border = '1px solid red'; // Set border to red for empty required fields
+           addErrorMessage(input.parentNode, kilerror); // Add error message
+       }
+   });
+   
+   return isValid;
+   }
+   
+   
+   // Add real-time validation for each required field
+   function addRealTimeValidation(kil) {
+       const form = document.querySelector(`${kil}`); 
+       const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+   
+       inputs.forEach(input => {
+           input.addEventListener('input', function () {
+               const label = document.querySelector(`label[for='${input.name}']`); // Find label based on name
+               if (input.value.trim()) {
+                   input.style.border = '';
+                   const errorMessage = input.parentNode.querySelector('.error-message');
+                   if (errorMessage) {
+                       errorMessage.remove();
+                   }
+                   if (label && label.innerHTML.includes('*')) {
+                       label.innerHTML = label.innerHTML.replace(' <span style="color:red;">*</span>', ''); // Remove asterisk
+                   }
+               } else {
+                   // If the input is empty again, add the asterisk back
+                   if (label && !label.innerHTML.includes('*')) {
+                       label.innerHTML += ' <span style="color:red;">*</span>'; // Append asterisk
+                   }
+               }
+           });
+   
+           input.addEventListener('change', function () {
+               const label = document.querySelector(`label[for='${input.name}']`); // Find label based on name
+               if (input.value.trim()) {
+                   input.style.border = '';
+                   const errorMessage = input.parentNode.querySelector('.error-message');
+                   if (errorMessage) {
+                       errorMessage.remove();
+                   }
+                   if (label && label.innerHTML.includes('*')) {
+                       label.innerHTML = label.innerHTML.replace(' <span style="color:red;">*</span>', ''); // Remove asterisk
+                   }
+               } else {
+                   // If the select input is empty again, add the asterisk back
+                   if (label && !label.innerHTML.includes('*')) {
+                       label.innerHTML += ' <span style="color:red;">*</span>'; // Append asterisk
+                   }
+               }
+           });
+       });
+   }
+   
+   
+   // Combined validation function
+   function validateForm(kil) {
+   
+   
+   if(!validateRequiredFields(kil)){
+     event.preventDefault();
+   }
+   }
+   
+   // Add real-time validation once the document is loaded
+   document.addEventListener('DOMContentLoaded', () => {
+   addRealTimeValidation('#kilform');  // Activate real-time validation
+   });
+   
+   
+   function validateKilvishInput(event) {
+          const inputField = event.target;
+      
+          // General valid character sets
+          // let validCharacters = /^[a-zA-Z0-9@,._\s-]*$/;
+      
+          let validCharacters = /^[a-zA-Z\s]*$/; // only char, no special char no numbers 
+      
+          // Define allowed image file types
+          const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/tiff', 'image/webp', 'image/svg+xml'];
+      
+          // Use parentNode for regular inputs, container for checkboxes
+          const container = inputField.closest('.col-lg-12') || inputField.closest('.form-group') || inputField.closest('div');
+          const inputParent = inputField.parentNode;
+      
+          // Remove previous error message and border
+          let errorMessage = inputParent.querySelector('.error-message');
+          if (errorMessage) errorMessage.remove();
+          inputField.style.border = ''; // Reset border
+      
+          // Custom validations based on input name
+          if (inputField.name === 'description' || inputField.name ===  'address') {
+              validCharacters = /^[a-zA-Z0-9@,._\s-'"*]*$/;
+      
+              // Check length limit
+              if (inputField.value.length > 400) {
+                  addErrorMessage(inputParent, 'Input exceeds the maximum length of 400 characters!');
+                  inputField.style.border = '1px solid red';
+                  inputField.value = inputField.value.substring(0, 400); // Truncate the input
+                  return;
+              }
+          }  else if (inputField.name === 'agent_name') {
+   
+                         validCharacters = /^[a-zA-Z\s]*$/; 
+                   
+                       // const allowedChars = /^[a-zA-Z0-9._@-]+$/;  //for kilMiddle Conditon 
+                        const allowedChars = /^[a-zA-Z0-9._@-\s]+$/; // For any additional validations
+                        
+                        const inputValue = inputField.value; 
+
+                          
+
+                                    if (!allowedChars.test(inputField.value)) {
+                                        // Allow common validation to handle non-numeric characters
+                                    } else if (inputValue.length > 20 || inputValue.length < 2  ) {                        
+                                        addErrorMessage(inputParent, 'Agent Name Must Be Between 2 And 20 Characters.');
+                                        inputField.style.border = '1px solid red'; 
+
+                                        if (event.type === 'change') {
+                                            inputField.value = ''; 
+                                        }    
+                                        return;
+                                        } 
+
+
+                                        inputField.style.border = '';
+
+
+
+                        } else if (inputField.name === 'otp') {
+   
+   
+   
+              validCharacters = /^\d{6,6}$/;
+              const numericOnlyPattern = /^\d+$/; // Checks for numeric-only input
+            const inputValue = inputField.value; 
+   
+                        const numericValue = parseInt(inputValue, 10);
+   
+                        if (!numericOnlyPattern.test(inputField.value)) {
+                           // Allow common validation to handle non-numeric characters
+                       } else if (inputValue.length > 6 || inputValue.length < 6  ) {                        
+                              addErrorMessage(inputParent, 'OTP must be exactly 6 digits');
+                              inputField.style.border = '1px solid red'; 
+   
+                              if (event.type === 'change') {
+                                 inputField.value = ''; 
+                              }    
+                              return;
+                           } 
+   
+   
+                           inputField.style.border = '';
+   
+   
+   
+          }else if (inputField.name === 'credit_limit') { 
+   
+          
+   
+   
+                            // validCharacters = /^\d{0,6}$/;  // without decimal 
+                            validCharacters = /^\d{0,6}(\.\d{0,2})?$/;   //with decimal 2 place
+                            const numericOnlyPattern = /^\d+$/; // Checks for numeric-only input
+                            const inputValue = inputField.value; 
+                      
+                                        const numericValue = parseInt(inputValue, 10);
+
+                                        if (!numericOnlyPattern.test(inputField.value)) {
+                                            // Allow common validation to handle non-numeric characters
+                                        } else if (inputValue.length > 5 || inputValue == 0  ) {                        
+                                            addErrorMessage(inputParent, 'Credit Limit Amount Cannot Be 0 Or Exceed 5 Digits');
+                                            inputField.style.border = '2px solid red'; 
+
+                                            if (event.type === 'change') {
+                                                inputField.value = ''; 
+                                            }    
+                                            return;
+                                            } 
+
+
+                                            inputField.style.border = '';
+
+
+
+                            }else if (inputField.name === 'agent_contact' || inputField.id =='agent_contact') {
+   
+   
+                                            
+                                            validCharacters = /^\d{7,10}$/;
+                                            const numericOnlyPattern = /^\d+$/; // Checks for numeric-only input
+                                            const inputValue = inputField.value; 
+
+                                                        const numericValue = parseInt(inputValue, 10);
+
+                                                        if (!numericOnlyPattern.test(inputField.value)) {
+                                                            // Allow common validation to handle non-numeric characters
+                                                        } else if (inputValue.length > 10 || inputValue.length < 7  ) {                        
+                                                            addErrorMessage(inputParent, 'Mobile Number Must Be Between 7 And 10 Digits.');
+                                                            inputField.style.border = '2px solid red'; 
+
+                                                            if (event.type === 'change') {
+                                                                inputField.value = ''; 
+                                                            }    
+                                                            return;
+                                                            } 
+
+
+                                                            inputField.style.border = '';
+
+
+
+   }else if (inputField.type === 'date') {
+         
+                                validCharacters = /^(?:\d{4}[-\/]\d{2}[-\/]\d{2})$/; 
+                                
+                                const inputValue = inputField.value.trim();
+   
+   
+                                const inputDate = new Date(inputValue.replace(/[-\/]/g, '/'));
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0); // Set to midnight for comparison
+   
+                                         // Check if the date is in the past
+                          if (inputDate < today) {
+                             addErrorMessage(inputParent, 'The date cannot be in the past.');
+                             inputField.style.border = '2px solid red';
+                             
+                             if (event.type === 'change') {
+                                   inputField.value = ''; // Clear the input field on change
+                             }
+                             
+                             return; // Exit the function after handling the error
+                          }
+   
+   
+                 inputField.style.border = '';
+                  }else if (inputField.name === 'model_name' || inputField.name ==='models[]') {
+                     // Only numbers allowed, between 7 and 10 digits
+                     validCharacters = /^[a-zA-Z0-9]{4,20}$/;
+                  }else if(inputField.type =='email'){
+                     validCharacters = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/; // Basic email pattern
+                     const allowedEmailChars = /^[a-zA-Z0-9._@-]+$/; 
+                    
+                     const inputValue = inputField.value; 
+   
+                     // If input contains invalid characters, skip email validation and let common validation handle it
+                               if (!allowedEmailChars.test(inputValue)) {
+                                   // Skip email validation, allowing common validation to catch unwanted characters
+                               } else if (!validCharacters.test(inputValue)) {                        
+                                 addErrorMessage(inputParent, 'Invalid Email Format.');
+                                 inputField.style.border = '1px solid red'; 
+   
+                                 if (event.type === 'change') {
+                                   inputField.value = ''; 
+                                 }    
+                                 return;
+                             } 
+   
+   
+                             inputField.style.border = '';
+   
+                  }else if(inputField.type ==='password'){
+      
+                                  const hasSequentialChars = (password) => {
+                                       console.log("passworddddddd -", password)
+                                       const length = password.length;
+                                       
+                                       // Check for ascending sequences (e.g., "123", "abc")
+                                       for (let i = 0; i < length - 3; i++) {
+                                          if (password.charCodeAt(i + 1) === password.charCodeAt(i) + 1 &&
+                                                password.charCodeAt(i + 2) === password.charCodeAt(i) + 2 &&
+                                                password.charCodeAt(i + 3) === password.charCodeAt(i) + 3) {
+                                                return true; // Ascending sequence found
+                                          }
+                                       }
+      
+                                       // Check for descending sequences (e.g., "321", "cba")
+                                       for (let i = 0; i < length - 3; i++) {
+                                          if (password.charCodeAt(i + 1) === password.charCodeAt(i) - 1 &&
+                                                password.charCodeAt(i + 2) === password.charCodeAt(i) - 2 &&
+                                                password.charCodeAt(i + 3) === password.charCodeAt(i) - 3) {
+                                                return true; // Descending sequence found
+                                          }
+                                       }
+                                       
+                                       return false; // No sequential characters
+                                    };
+      
+                     
+      
+                     validCharacters = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{12,}$/;
+      
+      
+                                                // Check if password meets the required pattern
+                                 if (!validCharacters.test(inputField.value)) {
+                                    addErrorMessage(inputParent, 'Password must be at least 12 characters long and contain at least one uppercase letter, one lowercase letter, one special character, and one number.');
+                                    inputField.style.border = '1px solid red';
+                                    if (event.type === 'change') {   inputField.value = '';  }
+                                    return; // Stop further validation
+                                 }
+      
+                                 // Check for sequential characters
+                                 if (hasSequentialChars(inputField.value)) {
+                                    addErrorMessage(inputParent, 'Password should not contain sequential characters.');
+                                    inputField.style.border = '1px solid red';
+                                       if (event.type === 'change') {   inputField.value = '';  }
+                                    return; // Stop further validation
+                                 }
+      
+      
+                                 // Function to check for sequential characters in the password
+                       
+                                                         
+      
+      
+      
+                  }
+                    
+      
+                  
+      
+      
+      
+          // Handle file input validation
+          if (inputField.type === 'file') {
+              const file = inputField.files[0];
+              if (file && !validImageTypes.includes(file.type)) {
+                  addErrorMessage(inputParent, 'Please select a valid image file (JPEG, PNG, etc.)');
+                  inputField.value = ''; // Clear the file input field
+                  inputField.style.border = '1px solid red';
+                  return;
+              }
+          } else {
+              // For normal text/number input validation
+              if (event.type === 'keyup') {
+                  if (!validCharacters.test(inputField.value)) {
+                      addErrorMessage(inputParent, 'Invalid character entered!');
+                      inputField.style.border = '1px solid red';
+                      
+                  }
+              }
+      
+              if (event.type === 'change') {
+                  if (!validCharacters.test(inputField.value)) {
+                      // On invalid input during change event, clear the field and show an error
+                      inputField.value = ''; // Clear invalid input
+                      addErrorMessage(inputParent, 'Invalid character or format!');
+                      inputField.style.border = '1px solid red';
+                  } else {
+                      // Clear error when value is corrected
+                      inputField.style.border = '';
+                      if (errorMessage) errorMessage.remove();
+                  }
+              }
+          }
+      }
+      
+   
+   
+   
+   
+   
+      // Function to display error messages under the input field or container for checkboxes
+      function addErrorMessage(parent, message) {
+          if (!parent.querySelector('.error-message')) {
+              const errorMessage = document.createElement('div');
+              errorMessage.className = 'error-message';
+              errorMessage.style.color = 'red';
+              errorMessage.style.fontSize = '12px';
+              errorMessage.innerText = message;
+              parent.appendChild(errorMessage);
+          }
+      }
+      
+      
+   
+   
+      document.addEventListener('DOMContentLoaded', () => {    
+       addRealTimeValidation('#kilform');  // Activate real-time validation
+
+       const form = document.querySelector(`#kilform`); 
+      // const requiredFields = form.querySelectorAll('input[required], select[required], textarea[required]');
+      const requiredFields = document.querySelectorAll('input[required], select[required], textarea[required]');
+   
+            requiredFields.forEach(field => {
+    
+       const label = document.querySelector(`label[for='${field.name}']`); // Use name instead of id
+      // Check if the field is empty
+                     if (label && !label.innerHTML.includes('*') && field.value.trim() === '') { 
+                                          // Append asterisk only if the field is empty
+                            label.innerHTML += ' <span style="color:red;">*</span>'; 
+                        }
+
+   
+   });
+   
+   
+   });
+
+
+
+   //============= Clear Kilalert msg after 5 sec =========== 
+    // Wait for the DOM to fully load
+    document.addEventListener("DOMContentLoaded", function() {
+        // Set a timeout to clear the message after 5 seconds
+        setTimeout(function() {
+            const messageElement = document.getElementById("kilmessage");
+            if (messageElement) {
+                messageElement.innerHTML = ""; // Clear the message
+            }
+        }, 5000); // 5000 milliseconds = 5 seconds
+    });
+   
+   
+   
+   //====================== Command Kilvish validation End ===============================
+
+</script>

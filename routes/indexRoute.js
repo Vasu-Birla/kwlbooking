@@ -21,11 +21,11 @@ router.route('/book').get(globalAuth,book)
 
 router.route('/booking_availability').get(globalAuth,booking_availability)
 
-router.route('/dates_availability').get( dates_availability);
+router.route('/dates_availability').get( globalAuth,dates_availability);
 
-router.use('/appointment_types', appointment_types);
+router.use('/appointment_types', globalAuth,appointment_types);
 
-router.route('/time_availability').get( time_availability);
+router.route('/time_availability').get( globalAuth,time_availability);
 
 router.route('/check_times').post( check_times);
 

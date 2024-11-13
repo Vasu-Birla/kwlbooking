@@ -1,0 +1,58 @@
+<table id="example1" class="table table-bordered table-striped">
+  <thead>
+      <tr>
+          <th>Sr. No.</th>
+          <th>TRN</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Mobile Number</th>
+          <th>Email Address</th>
+          <th>Agent/Freight Forwarder</th>
+          <th>Individual Making Appointment</th>
+          <th>Appointment Type</th>
+          <th>Vessel Name</th>
+          <th>Vessel Reported Date</th>
+          <th>Bill of Lading Number</th>
+          <th>Chassis No</th>
+          <th>IMS4 Declaration Number</th>
+          <th>Container Number</th>
+          <th>Number of Pieces/Packages</th>
+          <th>Status</th>
+         
+      </tr>
+  </thead>
+  <tbody>
+
+      <% bookings.forEach((booking, index) => { %>
+
+
+
+
+          <tr>
+            <td><%= index + 1 %></td>
+            <td><%= booking.trn %></td>
+            <td><%= booking.firstname %></td>
+            <td><%= booking.lastname %></td>
+            <td><%= booking.contact %></td>
+            <td><%= booking.user_email %></td>
+            <td><%= booking.agent_forwarder %></td>
+            <td><%= booking.appointment_by %></td>
+            <td><%= booking.appointment_type %></td>
+            <td><%= booking.vessel_name %></td>
+            <td><%= booking.vessel_reported_date %></td>
+            <td><%= booking.bol_number %></td>
+            <td><%= booking.chassis_number %></td>
+            <td><%= booking.declaration_number %></td>
+            <td><%= booking.container_number %></td>
+            <td><%= booking.number_of_items %></td>
+            <td><span class="badge badge-<%= booking.booking_status === 'Cancelled' ? 'danger' : 'success' %>"><%= booking.booking_status %></span></td>
+       
+          </tr>
+
+
+
+        <% }) %>
+        
+
+  </tbody>
+</table>
