@@ -1341,7 +1341,7 @@ const auditLogs = async (req, res, next) => {
     console.log(result.recordset)
 
     // Render the audit logs page with the fetched data
-    res.render('superadmin/auditlogs', {
+    res.render('superadmin/auditLogs', {
       output: output,
       auditLogs: result.recordset // Pass the audit logs to the template
     });
