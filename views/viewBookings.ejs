@@ -32,7 +32,7 @@
                          <% } %>
                            <!-- /alert msgs -->
                 <div class="col-md-12">
-                    <table id="example" class="table table-striped table-bordered" style="width:100%">
+                    <table id="example1" class="table table-striped table-bordered" style="width:100%">
                         <thead>
                             <tr>
                                 <th>Appointment ID</th>
@@ -851,6 +851,13 @@ function showAppointmentDetails(booking_id, booking) {
                 statusColor = '#17a2b8'; // default info color
         }
 
+
+        const originalTime = booking.booking_times 
+
+// Use Moment.js to format the time in the user's local timezone
+
+const formattedTime = moment(originalTime, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
+
         
         // Display booking details in the modal
         Swal.fire({
@@ -863,7 +870,7 @@ function showAppointmentDetails(booking_id, booking) {
                         <strong>Date:</strong><span>${booking.booking_date || 'N/A'}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; padding: 5px 0;">
-                        <strong>Time:</strong><span>${booking.booking_times || 'N/A'}</span>
+                        <strong>Time:</strong><span>${formattedTime|| 'N/A'}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; padding: 5px 0;">
                         <strong>Status:</strong><span style="color: #ffffff; background-color: ${statusColor}; padding: 4px 8px; border-radius: 5px;">${booking.booking_status || 'N/A'}</span>

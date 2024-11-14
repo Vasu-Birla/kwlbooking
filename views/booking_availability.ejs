@@ -36,8 +36,8 @@
 
                     <!-- Tab Headers -->
                     <div class="tabs">
-                        <div class="tab active" onclick="showTab(0)">1. CHOOSE APPOINTMENT</div>
-                        <div class="tab">2. CONTACT INFORMATION</div>
+                        <div class="tab active" onclick="showTab(0)">1. CHOOSE APPOINTMENT</div> &nbsp;
+                        <div class="tab">2. CONTACT INFORMATION</div>&nbsp;
                         <div class="tab">3. APPOINTMENT PREVIEW</div>
                     </div>
 
@@ -110,7 +110,7 @@
                                                     <option value="+91">+91 (India)</option>
                                                 </select>
                                             </div>
-                                            <input type="number" id="phone4" class="form-control" name="contact" placeholder="Enter contact number" required>
+                                            <input type="tel" id="phone4" class="form-control" name="contact" placeholder="Enter contact number" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -133,8 +133,15 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label>* Appointment Type (Personal/Commercial)</label>
-                                        <input type="text" id="apppersonal" class="form-control" name="appointment_type" placeholder="Enter the appointment type" required="">
+                                        <!-- <input type="text" id="apppersonal" class="form-control" name="appointment_type" placeholder="Enter the appointment type" required=""> -->
+                                        <select id="apppersonal" class="form-control" name="appointment_type" required>
+                                            <option value="">Select any one</option>
+                                            <option value="Personal">Personal</option>
+                                            <option value="Commercial">Commercial</option>
+                                        </select>
                                     </div>
+
+                                    
                                     <div class="col-md-6">
                                         <label>* Bill of Lading Number</label>
                                         <input type="text" id="blnumber" class="form-control" name="bol_number" placeholder="Enter the number" required="">
@@ -161,7 +168,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label>* Number of Pieces/Packages</label>
-                                        <input type="number" id="ppnumber" class="form-control" name="number_of_items" placeholder="Enter the packages" required="">
+                                        <input type="number" min="0" id="ppnumber" class="form-control" name="number_of_items" placeholder="Enter the packages" required="">
                                     </div>
                                 </div>
                             </form>
@@ -287,7 +294,7 @@
                         
                             <div class="button-container">
                                 <center>
-                                    <button class="btn btn-warning" id="prevBtn" onclick="changeTab(-2)">Previous</button>
+                                    <button class="btn btn-warning" id="prevBtn" onclick="changeTab(-1)">Previous</button>
                                     <button class="btn btn-warning" id="nextBtn" onclick="confirmBooking()">Submit</button>
                                 </center>
                             </div>
@@ -335,6 +342,10 @@ appointmentTypeSelect.addEventListener('change', function() {
     // Get the selected option
     const selectedOption = appointmentTypeSelect.options[appointmentTypeSelect.selectedIndex];
 
+  
+    const defaultOption = appointmentTypeSelect.options[0];
+    defaultOption.disabled = true;
+
     appointmentTypeID = document.getElementById("appointmentType").value,
 
     // Fetch the data-calendar-id using getAttribute
@@ -371,6 +382,10 @@ appointmentTypeSelect.addEventListener('change', function() {
     }
 
     function changeTab(step) {
+        
+        if(currentTab==1){
+            selectedTimes = [];
+        }
         const newTabIndex = currentTab + step;
         if (newTabIndex >= 0 && newTabIndex < tabs.length) showTab(newTabIndex);
     }
