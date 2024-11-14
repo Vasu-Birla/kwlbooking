@@ -261,11 +261,13 @@ const reschedule = async (req, res, next) => {
 
     const acuityBooking = acuityResponse.data;
    
+    console.log("acuityBookingacuityBooking,acuityBooking",acuityBooking)
 
     // Step 3: Merge Acuity data into internal booking data, adding `appointmentTypeID` and `calendarID`
     const booking = {
       ...internalBooking,
       appointmentTypeID: acuityBooking.appointmentTypeID,
+      type_name:acuityBooking.type,
       calendarID: acuityBooking.calendarID,
       acuityData: acuityBooking // Optionally, store other Acuity details if needed
     };
@@ -879,6 +881,28 @@ const confirmbooking = async (req, res, next) => {
 
         // Perform the insert query
         await transaction.request().query(query);
+
+        var reason1 = 'Confirmed'
+
+        const booking_times = moment(datetime, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
+        const booking_datetime = `${booking_date},${booking_times}`
+
+        await transaction.request()
+        .input('user_role', sql.NVarChar, userRole)
+        .input('user_name', sql.NVarChar, userName)
+        .input('reason', sql.NVarChar, reason1)
+        .input('acuity_url', sql.NVarChar, acuityUrl)
+        .input('booking_id', sql.Int, bookingId)
+        .input('booking_datetime', sql.NVarChar, booking_datetime || '') // use empty string if null
+        .input('new_datetime', sql.NVarChar,'') // use empty string if null
+        .query(`
+            INSERT INTO tbl_booking_logs 
+            (user_role, user_name, reason, acuity_url, booking_id, booking_datetime, new_datetime) 
+            VALUES (@user_role, @user_name, @reason, @acuity_url, @booking_id, @booking_datetime, @new_datetime)
+        `);
+
+
+        
       } else {
         throw new Error('Failed to book appointment on Acuity for datetime: ' + formattedDatetime);
       }
@@ -950,28 +974,66 @@ const check_times = async (req, res, next) => {
 };
 
 
-const viewBookingstest = async (req, res, next) => {
-  const pool = await connection();
-  const transaction = new sql.Transaction(pool);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const viewBookings = async (req, res, next) => {
+  let pool;
   const output = req.cookies.kwl_msg || '';
+  const userEmail = req.user.user_email; // Get the email from req.user
 
   try {
-    await transaction.begin(); // Begin the transaction
-
-    const request = transaction.request();
+    pool = await connection();
     
-    // Example query to check or update booking availability (modify as needed)
-    // await request.query('UPDATE bookings SET status = @status WHERE id = @bookingId');
+    // Step 1: Fetch all the bookings for the user
+    const result = await pool
+      .request()
+      .input('userEmail', sql.NVarChar, userEmail) // Bind the email parameter
+      .query('SELECT * FROM tbl_bookings WHERE user_email = @userEmail ORDER BY created_at DESC');
 
-    // Commit the transaction if everything is successful
-    await transaction.commit();
+    // Step 2: Iterate over bookings and fetch logs for each booking
+    const bookings = [];
+    for (const booking of result.recordset) {
+      // Step 2.1: Fetch logs for the current booking
+      const logsResult = await pool
+        .request()
+        .input('booking_id', sql.Int, booking.booking_id) // Bind the booking_id
+        .query('SELECT * FROM tbl_booking_logs WHERE booking_id = @booking_id ORDER BY created_at DESC');
 
-    res.render('viewBookings', { output: output });
-  } catch (error) {
-    // Rollback if an error occurs
-    if (transaction) {
-      await transaction.rollback();
+      // Step 2.2: Format the logs array (if any)
+      booking.logs = logsResult.recordset.map((log) => {
+        log.created_at = moment(log.created_at).format('YYYY-MM-DDTHH:mm:ssZ'); // Format created_at as needed
+        return log;
+      });
+
+      // Step 2.3: Format booking_times
+      // if (booking.booking_times) {
+      //   booking.booking_times = moment(booking.booking_times, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
+      // } else {
+      //   booking.booking_times = 'N/A';
+      // }
+
+      // Step 2.4: Push formatted booking with logs into the array
+      bookings.push(booking);
     }
+
+    console.log(bookings)
+
+    // Render the view with the bookings and logs
+    res.render('viewBookings', { output: output, bookings: bookings });
+
+  } catch (error) {
     console.error('Error:', error);
     res.render('kil500', { output: `${error}` });
   } finally {
@@ -982,7 +1044,13 @@ const viewBookingstest = async (req, res, next) => {
   }
 };
 
-const viewBookings = async (req, res, next) => {
+
+
+
+
+
+
+const viewBookingswithoutlogs = async (req, res, next) => {
   let pool;
   const output = req.cookies.kwl_msg || '';
   const userEmail = req.user.user_email; // Get the email from req.user
@@ -990,14 +1058,14 @@ const viewBookings = async (req, res, next) => {
   try {
     pool = await connection();
     
-    // Execute the general query for all bookings
-    const result1 = await pool.request().query('SELECT * FROM tbl_bookings ORDER BY booking_id DESC');
-
+   
     // Execute the query with the user's email
     const result = await pool
       .request()
       .input('userEmail', sql.NVarChar, userEmail) // Bind the email parameter
       .query('SELECT * FROM tbl_bookings WHERE user_email = @userEmail ORDER BY created_at  DESC');
+
+
 
     // Map and format the bookings
     const bookings = result.recordset.map((booking) => {
@@ -1010,66 +1078,11 @@ const viewBookings = async (req, res, next) => {
       return booking;
     });
 
+    console.log("bookings",bookings)
+
     // Render the view with bookings
     res.render('viewBookings', { output: output, bookings: bookings });
   } catch (error) {
-    console.error('Error:', error);
-    res.render('kil500', { output: `${error}` });
-  } finally {
-    // Always close the pool to release resources
-    if (pool) {
-      pool.close();
-    }
-  }
-};
-
-
-const viewBookingsold = async (req, res, next) => {
-
-  let pool;
-  let transaction;
-  const output = req.cookies.kwl_msg || '';
-
-  try {
-    
-
-    pool = await connection();
-    transaction = new sql.Transaction(pool);
-    await transaction.begin();
-
-    const request = transaction.request();
-
-    // Commit the transaction if everything is successful
-    await transaction.commit();
-    // Execute the query directly without wrapping in a transaction for SELECT statements
-    const result1 = await pool.request().query('SELECT * FROM tbl_bookings ORDER BY booking_id DESC');
-
-    const result = await pool
-    .request()
-    .input('userEmail', sql.NVarChar, userEmail) // Bind the email parameter
-    .query('SELECT * FROM tbl_bookings WHERE user_email = @userEmail ORDER BY booking_id DESC');
-
-
-    req.user.user_email
-        
-    //const bookings = result.recordset; // Access the result set in `mssql`
-    const bookings = result.recordset.map((booking) => {
-      // Parse and format booking_times if it exists
-      if (booking.booking_times) {
-        booking.booking_times = moment(booking.booking_times, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
-      } else {
-        booking.booking_times = 'N/A';
-      }
-      return booking;
-    });
-    
-   // console.log('bookings:', bookings);
-    res.render('viewBookings', { output: output , bookings:bookings});
-  } catch (error) {
-    // Rollback if an error occurs
-    if (transaction) {
-      await transaction.rollback();
-    }
     console.error('Error:', error);
     res.render('kil500', { output: `${error}` });
   } finally {
@@ -1090,7 +1103,7 @@ const cancelBooking = async (req, res, next) => {
   let pool;
   let transaction;
   let acuityResponse;
-  const { id, status, cancelNote } = req.body;
+  const { id, status, cancelNote ,booking_datetime } = req.body;
 
   try {
 
@@ -1134,6 +1147,24 @@ const cancelBooking = async (req, res, next) => {
       request.input('booking_status', sql.NVarChar, status); // Use 'Cancelled' or 'No Show'
       request.input('id', sql.Int, id); // Use dynamic booking ID
       await request.query(updateSql);
+
+
+
+
+      await transaction.request()
+      .input('user_role', sql.NVarChar, userRole)
+      .input('user_name', sql.NVarChar, userName)
+      .input('reason', sql.NVarChar, status)
+      .input('acuity_url', sql.NVarChar, acuityUrl)
+      .input('booking_id', sql.Int, id)
+      .input('booking_datetime', sql.NVarChar, booking_datetime || '') // use empty string if null
+      .input('new_datetime', sql.NVarChar,'') // use empty string if null
+      .query(`
+          INSERT INTO tbl_booking_logs 
+          (user_role, user_name, reason, acuity_url, booking_id, booking_datetime, new_datetime) 
+          VALUES (@user_role, @user_name, @reason, @acuity_url, @booking_id, @booking_datetime, @new_datetime)
+      `);
+
 
       await transaction.commit();
 
@@ -1235,7 +1266,7 @@ const cancelBookingsimple = async (req, res, next) => {
 
 const rescheduleBooking = async (req, res, next) => {
   console.log(req.body)
-  const { booking_id, selectedDateTimes, booking_date } = req.body;
+  const { booking_id, selectedDateTimes, booking_date ,booking_datetime } = req.body;
 
   let pool;
   let transaction;
@@ -1308,6 +1339,35 @@ const rescheduleBooking = async (req, res, next) => {
 
         // Perform the update query
         await transaction.request().query(query);
+
+       
+
+
+        const new_time = moment(datetime, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
+        const old_time = moment(booking_datetime, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
+        const old_date = moment(booking_datetime, "YYYY-MM-DDTHHmm:ssZ").format('YYYY-MM-DD');
+
+
+         const old_datetime = `${old_date},${new_time}`
+          const new_datetime = `${booking_date},${old_time}`
+
+        var reason1 = 'Rescheduled'
+
+        await transaction.request()
+        .input('user_role', sql.NVarChar, userRole)
+        .input('user_name', sql.NVarChar, userName)
+        .input('reason', sql.NVarChar, reason1)
+        .input('acuity_url', sql.NVarChar, acuityUrl)
+        .input('booking_id', sql.Int, booking_id)
+        .input('booking_datetime', sql.NVarChar, old_datetime || '') // use empty string if null
+        .input('new_datetime', sql.NVarChar,new_datetime) // use empty string if null
+        .query(`
+            INSERT INTO tbl_booking_logs 
+            (user_role, user_name, reason, acuity_url, booking_id, booking_datetime, new_datetime) 
+            VALUES (@user_role, @user_name, @reason, @acuity_url, @booking_id, @booking_datetime, @new_datetime)
+        `);
+
+
       } else {
         throw new Error('Failed to reschedule appointment on Acuity for datetime: ' + formattedDatetime);
       }
@@ -1345,7 +1405,7 @@ const rescheduleBooking = async (req, res, next) => {
 
 const updateBooking = async (req, res) => {
 
-  const { booking_id, firstname, lastname, country_code, contact  } = req.body;
+  const { booking_id, firstname, lastname, country_code, contact , booking_datetime  } = req.body;
 
   if (!booking_id || !firstname || !lastname || !country_code || !contact) {
     return res.status(400).json({
@@ -1369,6 +1429,8 @@ const updateBooking = async (req, res) => {
         const userRole = 'User';
     
        await logAcuityRequest(acuityUrl, userRole, userName, reason);
+
+      //  booking_id,booking_datetime
     
         //----------------------   audit Logging -------------------------- 
 
@@ -1419,6 +1481,24 @@ const updateBooking = async (req, res) => {
     request.input('booking_id', sql.Int, booking_id);
 
     await request.query(query);
+
+var reason1 = 'Updated'
+
+await transaction.request()
+.input('user_role', sql.NVarChar, userRole)
+.input('user_name', sql.NVarChar, userName)
+.input('reason', sql.NVarChar, reason1)
+.input('acuity_url', sql.NVarChar, acuityUrl)
+.input('booking_id', sql.Int, booking_id)
+.input('booking_datetime', sql.NVarChar, booking_datetime || '') // use empty string if null
+.input('new_datetime', sql.NVarChar,'') // use empty string if null
+.query(`
+    INSERT INTO tbl_booking_logs 
+    (user_role, user_name, reason, acuity_url, booking_id, booking_datetime, new_datetime) 
+    VALUES (@user_role, @user_name, @reason, @acuity_url, @booking_id, @booking_datetime, @new_datetime)
+`);
+
+
     await transaction.commit();
 
     res.cookie('kwl_msg', 'Booking updated successfully!');

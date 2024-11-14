@@ -46,6 +46,7 @@
                                     <thead>
                                         <tr>
                                             <th>Appointment ID</th>
+                                            <th>Log</th>    
                                             <th>Date</th>
                                             <th>Time</th>
                                             <th>TRN</th>
@@ -60,9 +61,13 @@
                                             <tr>
                                             
                                                 <td><a href="#" onclick="showAppointmentDetails('<%= booking.booking_id %>', '<%= JSON.stringify(booking) %>')" ><b><%= booking.booking_id %></b></a></td>
+                                                <td><a href="#" onclick="bookinglogs('<%= JSON.stringify(booking.logs) %>')" ><b>Open Log</b></a></td>
                                         
                                                 <td> <%= booking.booking_date  %> </td>
-                                                <td> <%= booking.booking_times  %> </td>
+                                                <!-- <td> <%= booking.booking_times  %> </td> -->
+                                                <td>
+                                                    <span class="booking-time" data-time="<%= booking.booking_times %>"></span>
+                                                </td>
                                                 <td> <%= booking.trn  %> </td>
                                                 <td> <%= booking.firstname %> <%= booking.lastname %> </td>
                                                 <td> <%= booking.country_code %> <%= booking.contact %></td>
@@ -131,7 +136,7 @@
             
                                                     <a href="#" onclick="reschedule('<%= booking.booking_id %>')" class="btn btn-warning" data-toggle="tooltip" title="Reschedule"><i class="fa fa-history" aria-hidden="true"></i>          </a>
             
-                                                    <a href="#"  onclick="cancelBooking('<%= booking.booking_id %>','Cancelled')" class="btn btn-danger" data-toggle="tooltip" title="Cancel Booking"><i class="fa fa-times" aria-hidden="true"></i></a>                                        
+                                                    <a href="#"  onclick="cancelBooking('<%= booking.booking_id %>','Cancelled','<%= JSON.stringify(booking) %>')" class="btn btn-danger" data-toggle="tooltip" title="Cancel Booking"><i class="fa fa-times" aria-hidden="true"></i></a>                                        
                                                       
             
                                                     <% } else { %>                                             
@@ -310,7 +315,11 @@ window.location.href = '/superadmin/reschedule';
 }
 
 
-function cancelBooking(booking_id, newStatus) {
+function cancelBooking(booking_id, newStatus,booking) {
+
+    booking = JSON.parse(booking);
+
+var booking_datetime = `${booking.booking_date},${booking.booking_times}`
     event.preventDefault();
     var action = (newStatus === 'Cancelled') ? 'Cancelled' : 'approved';
 
@@ -339,7 +348,8 @@ function cancelBooking(booking_id, newStatus) {
                     data: {
                         id: booking_id,
                         status: newStatus,
-                        cancelNote: cancelNote // Send the cancel note
+                        cancelNote: cancelNote, // Send the cancel note
+                        booking_datetime:booking_datetime
                     }
                 });
             } else {
@@ -395,6 +405,8 @@ async function updateBooking(booking_id, booking) {
     booking = JSON.parse(booking);
     console.log("booking ", booking);
 
+      var booking_datetime = `${booking.booking_date},${booking.booking_times}`
+
     // Step 1: Prompt the admin for an admin note
     const { value: adminNote } = await Swal.fire({
         title: 'Enter Admin Note',
@@ -420,6 +432,7 @@ async function updateBooking(booking_id, booking) {
                 <input type="hidden" id="calendarId" name="calendarId" value="${booking.calendarID}">
                 <input type="hidden" id="booking_id" name="booking_id" value="${booking_id}">
                 <input type="hidden" id="admin_note" name="admin_note" value="${adminNote}">
+                  <input type="hidden"  name="booking_datetime" value="${booking_datetime}">
 
                 <!-- First Name field -->
                 <div class="col-md-6">
@@ -1032,5 +1045,102 @@ function updateBookingold(booking_id, booking) {
    
    
    //====================== Command Kilvish validation End ===============================
+
+
+
+
+   function bookinglogs(logs) {
+    logs = JSON.parse(logs); // Parse the logs data
+
+    // Initialize the HTML table for SweetAlert
+    let logContent = `
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: black; color: white; text-align: left;">
+                    <th style="padding: 8px; border: 1px solid #ddd;">User</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Operation</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Booking Datetime</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">New Datetime</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Created At</th>
+                  
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    // Loop through each log and build a table row
+    logs.forEach(log => {
+        // Determine the status color based on the reason
+        let statusColor;
+        switch (log.reason) {
+            case 'Updated':
+                statusColor = '#0787ff'; // info (blue)
+                break;
+            case 'Confirmed':
+                statusColor = '#28a745'; // success (green)
+                break;
+            case 'Cancelled':
+                statusColor = '#dc3545'; // danger (red)
+                break;
+            case 'Completed':
+                statusColor = '#007bff'; // info (blue)
+                break;
+            case 'Rescheduled':
+                statusColor = '#6f42c1'; // purple
+                break;
+            default:
+                statusColor = '#17a2b8'; // default info color
+        }
+               // Format the created_at date
+               const formattedCreatedAt = new Date(log.created_at).toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true
+        });
+
+        // Add each log entry as a row in the table
+        logContent += `
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;">${log.user_name} (${log.user_role})</td>
+                <td style="padding: 8px; border: 1px solid #ddd; color: ${statusColor};">${log.reason}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">${log.booking_datetime}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">${log.new_datetime || 'N/A'}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">${formattedCreatedAt}</td>
+              
+            </tr>
+        `;
+    });
+
+    logContent += '</tbody></table>';
+
+    // Display logs in SweetAlert with table format
+    Swal.fire({
+        title: 'Booking Logs',
+        html: logContent,
+        width: '80%',
+        showCloseButton: true,
+        focusConfirm: false,
+        confirmButtonText: 'Close'
+    });
+}
+
+
+   
+document.addEventListener("DOMContentLoaded", function () {
+        // Select all elements with the booking time data attribute
+        document.querySelectorAll('.booking-time').forEach(function (element) {
+            const originalTime = element.getAttribute('data-time');
+
+            // Use Moment.js to format the time in the user's local timezone
+        
+            const formattedTime = moment(originalTime, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
+
+            // Set the formatted time as the text content of the element
+            element.textContent = formattedTime;
+        });
+    });
 
 </script>
