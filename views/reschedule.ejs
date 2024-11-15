@@ -367,6 +367,14 @@ appointmentTypeSelect.addEventListener('change', function() {
      document.getElementById('calendarId').value = calendarId;
 
     console.log('Selected Calendar ID:', calendarId);
+
+
+    const timeContainer = document.getElementById("timeSlots");                     
+    timeContainer.innerHTML = "";
+
+
+     selectedTimes = [];
+     selectedDate=null;   
 });
 
 

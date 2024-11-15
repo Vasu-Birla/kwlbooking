@@ -144,7 +144,7 @@
                                                                 <% if (booking.booking_status == 'Completed' ) { %>                                           
                                                                 <p class="kilstatus" style="color: rgb(12, 185, 238);"> Completed</p> 
                                                                 <% } else { %> 
-                                                                    <p class="kilstatus" style="color: red;"> Cancelled</p>
+                                                                    <!-- <p class="kilstatus" style="color: red;"> Cancelled</p> -->
                                                                                                        
                                                                 <% } %>
             
@@ -408,7 +408,7 @@ var booking_datetime = `${booking.booking_date},${booking.booking_times}`
     });
 }
 
-async function updateBooking(booking_id, booking) {
+async function updateBookingold(booking_id, booking) {
     booking = JSON.parse(booking);
     console.log("booking ", booking);
 
@@ -494,6 +494,127 @@ async function updateBooking(booking_id, booking) {
     // Step 4: Add real-time validation for inputs (reuse the existing validation)
     addRealTimeValidation('#kilform'); // Ensure real-time validation works with the new modal form
 }
+
+
+
+function updateBooking(booking_id, booking) {
+    booking = JSON.parse(booking);
+    console.log("booking ",booking)
+    var booking_datetime = `${booking.booking_date},${booking.booking_times}`
+
+    // Create the form structure for editing inside SweetAlert
+    const htmlForm = `
+        <form id="kilform" action="/updateBooking" method="POST">
+            <div class="row gy-4">
+                <!-- Hidden input for calendarId -->
+                <input type="hidden" id="calendarId" name="calendarId" value="${booking.calendarID}">
+                 <input type="hidden" id="booking_id" name="booking_id" value="${booking_id}">
+                  <input type="hidden"  name="booking_datetime" value="${booking_datetime}">
+                <!-- Hidden input for booking_id -->
+
+                
+                <!-- First Name field -->
+                <div class="col-md-6">
+                    <label>* First Name</label>
+                    <input type="text" id="fname" class="form-control" name="firstname" value="${booking.firstname}" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)"  required>
+                </div>
+                
+                <!-- Last Name field -->
+                <div class="col-md-6">
+                    <label>* Last Name</label>
+                    <input type="text" id="lname" class="form-control" name="lastname" value="${booking.lastname}" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required>
+                </div>
+                
+                <!-- Country Code and Mobile Number fields -->
+                <div class="col-md-6">
+                    <label>* Mobile Number</label>
+                    <div class="input-group">                      
+
+
+                        <input type="tel" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" name="contact" id="kilvishcontact"   class="form-control" placeholder="Mobile Number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required>
+
+    
+                                            <input type="hidden" id="fullkilvishcontact" name="fullkilvishcontact"  >
+                                            <input type="hidden" id="country_code" name="country_code" >
+
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="row gy-4">
+                <div class="col-md-12 text-right">
+                    <button type="submit" style="font-size:16px;" class="btn btn-success">Submit</button>
+                    <button type="button"  style="font-size:16px;" class="btn btn-secondary" onclick="Swal.close()">Cancel</button>
+                </div>
+            </div>
+        </form>
+    `;
+
+    // Open SweetAlert with the form
+    Swal.fire({
+        title: `<span style="font-size: 16px;">Update User : ${booking.firstname}</span>`,
+        html: htmlForm,
+        showConfirmButton: false, // Disable default SweetAlert buttons, use form's submit buttons instead
+        focusCancel: true,
+        customClass: {
+            popup: 'my-popup-class' // Add a custom class for the popup
+        },
+        allowOutsideClick: false ,// Disable closing by clicking outside
+        didOpen: () => {
+            // Now initialize intlTelInput when the modal has fully opened
+            var input = document.querySelector("#kilvishcontact");
+            var savedCountryCode = booking.country_code || '';  // Use saved country code from user data
+            var savedPhoneNumber = booking.contact || '';  // Use saved phone number from user data
+
+            var iti = window.intlTelInput(input, {
+                preferredCountries: ["hk", "cn"], // Customize based on your needs
+                separateDialCode: true,
+                initialCountry: "auto",
+                geoIpLookup: function(success, failure) {
+                    fetch('https://ipinfo.io/json', {cache: 'reload'}).then(resp => resp.json()).then(resp => {
+                        var countryCode = (resp && resp.country) ? resp.country : "hk";
+                        success(countryCode);
+                    }).catch(() => success("hk"));
+                },
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.min.js", // Utility script
+            });
+
+            if (savedCountryCode && savedPhoneNumber) {
+                // Combine country code and phone number if available
+                iti.setNumber(savedCountryCode + savedPhoneNumber);
+            }
+
+            // Update hidden input field with full phone number
+            input.addEventListener("input", function() {
+                var fullPhoneNumber = iti.getNumber();
+                var countryCode = '+' + iti.getSelectedCountryData().dialCode;
+                document.querySelector("#fullkilvishcontact").value = fullPhoneNumber;
+                document.querySelector("#country_code").value = countryCode;
+            });
+
+            input.addEventListener("countrychange", function() {
+                var fullPhoneNumber = iti.getNumber();
+                var countryCode = '+' + iti.getSelectedCountryData().dialCode;
+                document.querySelector("#fullkilvishcontact").value = fullPhoneNumber;
+                document.querySelector("#country_code").value = countryCode;
+            });
+
+            // Initialize hidden field with the current value on page load
+            var fullPhoneNumber = iti.getNumber();
+            var countryCode = '+' + iti.getSelectedCountryData().dialCode;
+            document.querySelector("#fullkilvishcontact").value = fullPhoneNumber;
+            document.querySelector("#country_code").value = countryCode;
+        }
+    });
+
+    // Add real-time validation for inputs (reuse the existing validation)
+    addRealTimeValidation('#kilform'); // Ensure real-time validation works with the new modal form
+}
+
+
+
 
 
 
@@ -585,7 +706,6 @@ function updateBookingold(booking_id, booking) {
 <script>
 
 
-    
 
    //==================== Comman Kilvalidation start =====================
    
@@ -736,7 +856,7 @@ function updateBookingold(booking_id, booking) {
                   inputField.value = inputField.value.substring(0, 400); // Truncate the input
                   return;
               }
-          }  else if (inputField.name === 'agent_name') {
+          }  else if (inputField.name === 'firstname' ||  inputField.name === 'lastname' ) {
    
                          validCharacters = /^[a-zA-Z\s]*$/; 
                    
@@ -750,7 +870,7 @@ function updateBookingold(booking_id, booking) {
                                     if (!allowedChars.test(inputField.value)) {
                                         // Allow common validation to handle non-numeric characters
                                     } else if (inputValue.length > 20 || inputValue.length < 2  ) {                        
-                                        addErrorMessage(inputParent, 'Agent Name Must Be Between 2 And 20 Characters.');
+                                        addErrorMessage(inputParent, 'This Field Must Be Between 2 And 20 Characters.');
                                         inputField.style.border = '1px solid red'; 
 
                                         if (event.type === 'change') {
@@ -791,13 +911,12 @@ function updateBookingold(booking_id, booking) {
    
    
    
-          }else if (inputField.name === 'credit_limit') { 
+          }else if (inputField.name === 'trn') { 
    
           
    
    
-                            // validCharacters = /^\d{0,6}$/;  // without decimal 
-                            validCharacters = /^\d{0,6}(\.\d{0,2})?$/;   //with decimal 2 place
+                             validCharacters = /^\d{0,20}$/;
                             const numericOnlyPattern = /^\d+$/; // Checks for numeric-only input
                             const inputValue = inputField.value; 
                       
@@ -805,8 +924,8 @@ function updateBookingold(booking_id, booking) {
 
                                         if (!numericOnlyPattern.test(inputField.value)) {
                                             // Allow common validation to handle non-numeric characters
-                                        } else if (inputValue.length > 5 || inputValue == 0  ) {                        
-                                            addErrorMessage(inputParent, 'Credit Limit Amount Cannot Be 0 Or Exceed 5 Digits');
+                                        } else if (inputValue.length > 20 || inputValue == 0  ) {                        
+                                            addErrorMessage(inputParent, 'TRN Cannot Be 0 Or Exceed 20 Digits');
                                             inputField.style.border = '2px solid red'; 
 
                                             if (event.type === 'change') {
@@ -820,7 +939,36 @@ function updateBookingold(booking_id, booking) {
 
 
 
-                            }else if (inputField.name === 'agent_contact' || inputField.id =='agent_contact') {
+                            }else if (inputField.name === 'number_of_items') { 
+   
+          
+   
+   
+                            // validCharacters = /^\d{0,6}$/;  // without decimal 
+                            validCharacters = /^\d{0,6}(\.\d{0,2})?$/;   //with decimal 2 place
+                            const numericOnlyPattern = /^\d+$/; // Checks for numeric-only input
+                            const inputValue = inputField.value; 
+
+                                        const numericValue = parseInt(inputValue, 10);
+
+                                        if (!numericOnlyPattern.test(inputField.value)) {
+                                            // Allow common validation to handle non-numeric characters
+                                        } else if (inputValue.length > 3 || inputValue == 0  ) {                        
+                                            addErrorMessage(inputParent, 'Pacakge Number Cannot Be 0 Or Exceed 3 Digits');
+                                            inputField.style.border = '2px solid red'; 
+
+                                            if (event.type === 'change') {
+                                                inputField.value = ''; 
+                                            }    
+                                            return;
+                                            } 
+
+
+                                            inputField.style.border = '';
+
+
+
+   }else if (inputField.name === 'contact' || inputField.id =='agent_contact') {
    
    
                                             
@@ -847,7 +995,34 @@ function updateBookingold(booking_id, booking) {
 
 
 
-   }else if (inputField.type === 'date') {
+   }else if (inputField.name === 'bol_number' || inputField.name =='chassis_number' || inputField.name =='declaration_number' || inputField.name =='container_number' ) {
+   
+   
+                                            
+       validCharacters = /^\d{0,20}$/;
+   const numericOnlyPattern = /^\d+$/; // Checks for numeric-only input
+   const inputValue = inputField.value; 
+
+               const numericValue = parseInt(inputValue, 10);
+
+               if (!numericOnlyPattern.test(inputField.value)) {
+                   // Allow common validation to handle non-numeric characters
+               } else if (inputValue.length > 20 || inputValue.length < 1  ) {                        
+                   addErrorMessage(inputParent, 'This Must Be Between 1 And 20 Digits.');
+                   inputField.style.border = '2px solid red'; 
+
+                   if (event.type === 'change') {
+                       inputField.value = ''; 
+                   }    
+                   return;
+                   } 
+
+
+                   inputField.style.border = '';
+
+
+
+}else if (inputField.type === 'date') {
          
                                 validCharacters = /^(?:\d{4}[-\/]\d{2}[-\/]\d{2})$/; 
                                 
@@ -1049,9 +1224,13 @@ function updateBookingold(booking_id, booking) {
         }, 5000); // 5000 milliseconds = 5 seconds
     });
    
-   
-   
+
+
+    
+
+
    //====================== Command Kilvish validation End ===============================
+
 
 
 

@@ -43,6 +43,14 @@
 
 <style>
 
+@media (min-width: 1200px) {
+    .navmenu>ul>li {
+        white-space: nowrap;
+        padding: 2px 6px;
+    }
+}
+
+
 .calendar-day.disabled {
     color: #ccc !important;
     pointer-events: none !important; /* Prevent clicking */
@@ -154,31 +162,31 @@
 
 
   <script>
-    function highlightActiveNavLink() {
-        const savedPath = localStorage.getItem('activeNavPath') || window.location.pathname;
 
-        // Remove active class from all links
-        document.querySelectorAll('#navmenu a').forEach((link) => {
-            link.classList.remove('active');
-        });
+function highlightActiveLink() {
+    const currentPath = window.location.pathname;
 
-        // Highlight the active link
-        const activeLink = document.querySelector(`#navmenu a[href="${savedPath}"]`);
-        if (activeLink) {
-            activeLink.classList.add('active');
+    // Remove active class from all links
+    document.querySelectorAll('#navmenu ul li a').forEach((link) => {
+        link.classList.remove('active');
+    });
+
+    // Add active class to the current link
+    const activeLink = document.querySelector(`#navmenu ul li a[href="${currentPath}"]`);
+    if (activeLink) {
+        activeLink.classList.add('active');
+
+        // Handle parent `li` element if necessary
+        const parentLi = activeLink.closest('li');
+        if (parentLi) {
+            parentLi.classList.add('active');
         }
     }
+}
 
-    document.addEventListener('DOMContentLoaded', () => {
-        highlightActiveNavLink();
+// Run the function after the DOM has fully loaded
+document.addEventListener('DOMContentLoaded', highlightActiveLink);
 
-        // Save active path to local storage on link click
-        document.querySelectorAll('#navmenu a').forEach((link) => {
-            link.addEventListener('click', () => {
-                localStorage.setItem('activeNavPath', link.getAttribute('href'));
-            });
-        });
-    });
 </script>
 
 

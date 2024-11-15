@@ -249,7 +249,7 @@ let transaction;
         const mailOptions = {
             from: AppEmail,
             to: email,
-            subject: 'Email Verification OTP (Kingston Booking)',
+            subject: 'Booking Verification OTP (Kingston Booking)',
             html: `
             <html>
             <head>
@@ -285,7 +285,7 @@ let transaction;
                       <h3 style="color: #333333;">Your One Time Password (OTP): <span style="color: #007BFF;">${otp}</span></h3>
                   </div>
            <p>To confirm your booking, we have sent you a One-Time Password (OTP). Please use the OTP below to complete your booking:</p>
-<p><strong>OTP: 123456</strong></p>
+
 <p>If you didn't request a booking or need assistance, please contact our support team immediately.</p>
 <p>Your OTP is valid for a limited time, so please use it promptly to confirm your appointment.</p>
 <p>Thank you for using Kingston Booking!</p>

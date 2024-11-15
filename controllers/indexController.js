@@ -1012,10 +1012,10 @@ const viewBookings = async (req, res, next) => {
         .query('SELECT * FROM tbl_booking_logs WHERE booking_id = @booking_id ORDER BY created_at DESC');
 
       // Step 2.2: Format the logs array (if any)
-      booking.logs = logsResult.recordset.map((log) => {
-        log.created_at = moment(log.created_at).format('YYYY-MM-DDTHH:mm:ssZ'); // Format created_at as needed
-        return log;
-      });
+      // booking.logs = logsResult.recordset.map((log) => {
+      //   log.created_at = moment(log.created_at).format('YYYY-MM-DDTHH:mm:ssZ'); // Format created_at as needed
+      //   return log;
+      // });
 
       // Step 2.3: Format booking_times
       // if (booking.booking_times) {

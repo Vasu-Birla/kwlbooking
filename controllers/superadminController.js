@@ -605,73 +605,175 @@ const error500 = async(req,res,next) => {
 
 
 
-const profile = async(req,res,next) => {
-  const con = await connection();
-  const output= req.cookies.kwl_msg || '';
+
+const profile = async (req, res, next) => {
+  const output = req.cookies.kwl_msg || '';
+
+  let pool;
+  let transaction;
+
   try {
-      await con.beginTransaction();
+      pool = await connection();
+      transaction = new sql.Transaction(pool);
+      await transaction.begin(); // Begin the transaction
 
-     await con.commit(); 
+      // Create a request object tied to the transaction
+      const request = transaction.request();
 
-     res.render('superadmin/profile',{output:output})
 
+      // Fetch counts
+      const result = await request.query(`
+        SELECT 
+            COUNT(*) AS totalAppointments,
+            COUNT(CASE WHEN booking_date = CONVERT(date, GETDATE()) THEN 1 END) AS todaysAppointments,
+            COUNT(CASE WHEN booking_date > GETDATE() THEN 1 END) AS upcomingAppointments,
+            COUNT(CASE WHEN booking_status = 'Cancelled' THEN 1 END) AS cancelledAppointments
+        FROM tbl_bookings
+    `);
+
+      
+
+      await transaction.commit();
+
+      const counts = result.recordset[0];
+
+      console.log("counts -> ", counts)
+
+      // Render with counts passed to the template
+      res.render('superadmin/profile',{output:output})
   } catch (error) {
-     console.error('Error:',error);
-     await con.rollback(); 
-     res.status(500).send('Internal Server Error');
+      // Rollback if an error occurs
+      if (transaction) await transaction.rollback();
+      console.error('Error:', error);
+      res.status(500).send('Internal Server Error');
   } finally {
-      con.release();
+      // Close the pool to release resources
+      if (pool) pool.close();
   }
-}
+};
+
+
+
+
+
 
 
 const updateUserPic = async (req, res, next) => {
-  console.log("sala ",req.file)
-  const con = await connection();
+  const output = req.cookies.kwl_msg || '';
 
+  let pool;
+  let transaction;
 
   try {
-    await con.beginTransaction();
-
     var image = req.admin.image
-
     if (req.file) {
       image = req.file.filename;
     }
-    await con.query('UPDATE tbl_admin SET image = ? WHERE admin_id  = ?', [image, req.admin.admin_id]);
 
-    await con.commit();
-    res.json({ msg: "success" })
+      pool = await connection();
+      transaction = new sql.Transaction(pool);
+      await transaction.begin(); // Begin the transaction
+
+      // Create a request object tied to the transaction
+      const request = transaction.request();
+
+
+    // Execute the update query
+    await request
+      .input('image', sql.NVarChar, image)
+      .input('admin_id', sql.Int, req.admin.admin_id)
+      .query('UPDATE tbl_admin SET image = @image WHERE admin_id = @admin_id');
+
+      
+
+      await transaction.commit();
+
+      const counts = result.recordset[0];
+
+      console.log("counts -> ", counts)
+
+      // Render with counts passed to the template
+      res.render('superadmin/profile',{output:output})
   } catch (error) {
-    await con.rollback();
-    console.log("failed to update profile pic --> ", error)
-    res.json({ msg: "failed" })
+      // Rollback if an error occurs
+      if (transaction) await transaction.rollback();
+      console.error('Error:', error);
+      res.status(500).send('Internal Server Error');
   } finally {
-    con.release();
+      // Close the pool to release resources
+      if (pool) pool.close();
   }
-
-
-}
+};
 
 
 
-const profilePost = async(req,res,next) => {
-  const con = await connection();
+const profilePost = async (req, res, next) => {
+  const output = req.cookies.kwl_msg || '';
+
+  let pool;
+  let transaction;
+  const { admin_id, first_name, last_name, email, country_code, contact, username } = req.body;
+
+  // Handle uploaded image (if any)
+  const image = req.file ? req.file.filename : null; // Multer attaches 'file' if image is uploaded
+
   try {
-      await con.beginTransaction();
-      cost
-     await con.commit(); 
+    pool = await connection();
+    transaction = new sql.Transaction(pool);
+    await transaction.begin(); // Begin the transaction
 
-     res.render('superadmin/profile',{output:''})
+    // Create a request object tied to the transaction
+    const request = transaction.request();
 
+    // Base update query
+    let updateQuery = `
+      UPDATE tbl_admin 
+      SET first_name = @first_name, 
+          last_name = @last_name, 
+          email = @email, 
+          username = @username, 
+          country_code = @country_code, 
+          contact = @contact
+    `;
+
+    // Add image field to the query if a new image is provided
+    if (image) {
+      updateQuery += `, image = @image`;
+      request.input('image', sql.NVarChar, image);
+    }
+
+    // Finalize query with the WHERE clause
+    updateQuery += ` WHERE admin_id = @admin_id`;
+
+    // Bind the inputs
+    request
+      .input('first_name', sql.NVarChar, first_name)
+      .input('last_name', sql.NVarChar, last_name)
+      .input('email', sql.NVarChar, email)
+      .input('username', sql.NVarChar, username)
+      .input('country_code', sql.NVarChar, country_code)
+      .input('contact', sql.NVarChar, contact)
+      .input('admin_id', sql.Int, admin_id);
+
+    // Execute the query
+    await request.query(updateQuery);
+
+    // Commit the transaction
+    await transaction.commit();
+
+    // Set success message and redirect
+    res.cookie('kwl_msg', 'Admin updated successfully!');
+    res.redirect('/superadmin/profile');
   } catch (error) {
-     console.error('Error:',error);
-     await con.rollback(); 
-     res.status(500).send('Internal Server Error');
+    // Rollback the transaction if an error occurs
+    if (transaction) await transaction.rollback();
+    console.error('Error:', error);
+    res.render('superadmin/kil500', { output: `${error}` });
   } finally {
-      con.release();
+    // Release the pool resources
+    if (pool) pool.close();
   }
-}
+};
 
 
 

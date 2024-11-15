@@ -89,28 +89,38 @@
                                     <input type="hidden" id="calendarId" name="calendarId" value="" >
                                     <div class="col-md-6">
                                         <label>* TRN</label>
-                                        <input type="text" id="trn" name="trn" class="form-control" placeholder="Enter the number" required="">
+                                        <input type="text" id="trn" name="trn" class="form-control" placeholder="Enter the number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
                                     </div>
                                     <div class="col-md-6"></div>
                                     <div class="col-md-6">
                                         <label>* First Name</label>
-                                        <input type="text" id="fname" class="form-control" name="firstname" placeholder="Enter the name" required="">
+                                        <input type="text" id="fname" class="form-control" name="firstname" placeholder="Enter the name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
                                     </div>
                                     <div class="col-md-6">
                                         <label>Last Name</label>
-                                        <input type="text" id="lname" class="form-control" name="lastname"  placeholder="Last Name" required="">
+                                        <input type="text" id="lname" class="form-control" name="lastname"  placeholder="Last Name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
                                     </div>
                                     <div class="col-md-6">
                                         <label>* Mobile Number</label>
                                         <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <select id="countrycode" class="form-control" name="country_code" required>
+                                            <!-- <div class="input-group-prepend">
+                                                <select id="country_code" class="form-control" name="country_code" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required>
                                                     <option value="+1">+1 (USA)</option>
                                                     <option value="+44">+44 (UK)</option>
                                                     <option value="+91">+91 (India)</option>
                                                 </select>
                                             </div>
-                                            <input type="tel" id="phone4" class="form-control" name="contact" placeholder="Enter contact number" required>
+                                            <input type="tel" id="kilvishcontact" class="form-control" name="contact" placeholder="Enter contact number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required>
+ -->
+
+
+
+                                            <input type="tel" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" name="contact" id="kilvishcontact"   class="form-control" placeholder="Mobile Number" required>
+
+    
+                                            <input type="hidden" id="fullkilvishcontact" name="fullkilvishcontact"  >
+                                            <input type="hidden" id="country_code" name="country_code" >
+
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -120,21 +130,21 @@
                                         <% if (typeof loggeduser !== 'undefined' && loggeduser.user_email) { %>
                                             <input type="email" id="email" class="form-control" name="user_email"  value="<%= loggeduser.user_email %>" readonly>
                                         <% } else { %>
-                                            <input type="email" id="email" class="form-control" name="user_email" placeholder="Enter the email" required>
+                                            <input type="email" id="email" class="form-control" name="user_email" placeholder="Enter the email" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required>
                                         <% } %>
                                     </div>
                                     <div class="col-md-6">
                                         <label>* Agent/Freight Forwarder</label>
-                                        <input type="text" id="agent" class="form-control" name="agent_forwarder" placeholder="Enter the name" required="">
+                                        <input type="text" id="agent" class="form-control" name="agent_forwarder" placeholder="Enter the name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
                                     </div>
                                     <div class="col-md-6">
                                         <label>* Name of Individual Making Appointment</label>
-                                        <input type="text" id="appname" class="form-control" name="appointment_by" placeholder="Enter the name" required="">
+                                        <input type="text" id="appname" class="form-control" name="appointment_by" placeholder="Enter the name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
                                     </div>
                                     <div class="col-md-6">
                                         <label>* Appointment Type (Personal/Commercial)</label>
                                         <!-- <input type="text" id="apppersonal" class="form-control" name="appointment_type" placeholder="Enter the appointment type" required=""> -->
-                                        <select id="apppersonal" class="form-control" name="appointment_type" required>
+                                        <select id="apppersonal" class="form-control" name="appointment_type"  required>
                                             <option value="">Select any one</option>
                                             <option value="Personal">Personal</option>
                                             <option value="Commercial">Commercial</option>
@@ -144,31 +154,31 @@
                                     
                                     <div class="col-md-6">
                                         <label>* Bill of Lading Number</label>
-                                        <input type="text" id="blnumber" class="form-control" name="bol_number" placeholder="Enter the number" required="">
+                                        <input type="text" id="blnumber" class="form-control" name="bol_number" placeholder="Enter the number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
                                     </div>
                                     <div class="col-md-12">
                                         <label>* Vessel Name</label>
-                                        <input type="text" id="vname" class="form-control" name="vessel_name" placeholder="Enter the vessel name" required="">
+                                        <input type="text" id="vname" class="form-control" name="vessel_name" placeholder="Enter the vessel name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
                                     </div>
                                     <div class="col-md-12">
                                         <label>* Vessel Reported Date</label>
-                                        <input type="date" id="vreport" class="form-control" name="vessel_reported_date" placeholder="Vessel Reported Date" required="">
+                                        <input type="date" id="vreport" class="form-control" name="vessel_reported_date" placeholder="Vessel Reported Date" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
                                     </div>
                                     <div class="col-md-6">
                                         <label>* Chassis No (in the case of Motor Unit Appointments)</label>
-                                        <input type="text" id="chassis" class="form-control" name="chassis_number" placeholder="Enter the number" required="">
+                                        <input type="text" id="chassis" class="form-control" name="chassis_number" placeholder="Enter the number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
                                     </div>
                                     <div class="col-md-6">
                                         <label>* Customs Release/IMS4 Declaration Number</label>
-                                        <input type="text" id="ims" class="form-control" name="declaration_number" placeholder="Customs Release/IMS4 Declaration Number" required="">
+                                        <input type="text" id="ims" class="form-control" name="declaration_number" placeholder="Customs Release/IMS4 Declaration Number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
                                     </div>
                                     <div class="col-md-6">
                                         <label>Container Number</label>
-                                        <input type="text" id="cnumber" class="form-control" name="container_number" placeholder="Enter the data" required="">
+                                        <input type="text" id="cnumber" class="form-control" name="container_number" placeholder="Enter the data" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
                                     </div>
                                     <div class="col-md-6">
                                         <label>* Number of Pieces/Packages</label>
-                                        <input type="number" min="0" id="ppnumber" class="form-control" name="number_of_items" placeholder="Enter the packages" required="">
+                                        <input type="number" min="0" id="ppnumber" class="form-control" name="number_of_items" placeholder="Enter the packages" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
                                     </div>
                                 </div>
                             </form>
@@ -346,6 +356,7 @@ appointmentTypeSelect.addEventListener('change', function() {
     const defaultOption = appointmentTypeSelect.options[0];
     defaultOption.disabled = true;
 
+
     appointmentTypeID = document.getElementById("appointmentType").value,
 
     // Fetch the data-calendar-id using getAttribute
@@ -354,6 +365,15 @@ appointmentTypeSelect.addEventListener('change', function() {
      document.getElementById('calendarId').value = calendarId;
 
     console.log('Selected Calendar ID:', calendarId);
+
+ 
+    const timeContainer = document.getElementById("timeSlots");                     
+    timeContainer.innerHTML = "";
+
+
+     selectedTimes = [];
+     selectedDate=null;   
+
 });
 
 
@@ -383,9 +403,9 @@ appointmentTypeSelect.addEventListener('change', function() {
 
     function changeTab(step) {
         
-        if(currentTab==1){
-            selectedTimes = [];
-        }
+        // if(currentTab==1){
+        //     selectedTimes = [];
+        // }
         const newTabIndex = currentTab + step;
         if (newTabIndex >= 0 && newTabIndex < tabs.length) showTab(newTabIndex);
     }
@@ -393,7 +413,9 @@ appointmentTypeSelect.addEventListener('change', function() {
     function nextStep() {
         if (!validateCurrentTab()) return;
 
-        if (currentTab === 0 && (!selectedDate || selectedTimes.length === 0)) {
+      
+
+        if (currentTab === 0 && (!selectedDate || selectedTimes.length == 0)) {
             alert("Please select a date and at least one time slot.");
             return;
         } else if (currentTab === 1 && !validateInfo()) {
@@ -422,8 +444,8 @@ appointmentTypeSelect.addEventListener('change', function() {
         const trn = document.getElementById("trn").value || "N/A";
         const firstName = document.getElementById("fname").value || "N/A";
         const lastName = document.getElementById("lname").value || "N/A";
-        const countrycode = document.getElementById("countrycode").value || "N/A";
-        const mobileNumber = document.getElementById("phone4").value || "N/A";
+        const country_code = document.getElementById("country_code").value || "N/A";
+        const mobileNumber = document.getElementById("kilvishcontact").value || "N/A";
         const email = document.getElementById("email").value || "N/A";
         const agent = document.getElementById("agent").value || "N/A";
         const appname = document.getElementById("appname").value || "N/A";
@@ -442,7 +464,7 @@ appointmentTypeSelect.addEventListener('change', function() {
         document.getElementById("confirmFirstName").textContent = firstName;
         document.getElementById("confirmLastName").textContent = lastName;
         document.getElementById("confirmEmail").textContent = email;
-        document.getElementById("confirmPhone").textContent = `${countrycode} ${mobileNumber}`;
+        document.getElementById("confirmPhone").textContent = `${country_code} ${mobileNumber}`;
         document.getElementById("confirmAgent").textContent = agent;
         document.getElementById("confirmAppName").textContent = appname;
         document.getElementById("confirmAppointmentType").textContent = appointmentType;
@@ -458,7 +480,7 @@ appointmentTypeSelect.addEventListener('change', function() {
 
 
     function validateInfo() {
-        return ["fname", "lname", "email", "phone4"].every(id => document.getElementById(id).value.trim());
+        return ["fname", "lname", "email", "kilvishcontact"].every(id => document.getElementById(id).value.trim());
     }
 
     async function loadAppointmentTypes() {
@@ -1018,8 +1040,8 @@ async function directConfirmBooking(email) {
                 trn: document.getElementById("trn").value,
                 firstname: document.getElementById("fname").value,
                 lastname: document.getElementById("lname").value,
-                contact: document.getElementById("phone4").value,
-                country_code: document.getElementById("countrycode").value,
+                contact: document.getElementById("kilvishcontact").value,
+                country_code: document.getElementById("country_code").value,
                 user_email: document.getElementById("email").value,
                 agent_forwarder: document.getElementById("agent").value,
                 appointment_by: document.getElementById("appname").value,
@@ -1076,6 +1098,584 @@ async function directConfirmBooking(email) {
         Swal.fire('Error', 'Internal Server Error, Please try again later.', 'error');
     }
 }
+
+
+
+
+
+</script>
+
+
+
+<script>
+
+
+
+
+   //==================== Comman Kilvalidation start =====================
+   
+      
+   function validateRequiredFields(kil) {
+   
+   
+   const form = document.querySelector(`${kil}`); 
+   
+   const inputs = form.querySelectorAll('input[required], select[required], textarea[required]'); // Get only required inputs
+   
+   
+   let isValid = true;
+   let kilerror = 'This Field is Required.'
+   
+   
+   
+   // Remove previous error messages and borders
+   form.querySelectorAll('.error-message').forEach(errorMsg => errorMsg.remove());
+   inputs.forEach(input => {
+    
+       input.style.border = ''; // Reset borders
+   });
+   
+   inputs.forEach(input => {
+   
+   
+   
+                    if(input.type == 'date'){
+                        
+                        kilerror = "Please Select Date"
+                        input.style.border = '1px solid red';
+                    }else if(input.name == 'comments'){
+                    
+                        kilerror = 'Please Enter Comments'
+                    }else if(input.type == 'email'){
+                    
+                    kilerror = 'Please Enter Email'
+                }else if(input.type == 'password'){
+                    
+                    kilerror = 'Please Enter Password'
+                }else{
+                    kilerror = 'This Field is Required.'
+                }
+     
+   
+       if (!input.value.trim()) {  // If the required field is empty      
+           isValid = false;
+           input.style.border = '1px solid red'; // Set border to red for empty required fields
+           addErrorMessage(input.parentNode, kilerror); // Add error message
+       }
+   });
+   
+   return isValid;
+   }
+   
+   
+   // Add real-time validation for each required field
+   function addRealTimeValidation(kil) {
+       const form = document.querySelector(`${kil}`); 
+       const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+   
+       inputs.forEach(input => {
+           input.addEventListener('input', function () {
+               const label = document.querySelector(`label[for='${input.name}']`); // Find label based on name
+               if (input.value.trim()) {
+                   input.style.border = '';
+                   const errorMessage = input.parentNode.querySelector('.error-message');
+                   if (errorMessage) {
+                       errorMessage.remove();
+                   }
+                   if (label && label.innerHTML.includes('*')) {
+                       label.innerHTML = label.innerHTML.replace(' <span style="color:red;">*</span>', ''); // Remove asterisk
+                   }
+               } else {
+                   // If the input is empty again, add the asterisk back
+                   if (label && !label.innerHTML.includes('*')) {
+                       label.innerHTML += ' <span style="color:red;">*</span>'; // Append asterisk
+                   }
+               }
+           });
+   
+           input.addEventListener('change', function () {
+               const label = document.querySelector(`label[for='${input.name}']`); // Find label based on name
+               if (input.value.trim()) {
+                   input.style.border = '';
+                   const errorMessage = input.parentNode.querySelector('.error-message');
+                   if (errorMessage) {
+                       errorMessage.remove();
+                   }
+                   if (label && label.innerHTML.includes('*')) {
+                       label.innerHTML = label.innerHTML.replace(' <span style="color:red;">*</span>', ''); // Remove asterisk
+                   }
+               } else {
+                   // If the select input is empty again, add the asterisk back
+                   if (label && !label.innerHTML.includes('*')) {
+                       label.innerHTML += ' <span style="color:red;">*</span>'; // Append asterisk
+                   }
+               }
+           });
+       });
+   }
+   
+   
+   // Combined validation function
+   function validateForm(kil) {
+   
+   
+   if(!validateRequiredFields(kil)){
+     event.preventDefault();
+   }
+   }
+   
+   // Add real-time validation once the document is loaded
+   document.addEventListener('DOMContentLoaded', () => {
+   addRealTimeValidation('#kilform');  // Activate real-time validation
+   });
+   
+   
+   function validateKilvishInput(event) {
+          const inputField = event.target;
+      
+          // General valid character sets
+          // let validCharacters = /^[a-zA-Z0-9@,._\s-]*$/;
+      
+          let validCharacters = /^[a-zA-Z\s]*$/; // only char, no special char no numbers 
+      
+          // Define allowed image file types
+          const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/tiff', 'image/webp', 'image/svg+xml'];
+      
+          // Use parentNode for regular inputs, container for checkboxes
+          const container = inputField.closest('.col-lg-12') || inputField.closest('.form-group') || inputField.closest('div');
+          const inputParent = inputField.parentNode;
+      
+          // Remove previous error message and border
+          let errorMessage = inputParent.querySelector('.error-message');
+          if (errorMessage) errorMessage.remove();
+          inputField.style.border = ''; // Reset border
+      
+          // Custom validations based on input name
+          if (inputField.name === 'description' || inputField.name ===  'address') {
+              validCharacters = /^[a-zA-Z0-9@,._\s-'"*]*$/;
+      
+              // Check length limit
+              if (inputField.value.length > 400) {
+                  addErrorMessage(inputParent, 'Input exceeds the maximum length of 400 characters!');
+                  inputField.style.border = '1px solid red';
+                  inputField.value = inputField.value.substring(0, 400); // Truncate the input
+                  return;
+              }
+          }  else if (inputField.name === 'firstname' ||  inputField.name === 'lastname' ) {
+   
+                         validCharacters = /^[a-zA-Z\s]*$/; 
+                   
+                       // const allowedChars = /^[a-zA-Z0-9._@-]+$/;  //for kilMiddle Conditon 
+                        const allowedChars = /^[a-zA-Z0-9._@-\s]+$/; // For any additional validations
+                        
+                        const inputValue = inputField.value; 
+
+                          
+
+                                    if (!allowedChars.test(inputField.value)) {
+                                        // Allow common validation to handle non-numeric characters
+                                    } else if (inputValue.length > 20 || inputValue.length < 2  ) {                        
+                                        addErrorMessage(inputParent, 'This Field Must Be Between 2 And 20 Characters.');
+                                        inputField.style.border = '1px solid red'; 
+
+                                        if (event.type === 'change') {
+                                            inputField.value = ''; 
+                                        }    
+                                        return;
+                                        } 
+
+
+                                        inputField.style.border = '';
+
+
+
+                        } else if (inputField.name === 'otp') {
+   
+   
+   
+              validCharacters = /^\d{6,6}$/;
+              const numericOnlyPattern = /^\d+$/; // Checks for numeric-only input
+            const inputValue = inputField.value; 
+   
+                        const numericValue = parseInt(inputValue, 10);
+   
+                        if (!numericOnlyPattern.test(inputField.value)) {
+                           // Allow common validation to handle non-numeric characters
+                       } else if (inputValue.length > 6 || inputValue.length < 6  ) {                        
+                              addErrorMessage(inputParent, 'OTP must be exactly 6 digits');
+                              inputField.style.border = '1px solid red'; 
+   
+                              if (event.type === 'change') {
+                                 inputField.value = ''; 
+                              }    
+                              return;
+                           } 
+   
+   
+                           inputField.style.border = '';
+   
+   
+   
+          }else if (inputField.name === 'trn') { 
+   
+          
+   
+   
+                             validCharacters = /^\d{0,20}$/;
+                            const numericOnlyPattern = /^\d+$/; // Checks for numeric-only input
+                            const inputValue = inputField.value; 
+                      
+                                        const numericValue = parseInt(inputValue, 10);
+
+                                        if (!numericOnlyPattern.test(inputField.value)) {
+                                            // Allow common validation to handle non-numeric characters
+                                        } else if (inputValue.length > 20 || inputValue == 0  ) {                        
+                                            addErrorMessage(inputParent, 'TRN Cannot Be 0 Or Exceed 20 Digits');
+                                            inputField.style.border = '2px solid red'; 
+
+                                            if (event.type === 'change') {
+                                                inputField.value = ''; 
+                                            }    
+                                            return;
+                                            } 
+
+
+                                            inputField.style.border = '';
+
+
+
+                            }else if (inputField.name === 'number_of_items') { 
+   
+          
+   
+   
+                            // validCharacters = /^\d{0,6}$/;  // without decimal 
+                            validCharacters = /^\d{0,6}(\.\d{0,2})?$/;   //with decimal 2 place
+                            const numericOnlyPattern = /^\d+$/; // Checks for numeric-only input
+                            const inputValue = inputField.value; 
+
+                                        const numericValue = parseInt(inputValue, 10);
+
+                                        if (!numericOnlyPattern.test(inputField.value)) {
+                                            // Allow common validation to handle non-numeric characters
+                                        } else if (inputValue.length > 3 || inputValue == 0  ) {                        
+                                            addErrorMessage(inputParent, 'Pacakge Number Cannot Be 0 Or Exceed 3 Digits');
+                                            inputField.style.border = '2px solid red'; 
+
+                                            if (event.type === 'change') {
+                                                inputField.value = ''; 
+                                            }    
+                                            return;
+                                            } 
+
+
+                                            inputField.style.border = '';
+
+
+
+   }else if (inputField.name === 'contact' || inputField.id =='agent_contact') {
+   
+   
+                                            
+                                            validCharacters = /^\d{7,10}$/;
+                                            const numericOnlyPattern = /^\d+$/; // Checks for numeric-only input
+                                            const inputValue = inputField.value; 
+
+                                                        const numericValue = parseInt(inputValue, 10);
+
+                                                        if (!numericOnlyPattern.test(inputField.value)) {
+                                                            // Allow common validation to handle non-numeric characters
+                                                        } else if (inputValue.length > 10 || inputValue.length < 7  ) {                        
+                                                            addErrorMessage(inputParent, 'Mobile Number Must Be Between 7 And 10 Digits.');
+                                                            inputField.style.border = '2px solid red'; 
+
+                                                            if (event.type === 'change') {
+                                                                inputField.value = ''; 
+                                                            }    
+                                                            return;
+                                                            } 
+
+
+                                                            inputField.style.border = '';
+
+
+
+   }else if (inputField.name === 'bol_number' || inputField.name =='chassis_number' || inputField.name =='declaration_number' || inputField.name =='container_number' ) {
+   
+   
+                                            
+       validCharacters = /^\d{0,20}$/;
+   const numericOnlyPattern = /^\d+$/; // Checks for numeric-only input
+   const inputValue = inputField.value; 
+
+               const numericValue = parseInt(inputValue, 10);
+
+               if (!numericOnlyPattern.test(inputField.value)) {
+                   // Allow common validation to handle non-numeric characters
+               } else if (inputValue.length > 20 || inputValue.length < 1  ) {                        
+                   addErrorMessage(inputParent, 'This Must Be Between 1 And 20 Digits.');
+                   inputField.style.border = '2px solid red'; 
+
+                   if (event.type === 'change') {
+                       inputField.value = ''; 
+                   }    
+                   return;
+                   } 
+
+
+                   inputField.style.border = '';
+
+
+
+}else if (inputField.type === 'date') {
+         
+                                validCharacters = /^(?:\d{4}[-\/]\d{2}[-\/]\d{2})$/; 
+                                
+                                const inputValue = inputField.value.trim();
+   
+   
+                                const inputDate = new Date(inputValue.replace(/[-\/]/g, '/'));
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0); // Set to midnight for comparison
+   
+                                         // Check if the date is in the past
+                          if (inputDate < today) {
+                             addErrorMessage(inputParent, 'The date cannot be in the past.');
+                             inputField.style.border = '2px solid red';
+                             
+                             if (event.type === 'change') {
+                                   inputField.value = ''; // Clear the input field on change
+                             }
+                             
+                             return; // Exit the function after handling the error
+                          }
+   
+   
+                 inputField.style.border = '';
+                  }else if (inputField.name === 'model_name' || inputField.name ==='models[]') {
+                     // Only numbers allowed, between 7 and 10 digits
+                     validCharacters = /^[a-zA-Z0-9]{4,20}$/;
+                  }else if(inputField.type =='email'){
+                     validCharacters = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/; // Basic email pattern
+                     const allowedEmailChars = /^[a-zA-Z0-9._@-]+$/; 
+                    
+                     const inputValue = inputField.value; 
+   
+                     // If input contains invalid characters, skip email validation and let common validation handle it
+                               if (!allowedEmailChars.test(inputValue)) {
+                                   // Skip email validation, allowing common validation to catch unwanted characters
+                               } else if (!validCharacters.test(inputValue)) {                        
+                                 addErrorMessage(inputParent, 'Invalid Email Format.');
+                                 inputField.style.border = '1px solid red'; 
+   
+                                 if (event.type === 'change') {
+                                   inputField.value = ''; 
+                                 }    
+                                 return;
+                             } 
+   
+   
+                             inputField.style.border = '';
+   
+                  }else if(inputField.type ==='password'){
+      
+                                  const hasSequentialChars = (password) => {
+                                       console.log("passworddddddd -", password)
+                                       const length = password.length;
+                                       
+                                       // Check for ascending sequences (e.g., "123", "abc")
+                                       for (let i = 0; i < length - 3; i++) {
+                                          if (password.charCodeAt(i + 1) === password.charCodeAt(i) + 1 &&
+                                                password.charCodeAt(i + 2) === password.charCodeAt(i) + 2 &&
+                                                password.charCodeAt(i + 3) === password.charCodeAt(i) + 3) {
+                                                return true; // Ascending sequence found
+                                          }
+                                       }
+      
+                                       // Check for descending sequences (e.g., "321", "cba")
+                                       for (let i = 0; i < length - 3; i++) {
+                                          if (password.charCodeAt(i + 1) === password.charCodeAt(i) - 1 &&
+                                                password.charCodeAt(i + 2) === password.charCodeAt(i) - 2 &&
+                                                password.charCodeAt(i + 3) === password.charCodeAt(i) - 3) {
+                                                return true; // Descending sequence found
+                                          }
+                                       }
+                                       
+                                       return false; // No sequential characters
+                                    };
+      
+                     
+      
+                     validCharacters = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{12,}$/;
+      
+      
+                                                // Check if password meets the required pattern
+                                 if (!validCharacters.test(inputField.value)) {
+                                    addErrorMessage(inputParent, 'Password must be at least 12 characters long and contain at least one uppercase letter, one lowercase letter, one special character, and one number.');
+                                    inputField.style.border = '1px solid red';
+                                    if (event.type === 'change') {   inputField.value = '';  }
+                                    return; // Stop further validation
+                                 }
+      
+                                 // Check for sequential characters
+                                 if (hasSequentialChars(inputField.value)) {
+                                    addErrorMessage(inputParent, 'Password should not contain sequential characters.');
+                                    inputField.style.border = '1px solid red';
+                                       if (event.type === 'change') {   inputField.value = '';  }
+                                    return; // Stop further validation
+                                 }
+      
+      
+                                 // Function to check for sequential characters in the password
+                       
+                                                         
+      
+      
+      
+                  }
+                    
+      
+                  
+      
+      
+      
+          // Handle file input validation
+          if (inputField.type === 'file') {
+              const file = inputField.files[0];
+              if (file && !validImageTypes.includes(file.type)) {
+                  addErrorMessage(inputParent, 'Please select a valid image file (JPEG, PNG, etc.)');
+                  inputField.value = ''; // Clear the file input field
+                  inputField.style.border = '1px solid red';
+                  return;
+              }
+          } else {
+              // For normal text/number input validation
+              if (event.type === 'keyup') {
+                  if (!validCharacters.test(inputField.value)) {
+                      addErrorMessage(inputParent, 'Invalid character entered!');
+                      inputField.style.border = '1px solid red';
+                      
+                  }
+              }
+      
+              if (event.type === 'change') {
+                  if (!validCharacters.test(inputField.value)) {
+                      // On invalid input during change event, clear the field and show an error
+                      inputField.value = ''; // Clear invalid input
+                      addErrorMessage(inputParent, 'Invalid character or format!');
+                      inputField.style.border = '1px solid red';
+                  } else {
+                      // Clear error when value is corrected
+                      inputField.style.border = '';
+                      if (errorMessage) errorMessage.remove();
+                  }
+              }
+          }
+      }
+      
+   
+   
+   
+   
+   
+      // Function to display error messages under the input field or container for checkboxes
+      function addErrorMessage(parent, message) {
+          if (!parent.querySelector('.error-message')) {
+              const errorMessage = document.createElement('div');
+              errorMessage.className = 'error-message';
+              errorMessage.style.color = 'red';
+              errorMessage.style.fontSize = '12px';
+              errorMessage.innerText = message;
+              parent.appendChild(errorMessage);
+          }
+      }
+      
+      
+   
+   
+      document.addEventListener('DOMContentLoaded', () => {    
+       addRealTimeValidation('#kilform');  // Activate real-time validation
+
+       const form = document.querySelector(`#kilform`); 
+      // const requiredFields = form.querySelectorAll('input[required], select[required], textarea[required]');
+      const requiredFields = document.querySelectorAll('input[required], select[required], textarea[required]');
+   
+            requiredFields.forEach(field => {
+    
+       const label = document.querySelector(`label[for='${field.name}']`); // Use name instead of id
+      // Check if the field is empty
+                     if (label && !label.innerHTML.includes('*') && field.value.trim() === '') { 
+                                          // Append asterisk only if the field is empty
+                            label.innerHTML += ' <span style="color:red;">*</span>'; 
+                        }
+
+   
+   });
+   
+   
+   });
+
+
+
+   //============= Clear Kilalert msg after 5 sec =========== 
+    // Wait for the DOM to fully load
+    document.addEventListener("DOMContentLoaded", function() {
+        // Set a timeout to clear the message after 5 seconds
+        setTimeout(function() {
+            const messageElement = document.getElementById("kilmessage");
+            if (messageElement) {
+                messageElement.innerHTML = ""; // Clear the message
+            }
+        }, 5000); // 5000 milliseconds = 5 seconds
+    });
+   
+
+
+    
+
+  document.addEventListener("DOMContentLoaded", function() {
+        var input = document.querySelector("#kilvishcontact");
+
+        var iti = window.intlTelInput(input, {
+          preferredCountries: ["hk", "cn"], // Customize based on your needs
+          separateDialCode: true,
+          initialCountry: "hk",
+          utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.min.js", // Utility script
+        });
+
+
+
+    // Update hidden input field with full phone number
+    input.addEventListener("input", function() {
+      var fullPhoneNumber = iti.getNumber();
+      var countryCode =   '+'+iti.getSelectedCountryData().dialCode;
+      document.querySelector("#fullkilvishcontact").value = fullPhoneNumber;
+      document.querySelector("#country_code").value = countryCode;
+
+    });
+
+
+    input.addEventListener("countrychange", function() {
+    var fullPhoneNumber = iti.getNumber();  // Get the full number
+    var countryCode = '+' + iti.getSelectedCountryData().dialCode;  // Get the new country code
+    // Update hidden fields
+    document.querySelector("#fullkilvishcontact").value = fullPhoneNumber;
+    document.querySelector("#country_code").value = countryCode;
+  });
+
+
+
+
+    // Initialize hidden field with the current value on page load
+    var fullPhoneNumber = iti.getNumber();
+    var countryCode =   '+'+iti.getSelectedCountryData().dialCode;
+    document.querySelector("#fullkilvishcontact").value = fullPhoneNumber;
+    document.querySelector("#country_code").value = countryCode;
+
+  });
+   
+   
+   //====================== Command Kilvish validation End ===============================
 
 
 

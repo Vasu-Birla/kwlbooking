@@ -7,8 +7,8 @@
         
    
    
-   
-   <div class="content-wrapper">
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
         
         <!-- Content Header (Page header) -->
         <section class="content-header">
@@ -38,10 +38,10 @@
                     <div class="card card-primary card-outline">
                         <div class="card-body box-profile">
                             <div class="text-center">
-                                <img class="profile-user-img img-fluid img-circle" src="../adminassets/images/user-160x160.jpg" alt="User profile picture">
+                                <img class="profile-user-img img-fluid img-circle" src="images/user-160x160.jpg" alt="User profile picture">
                             </div>
-                            <h3 class="profile-username text-center"><?php echo $fetch_row['name']; ?></h3>
-                            <p class="text-muted text-center"><?php echo $fetch_row['user_type']; ?></p>
+                            <h3 class="profile-username text-center">Admin</h3>
+                            <p class="text-muted text-center">Adminstration</p>
                         </div>
                     </div>
                     <!-- Profile Image -->
@@ -64,25 +64,25 @@
                                         <div class="form-group row">
                                             <label for="inputName" class="col-sm-2 col-form-label">Name</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control" placeholder="Name" name="name" value="<?php echo $fetch_row['name']; ?>" autocomplete="off" required>
+                                                <input type="text" class="form-control" placeholder="Name" name="name" value="" autocomplete="off" required>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label for="inputUserName" class="col-sm-2 col-form-label">User Name</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control" placeholder="Username" name="username" value="<?php echo $fetch_row['username']; ?>" autocomplete="off" required>
+                                                <input type="text" class="form-control" placeholder="Username" name="username" value="" autocomplete="off" required>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
                                             <div class="col-sm-10">
-                                                <input type="email" class="form-control" placeholder="Email" name="email" value="<?php echo $fetch_row['email']; ?>" autocomplete="off" required>
+                                                <input type="email" class="form-control" placeholder="Email" name="email" value="" autocomplete="off" required>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label for="inputMobileNumber" class="col-sm-2 col-form-label">Mobile Number</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control" placeholder="Mobile Number" name="contact" value="<?php echo $fetch_row['contact']; ?>" minlength="10" maxlength="10" onkeypress="if ( isNaN( String.fromCharCode(event.keyCode) )) return false;" autocomplete="off" required>
+                                                <input type="text" class="form-control" placeholder="Mobile Number" name="contact" value="" minlength="10" maxlength="10" onkeypress="if ( isNaN( String.fromCharCode(event.keyCode) )) return false;" autocomplete="off" required>
                                             </div>
                                         </div>
                                         <!--<div class="form-group row">
@@ -154,6 +154,7 @@
             </div>
         </section>
     </div>
-
+  
+  
     <%- include ("footer.ejs") %>
   
