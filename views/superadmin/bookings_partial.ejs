@@ -8,13 +8,13 @@
           <th>Mobile Number</th>
           <th>Email Address</th>
           <th>Agent/Freight Forwarder</th>
-          <th>Individual Making Appointment</th>
+          <th>Name of Individual Making Appointment</th>
           <th>Appointment Type</th>
           <th>Vessel Name</th>
           <th>Vessel Reported Date</th>
           <th>Bill of Lading Number</th>
           <th>Chassis No</th>
-          <th>IMS4 Declaration Number</th>
+          <th>Customs Release/IMS4 Declaration Number</th>
           <th>Container Number</th>
           <th>Number of Pieces/Packages</th>
           <th>Status</th>
@@ -33,7 +33,7 @@
             <td><%= booking.trn %></td>
             <td><%= booking.firstname %></td>
             <td><%= booking.lastname %></td>
-            <td><%= booking.contact %></td>
+            <td><%= booking.country_code %><%= booking.contact %></td>
             <td><%= booking.user_email %></td>
             <td><%= booking.agent_forwarder %></td>
             <td><%= booking.appointment_by %></td>

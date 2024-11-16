@@ -11,6 +11,12 @@ const config = {
   options: {
     encrypt: true, // Use encryption if your server supports it
     trustServerCertificate: true // change this to true if using a self-signed certificate
+  },
+  pool: {
+    max: 30,       // Maximum number of connections in the pool
+    min: 0,        // Minimum number of connections in the pool
+    idleTimeoutMillis: 30000,  // Timeout for idle connections
+    acquireTimeoutMillis: 30000 // Timeout for acquiring a new connection
   }
 };
 

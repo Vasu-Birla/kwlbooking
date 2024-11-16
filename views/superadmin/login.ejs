@@ -22,6 +22,8 @@
     
     <!-- Common Pages CSS -->
     <link rel="stylesheet" href="../adminassets/dist/common.css">
+    
+    <link rel="stylesheet" href="../adminassets/dist/css/style.css">
 </head>
 <body class="hold-transition login-page" style="background-size: cover;background-image: url(images/background_image.jpg) !important;">
     <div class="login-box">
@@ -34,6 +36,13 @@
             </div>
             <div class="card-body">
                 <p class="login-box-msg">Login in Dashboard</p>
+                    <!-- alert msgs -->
+                    <% if ( output.includes('successfully') ) { %>
+                        <p id="kilmessage" class="success-text"><%= output %></p>
+                     <% } else { %>
+                        <p id="kilmessage" class="error-text"><%= output %></p>
+                     <% } %>
+                       <!-- /alert msgs -->
                 <form method="post" action="/superadmin/login">
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" name="username" id="username" placeholder="Enter username" autocomplete="off" required>
@@ -47,7 +56,7 @@
                         <input type="password" class="form-control" name="password" id="password"  placeholder="Enter password" autocomplete="off" required>
                         <div class="input-group-append">
                             <div class="input-group-text">
-                                <span class="fas fa-lock"></span>
+                                <i class="fa fa-eye" id="toggleEye" onclick="togglePassword()"></i>
                             </div>
                         </div>
                     </div>
@@ -73,3 +82,21 @@
     <script src="../adminassets/dist/js/adminlte.min.js"></script>
 </body>
 </html>
+
+
+<script>
+    function togglePassword() {
+    const passwordField = document.getElementById("password");
+    const toggleEye = document.getElementById("toggleEye");
+    
+    if (passwordField.type === "password") {
+        passwordField.type = "text";
+        toggleEye.classList.remove("fa-eye");
+        toggleEye.classList.add("fa-eye-slash");
+    } else {
+        passwordField.type = "password";
+        toggleEye.classList.remove("fa-eye-slash");
+        toggleEye.classList.add("fa-eye");
+    }
+}
+</script>

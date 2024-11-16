@@ -4,6 +4,31 @@
  <%- include ("header.ejs") %>
 
 <%- include ("sidebar.ejs") %>
+
+<style>
+
+    
+/* Adjust table layout on smaller screens */
+div[style*="overflow-x: auto;"] {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+/* Make table responsive for mobile screens */
+@media (max-width: 768px) {
+    table {
+        font-size: 12px;
+    }
+
+    th, td {
+        padding: 6px;
+    }
+}
+
+</style>
     
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
@@ -17,7 +42,7 @@
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="/superadmin">Dashboard</a></li>
                             <li class="breadcrumb-item active">View Appointment</li>
                         </ol>
                     </div>
@@ -257,7 +282,7 @@ const formattedTime = moment(originalTime, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm 
                         <strong>Agent/Freight Forwarder:</strong><span>${booking.agent_forwarder || 'N/A'}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; padding: 5px 0;">
-                        <strong>Appointment By:</strong><span>${booking.appointment_by || 'N/A'}</span>
+                        <strong>Name of Individual Making Appointment:</strong><span>${booking.appointment_by || 'N/A'}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; padding: 5px 0;">
                         <strong>Appointment Type:</strong><span>${booking.appointment_type || 'N/A'}</span>
@@ -278,7 +303,7 @@ const formattedTime = moment(originalTime, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm 
                         <strong>Chassis No:</strong><span>${booking.chassis_number || 'N/A'}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; padding: 5px 0;">
-                        <strong>IMS4 Declaration Number:</strong><span>${booking.declaration_number || 'N/A'}</span>
+                        <strong>Customs Release/IMS4 Declaration Numbe:</strong><span>${booking.declaration_number || 'N/A'}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; padding: 5px 0;">
                         <strong>Container Number:</strong><span>${booking.container_number || 'N/A'}</span>
@@ -1239,20 +1264,22 @@ function updateBookingold(booking_id, booking) {
     logs = JSON.parse(logs); // Parse the logs data
 
     // Initialize the HTML table for SweetAlert
-    let logContent = `
-        <table style="width: 100%; border-collapse: collapse;">
-            <thead>
-                <tr style="background-color: black; color: white; text-align: left;">
-                    <th style="padding: 8px; border: 1px solid #ddd;">User</th>
-                    <th style="padding: 8px; border: 1px solid #ddd;">Operation</th>
-                    <th style="padding: 8px; border: 1px solid #ddd;">Booking Datetime</th>
-                    <th style="padding: 8px; border: 1px solid #ddd;">New Datetime</th>
-                    <th style="padding: 8px; border: 1px solid #ddd;">Created At</th>
-                  
-                </tr>
-            </thead>
-            <tbody>
+     // Initialize the HTML table for SweetAlert
+     let logContent = `
+        <div style="overflow-x: auto; max-height: 400px; border: 1px solid #ddd; border-radius: 5px;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background-color: black; color: white; text-align: left;">
+                        <th style="padding: 8px; border: 1px solid #ddd; white-space: nowrap;">User</th>
+                        <th style="padding: 8px; border: 1px solid #ddd; white-space: nowrap;">Operation</th>
+                        <th style="padding: 8px; border: 1px solid #ddd; white-space: nowrap;">Booking Datetime</th>
+                        <th style="padding: 8px; border: 1px solid #ddd; white-space: nowrap;">New Datetime</th>
+                        <th style="padding: 8px; border: 1px solid #ddd; white-space: nowrap;">Created At</th>
+                    </tr>
+                </thead>
+                <tbody>
     `;
+
 
     // Loop through each log and build a table row
     logs.forEach(log => {

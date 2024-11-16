@@ -14,6 +14,12 @@
     padding-top: 10px !important;
 }
 
+
+div:where(.swal2-container) .swal2-html-container {
+    font-size: 1.3em !important;
+
+}
+
 </style>
 
 <main class="main">
@@ -87,6 +93,8 @@
                             <form id="kilform">
                                 <div class="row gy-4">
                                     <input type="hidden" id="calendarId" name="calendarId" value="" >
+                                    <input type="hidden" id="typename" name="typename" value="" >
+                                    
                                     <div class="col-md-6">
                                         <label>* TRN</label>
                                         <input type="text" id="trn" name="trn" class="form-control" placeholder="Enter the number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
@@ -102,18 +110,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label>* Mobile Number</label>
-                                        <div class="input-group">
-                                            <!-- <div class="input-group-prepend">
-                                                <select id="country_code" class="form-control" name="country_code" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required>
-                                                    <option value="+1">+1 (USA)</option>
-                                                    <option value="+44">+44 (UK)</option>
-                                                    <option value="+91">+91 (India)</option>
-                                                </select>
-                                            </div>
-                                            <input type="tel" id="kilvishcontact" class="form-control" name="contact" placeholder="Enter contact number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required>
- -->
-
-
+                                        <div class="input-group">                                          
 
                                             <input type="tel" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" name="contact" id="kilvishcontact"   class="form-control" placeholder="Mobile Number" required>
 
@@ -252,12 +249,23 @@
                                 <div class="col-md-6">
                                     <span id="confirmAppName"></span>
                                 </div>
+
+                                
+
                                 <div class="col-md-6">
-                                    <strong>Appointment Type</strong>
+                                    <strong>Appointment Type Name</strong>
+                                </div>
+                                <div class="col-md-6">
+                                    <span id="typename"></span>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <strong>Appointment Mode</strong>
                                 </div>
                                 <div class="col-md-6">
                                     <span id="confirmAppointmentType"></span>
                                 </div>
+
                                 <div class="col-md-6">
                                     <strong>Bill of Lading Number</strong>
                                 </div>
@@ -339,7 +347,7 @@
     let availableDates = []; // Array to store available dates
     let calendarId =0
     let appointmentTypeID =0
-
+    let typename = ''
     let selectedDateTimes=[]
 
 
@@ -361,8 +369,10 @@ appointmentTypeSelect.addEventListener('change', function() {
 
     // Fetch the data-calendar-id using getAttribute
      calendarId = selectedOption.getAttribute('data-calendar-id');
+     typename = selectedOption.getAttribute('data-type-name');
 
      document.getElementById('calendarId').value = calendarId;
+     document.getElementById('typename').value = typename;
 
     console.log('Selected Calendar ID:', calendarId);
 
@@ -456,9 +466,13 @@ appointmentTypeSelect.addEventListener('change', function() {
         const ims = document.getElementById("ims").value || "N/A";
         const cnumber = document.getElementById("cnumber").value || "N/A";
         const ppnumber = document.getElementById("ppnumber").value || "N/A";
+        const typename = document.getElementById("typename").value || "N/A";
+
+
+        
 
         // Set the retrieved values in the confirmation fields
-        document.getElementById("confirmDate").textContent = `${selectedDateText} (${appointmentType})`;
+        document.getElementById("confirmDate").textContent = `${selectedDateText}`;
         document.getElementById("confirmTime").textContent = selectedTimesText;
         document.getElementById("confirmTRN").textContent = trn;
         document.getElementById("confirmFirstName").textContent = firstName;
@@ -468,6 +482,7 @@ appointmentTypeSelect.addEventListener('change', function() {
         document.getElementById("confirmAgent").textContent = agent;
         document.getElementById("confirmAppName").textContent = appname;
         document.getElementById("confirmAppointmentType").textContent = appointmentType;
+        document.getElementById("typename").textContent = typename;
         document.getElementById("confirmBLNumber").textContent = blNumber;
         document.getElementById("confirmVesselName").textContent = vname;
         document.getElementById("confirmVesselReportedDate").textContent = vreport;
@@ -492,6 +507,7 @@ appointmentTypeSelect.addEventListener('change', function() {
                 option.value = type.id;
                 option.text = type.name;
                 option.setAttribute('data-calendar-id', type.calendarIDs[0]);
+                option.setAttribute('data-type-name', type.name);
                 appointmentTypeSelect.add(option);
 
                 
@@ -950,6 +966,7 @@ const loggeduser = loggeduserData ? JSON.parse(loggeduserData) : null;
         showCloseButton: true
     });
 
+
     try {
         // Send OTP request to the server
         const response = await fetch('/getBookingOtp', {
@@ -1231,6 +1248,7 @@ async function directConfirmBooking(email) {
    
    
    function validateKilvishInput(event) {
+  
           const inputField = event.target;
       
           // General valid character sets
@@ -1637,9 +1655,9 @@ async function directConfirmBooking(email) {
         var input = document.querySelector("#kilvishcontact");
 
         var iti = window.intlTelInput(input, {
-          preferredCountries: ["hk", "cn"], // Customize based on your needs
+          preferredCountries: ["us", "in"], // Customize based on your needs
           separateDialCode: true,
-          initialCountry: "hk",
+          initialCountry: "us",
           utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.min.js", // Utility script
         });
 

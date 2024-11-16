@@ -29,7 +29,7 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="/superadmin">Dashboard</a></li>
                         <li class="breadcrumb-item active">Dashboard</li>
                     </ol>
                 </div>
@@ -109,6 +109,7 @@
                             <form id="kilform">
                                 <div class="row gy-4">
                                     <input type="hidden" id="calendarId" name="calendarId" value="<%= booking.calendarID %>">
+                                    <input type="hidden" id="typename" name="typename" value="" >
 
                                     <input type="hidden" id="booking_datetime" name="booking_datetime" value="<%= booking.booking_times %>">
                                     
@@ -256,6 +257,15 @@
                                 <div class="col-md-6">
                                     <span id="confirmAppName"></span>
                                 </div>
+
+
+                                <div class="col-md-6">
+                                    <strong>Appointment Type Name</strong>
+                                </div>
+                                <div class="col-md-6">
+                                    <span id="typename"></span>
+                                </div>
+
                                 <div class="col-md-6">
                                     <strong>Appointment Type</strong>
                                 </div>
@@ -345,7 +355,7 @@
     let availableDates = []; // Array to store available dates
     let calendarId =document.getElementById('calendarId').value
     let appointmentTypeID =document.getElementById("appointmentType").value
-
+ let typename = ''
     let selectedDateTimes=[]
     let booking = {
     booking_date: document.getElementById('bookingDate').value,
@@ -366,8 +376,10 @@ appointmentTypeSelect.addEventListener('change', function() {
 
     // Fetch the data-calendar-id using getAttribute
      calendarId = selectedOption.getAttribute('data-calendar-id');
+     typename = selectedOption.getAttribute('data-type-name');
 
      document.getElementById('calendarId').value = calendarId;
+     document.getElementById('typename').value = typename;
 
     console.log('Selected Calendar ID:', calendarId);
 
@@ -454,6 +466,7 @@ appointmentTypeSelect.addEventListener('change', function() {
         const ims = document.getElementById("ims").value || "N/A";
         const cnumber = document.getElementById("cnumber").value || "N/A";
         const ppnumber = document.getElementById("ppnumber").value || "N/A";
+        const typename = document.getElementById("typename").value || "N/A";
 
         // Set the retrieved values in the confirmation fields
         document.getElementById("confirmDate").textContent = `${selectedDateText} (${appointmentType})`;
@@ -466,6 +479,7 @@ appointmentTypeSelect.addEventListener('change', function() {
         document.getElementById("confirmAgent").textContent = agent;
         document.getElementById("confirmAppName").textContent = appname;
         document.getElementById("confirmAppointmentType").textContent = appointmentType;
+        document.getElementById("typename").textContent = typename;
         document.getElementById("confirmBLNumber").textContent = blNumber;
         document.getElementById("confirmVesselName").textContent = vname;
         document.getElementById("confirmVesselReportedDate").textContent = vreport;
@@ -523,7 +537,7 @@ storedCalendarID = selectedOption.getAttribute('data-calendar-id');
                 option.setAttribute('data-calendar-id', storedCalendarID);
                 option.selected = true; // Pre-select the option
                 appointmentTypeSelect.add(option);
-                
+                option.setAttribute('data-type-name', type.name);
                 // Optionally, disable the select to prevent changes
                 appointmentTypeSelect.disabled = true;
             }

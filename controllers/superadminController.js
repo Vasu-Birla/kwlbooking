@@ -104,7 +104,8 @@ const home = async (req, res, next) => {
               COUNT(*) AS totalAppointments,
               COUNT(CASE WHEN booking_date = CONVERT(date, GETDATE()) THEN 1 END) AS todaysAppointments,
               COUNT(CASE WHEN booking_date > GETDATE() THEN 1 END) AS upcomingAppointments,
-              COUNT(CASE WHEN booking_status = 'Cancelled' THEN 1 END) AS cancelledAppointments
+              COUNT(CASE WHEN booking_status = 'Cancelled' THEN 1 END) AS cancelledAppointments,
+              COUNT(CASE WHEN booking_status = 'Confirmed' THEN 1 END) AS ConfirmedAppointments
           FROM tbl_bookings
       `);
 
@@ -211,7 +212,7 @@ const appointments = async (req, res, next) => {
 
       // Step 2.2: Format the logs array (if any)
       booking.logs = logsResult.recordset.map((log) => {
-        log.created_at = moment(log.created_at).format('YYYY-MM-DDTHH:mm:ssZ'); // Format created_at as needed
+        // log.created_at = moment(log.created_at).format('YYYY-MM-DDTHH:mm:ssZ'); // Format created_at as needed
         return log;
       });
 
@@ -1443,10 +1444,80 @@ const updateBooking11 = async (req, res) => {
 
 //-----------------------------Reportssssssssssssss-> 
 
-
-
-
 const reports = async (req, res, next) => {
+  const pool = await connection();
+  const transaction = new sql.Transaction(pool);
+  const output = req.cookies.kwl_msg || '';
+  const { startDate, endDate, option1 } = req.body; // Assuming the data comes from POST body for filters
+
+  console.log("filter data ->",  req.body);
+
+  try {
+    await transaction.begin(); // Begin the transaction
+
+    const request = transaction.request();
+
+    // Build the dynamic query based on filters
+    let query = 'SELECT * FROM tbl_bookings WHERE 1=1';
+
+    // Check if startDate and endDate are provided
+    if (startDate && endDate) {
+      const formattedStartDate = moment(startDate).format('YYYY-MM-DD');
+      const formattedEndDate = moment(endDate).format('YYYY-MM-DD');
+      
+      // If option1 is empty, filter by created_at, otherwise filter by booking_date
+      if (option1 === '') {
+        query += ` AND CAST(created_at AS DATE) BETWEEN '${formattedStartDate}' AND '${formattedEndDate}'`;
+      } else {
+        query += ` AND booking_date BETWEEN '${formattedStartDate}' AND '${formattedEndDate}'`;
+      }
+    }
+
+    // Apply booking_status filter if option1 is provided (not empty)
+    if (option1 && option1 !== '') {
+      query += ` AND booking_status = '${option1}'`;
+    }
+
+    console.log("Query to execute:", query);
+
+    const result = await pool.request().query(query);
+
+    const bookings = result.recordset.map((booking) => {
+      if (booking.booking_times) {
+        booking.booking_times = moment(booking.booking_times, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
+      } else {
+        booking.booking_times = 'N/A';
+      }
+      return booking;
+    });
+
+    console.log("reports ", bookings);
+
+    // Return filtered data as HTML for AJAX requests
+    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+      const renderedfilteredReports = await ejs.renderFile('views/superadmin/bookings_partial.ejs', { bookings });
+      res.json({ html: renderedfilteredReports });
+    } else {
+      res.render('superadmin/reports', { output: output, bookings: bookings });
+    }
+
+    await transaction.commit();
+  } catch (error) {
+    if (transaction) {
+      await transaction.rollback();
+    }
+    console.error('Error:', error);
+    res.render('superadmin/kil500', { output: `${error}` });
+  } finally {
+    if (pool) {
+      pool.close();
+    }
+  }
+};
+
+
+
+const reports1 = async (req, res, next) => {
   const pool = await connection();
   const transaction = new sql.Transaction(pool);
   const output = req.cookies.kwl_msg || '';

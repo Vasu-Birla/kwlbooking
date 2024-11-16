@@ -15,7 +15,7 @@
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="/superadmin">Dashboard</a></li>
                             <li class="breadcrumb-item active">Dashboard</li>
                         </ol>
                     </div>
@@ -34,26 +34,39 @@
                         <div class="small-box bg-info">
                             <div class="inner">
                                 <h3><%= counts.totalAppointments %></h3>
-                                <p>Total Appointment</p>
+                                <p>Total Appointments</p>
                             </div>
                             <div class="icon">
                                 <i class="fas fa-calendar"></i>
                             </div>
-                            <a href="/superadmin/appointments" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                            <a href="/superadmin/reports" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-success">
+                            <div class="inner">
+                                <h3><%= counts.ConfirmedAppointments %></h3>
+                                <p>Confirmed Appointments</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <a href="/superadmin/reports" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
                     <!-- // col -->
               
                     <div class="col-lg-3 col-6">
-                        <div class="small-box bg-success">
+                        <div class="small-box bg-primary">
                             <div class="inner">
                                 <h3><%= counts.todaysAppointments %></h3>
-                                <p>Today's Appointment</p>
+                                <p>Today's Appointments</p>
                             </div>
                             <div class="icon">
                                 <i class="fas fa-check"></i>
                             </div>
-                            <a href="/superadmin/appointments" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                            <a href="/superadmin/reports" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
                     <!-- // col -->
@@ -63,12 +76,12 @@
                             <div class="inner">
                                 <h3><%= counts.upcomingAppointments %></h3>
 
-                                <p>Upcoming Appointment</p>
+                                <p>Upcoming Appointments</p>
                             </div>
                             <div class="icon">
                                 <i class="fa fa-history"></i>
                             </div>
-                            <a href="/superadmin/appointments" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                            <a href="/superadmin/reports" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
                     <!-- // col -->
@@ -78,12 +91,12 @@
                         <div class="small-box bg-danger">
                             <div class="inner">
                                 <h3><%= counts.cancelledAppointments %></h3>
-                                <p>Cancel Appointment</p>
+                                <p>Cancel Appointments</p>
                             </div>
                             <div class="icon">
                                 <i class="fa fa-times"></i>
                             </div>
-                            <a href="/superadmin/appointments" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                            <a href="/superadmin/reports" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
 

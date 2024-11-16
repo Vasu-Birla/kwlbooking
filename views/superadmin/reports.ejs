@@ -30,7 +30,7 @@
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="/superadmin">Dashboard</a></li>
                             <li class="breadcrumb-item active">Report</li>
                         </ol>
                     </div>
@@ -137,13 +137,13 @@
                                                 <th>Mobile Number</th>
                                                 <th>Email Address</th>
                                                 <th>Agent/Freight Forwarder</th>
-                                                <th>Individual Making Appointment</th>
+                                                <th>Name of Individual Making Appointment</th>
                                                 <th>Appointment Type</th>
                                                 <th>Vessel Name</th>
                                                 <th>Vessel Reported Date</th>
                                                 <th>Bill of Lading Number</th>
                                                 <th>Chassis No</th>
-                                                <th>IMS4 Declaration Number</th>
+                                                <th>Customs Release/IMS4 Declaration Number</th>
                                                 <th>Container Number</th>
                                                 <th>Number of Pieces/Packages</th>
                                                 <th>Status</th>
@@ -162,7 +162,7 @@
                                                   <td><%= booking.trn %></td>
                                                   <td><%= booking.firstname %></td>
                                                   <td><%= booking.lastname %></td>
-                                                  <td><%= booking.contact %></td>
+                                                  <td><%= booking.country_code %><%= booking.contact %></td>
                                                   <td><%= booking.user_email %></td>
                                                   <td><%= booking.agent_forwarder %></td>
                                                   <td><%= booking.appointment_by %></td>
@@ -338,7 +338,24 @@ $(function () {
           success: function(response) {
             // Update the table with the filtered results
             // $('table tbody').html(response.html);
-            $("table").replaceWith(response.html);
+            // $("table").replaceWith(response.html);
+           // Destroy the existing DataTable instance
+        var table = $('#example1').DataTable();
+        table.destroy();
+
+// Replace the table with the filtered data
+$("table").replaceWith(response.html);
+
+// Reinitialize DataTable with the correct settings
+$('#example1').DataTable({
+  "lengthChange": true, // Enable the Entries per Page dropdown
+  "lengthMenu": [10, 25, 50, 100], // Customize the dropdown options (optional)
+  "responsive": true,
+  "autoWidth": false,
+  "buttons": ["excel", "pdf", "csv", "colvis"]
+}).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+            
+            
           },
           error: function() {
             alert('Error fetching filtered reports');

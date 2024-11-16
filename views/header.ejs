@@ -34,6 +34,7 @@
     <!-- Databale css -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap4.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap4.css" rel="stylesheet">
     <!-- Main CSS File -->
 
   <!-- Main CSS File -->
@@ -118,7 +119,7 @@
  <header id="header" class="header sticky-top">
     <div class="branding d-flex align-items-center">
       <div class="container position-relative d-flex align-items-center justify-content-between">
-        <a href="/" class="logo d-flex align-items-center me-auto">
+        <a href="javascript:void(0)" class="logo d-flex align-items-center me-auto">
           <img src="assets/img/logo.png">
         </a>
         <nav id="navmenu" class="navmenu">
@@ -129,16 +130,19 @@
 
             <% if (typeof loggeduser !== 'undefined' && loggeduser) { %>
               <li><a href="/viewBookings"> View Booking</a></li>
-              <li class="login-css dash-right">
-                  <a class="btn-getstarted1" href="#" style="color: #000;background: #ffffff;">
-                      <img src="assets/img/logo.png" alt="User Image" class="user-img"> 
-                      <span class="username"><%= loggeduser.username %></span>
-                  </a>
-                  <div class="dropdown-menu">
-                  
-                      <a href="/logout" style="color: #ffffff;" class="dropdown-item logout-btn" >Logout</a>
-                  </div>
+              <li class="login-css dash-right menuhide">
+                <a href="/logout" style="color: #ffffff;" class="dropdown-item logout-btn" >Logout</a>
               </li>
+              <li class="login-css dash-right">
+                <a class="btn-getstarted1" href="#" style="display: block !important;color: #000; background: #ffffff;" aria-expanded="false">
+                    <img src="assets/img/logo.png" alt="User Image" class="user-img">
+                    <span class="username"><%= loggeduser.firstname %> <%= loggeduser.lastname %></span>
+                </a>
+                <div class="dropdown-menu">
+                    <a href="/logout" style="color: #ffffff;" class="dropdown-item logout-btn" >Logout</a>
+                </div>
+              </li>
+
           <% } else { %>
               <li class="login-css dash-right">
                   <a class="btn-getstarted" id="loginbutton" href="#popup1">Login</a>
