@@ -117,7 +117,7 @@ function decrypt64(text) {
 
 //----------------------- send Login OTP ------------ 
 
-const sendWelcomeMsg = async (email, otp) => {
+const sendWelcomeMsg1 = async (email, otp) => {
 
   
     try {
@@ -137,29 +137,24 @@ const sendWelcomeMsg = async (email, otp) => {
 
 
         console.log(process.env.SMTP_HOST)
-        console.log(process.env.SMTP_PORT)
+         console.log(process.env.SMTP_PORT)
 
         //-------- with Own Server ----------
-        // const transporter = nodemailer.createTransport({
-        //     host: process.env.SMTP_HOST, // SMTP server
-        //     port: process.env.SMTP_PORT, // SMTP port
-        //     secure: true, // Use SSL/TLS
-        //     auth: {
-        //       user: AppEmail,
-        //       pass: AppPassword
-        //     }
-        //   });
-
-          const transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST, // Example: webmail.kwljm.com
-            port: 465,                   // Default port for implicit SSL/TLS
-            secure: true,                // Use true for implicit SSL/TLS
+        const transporter = nodemailer.createTransport({
+            host: process.env.SMTP_HOST, // SMTP server
+            port: process.env.SMTP_PORT, // SMTP port
+            secure: true, // Use SSL/TLS
             auth: {
-              user: process.env.SMTP_USER,     // Your username
-              pass: process.env.SMTP_PASSWORD, // Your password
+              user: AppEmail,
+              pass: AppPassword
             },
+            tls: {
+                rejectUnauthorized: false, // Skip validation for now
+              },
+              debug: true, // Enable debugging
+              logger: true, // Log more info
           });
-          
+
   
         const mailOptions = {
             from: AppEmail,
@@ -325,7 +320,7 @@ let transaction;
 
 
 
-  const sendWelcomeMsgwithgmail = async (email, otp) => {
+  const sendWelcomeMsg = async (email, otp) => {
     const con = await connection();
     let pool;
 let transaction;

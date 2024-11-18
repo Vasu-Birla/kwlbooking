@@ -637,9 +637,6 @@ const profile = async (req, res, next) => {
       await transaction.commit();
 
       const counts = result.recordset[0];
-
-      console.log("counts -> ", counts)
-
       // Render with counts passed to the template
       res.render('superadmin/profile',{output:output})
   } catch (error) {
@@ -652,7 +649,6 @@ const profile = async (req, res, next) => {
       if (pool) pool.close();
   }
 };
-
 
 
 
@@ -666,18 +662,19 @@ const updateUserPic = async (req, res, next) => {
   let transaction;
 
   try {
-    var image = req.admin.image
+    let image = req.admin.image;
     if (req.file) {
       image = req.file.filename;
     }
 
-      pool = await connection();
-      transaction = new sql.Transaction(pool);
-      await transaction.begin(); // Begin the transaction
+    pool = await connection();
+    transaction = new sql.Transaction(pool);
 
-      // Create a request object tied to the transaction
-      const request = transaction.request();
+    // Ensure transaction begins successfully
+    await transaction.begin();
 
+    // Create a request object tied to the transaction
+    const request = transaction.request();
 
     // Execute the update query
     await request
@@ -685,35 +682,34 @@ const updateUserPic = async (req, res, next) => {
       .input('admin_id', sql.Int, req.admin.admin_id)
       .query('UPDATE tbl_admin SET image = @image WHERE admin_id = @admin_id');
 
-      
+    // Commit transaction
+    await transaction.commit();
 
-      await transaction.commit();
-
-      const counts = result.recordset[0];
-
-      console.log("counts -> ", counts)
-
-      // Render with counts passed to the template
-      res.render('superadmin/profile',{output:output})
+    res.json({ msg: "success" })
+    // Render response with success
+    //res.render('superadmin/profile', { output });
   } catch (error) {
-      // Rollback if an error occurs
-      if (transaction) await transaction.rollback();
-      console.error('Error:', error);
-      res.status(500).send('Internal Server Error');
+    // Rollback if an error occurs
+    if (transaction && transaction._isolationLevel) {
+      await transaction.rollback();
+    }
+    console.error('Error:', error);
+    res.status(500).send('Internal Server Error');
   } finally {
-      // Close the pool to release resources
-      if (pool) pool.close();
+    // Close the pool to release resources
+    if (pool) pool.close();
   }
 };
 
 
-
-const profilePost = async (req, res, next) => {
+const profilePost = async (req, res, next) => {  console.log("updaing admin ", req.body)
   const output = req.cookies.kwl_msg || '';
 
   let pool;
   let transaction;
-  const { admin_id, first_name, last_name, email, country_code, contact, username } = req.body;
+  const {  first_name, last_name, email, country_code, contact, username } = req.body;
+
+  
 
   // Handle uploaded image (if any)
   const image = req.file ? req.file.filename : null; // Multer attaches 'file' if image is uploaded
@@ -754,7 +750,7 @@ const profilePost = async (req, res, next) => {
       .input('username', sql.NVarChar, username)
       .input('country_code', sql.NVarChar, country_code)
       .input('contact', sql.NVarChar, contact)
-      .input('admin_id', sql.Int, admin_id);
+      .input('admin_id', sql.Int, req.admin.admin_id);
 
     // Execute the query
     await request.query(updateQuery);
@@ -833,6 +829,74 @@ const updateAdmin = async (req, res, next) => {
 
 
 const changepass = async (req, res, next) => {
+  let pool;
+  let transaction;
+
+  try {
+    pool = await connection(); // Get the connection pool
+    transaction = new sql.Transaction(pool);
+    await transaction.begin(); // Begin the transaction
+
+    const existingPass = req.admin.password;
+    const email = req.admin.email;
+
+    const { opass, npass, cpass } = req.body;
+
+    // Validate the old password
+    const isValid = comparePassword(opass, existingPass);
+
+    if (!isValid) {
+      res.cookie('kwl_msg', 'Old password is incorrect');
+      return res.redirect('/superadmin/profile');
+    }
+
+    if (opass === cpass) {
+      res.cookie('kwl_msg', 'New password cannot be the same as the old password.');
+      return res.redirect('/superadmin/profile');
+    }
+
+    if (npass !== cpass) {
+      res.cookie('kwl_msg', 'New password and confirm password do not match.');
+      return res.redirect('/superadmin/profile');
+    }
+
+    // Hash the new password
+    const hashedPass = hashPassword(cpass);
+
+    // Update the password in the database
+    const request = transaction.request();
+    await request
+      .input('hashedPass', sql.NVarChar, hashedPass)
+      .input('admin_id', sql.Int, req.admin.admin_id)
+      .query('UPDATE tbl_admin SET password = @hashedPass WHERE admin_id = @admin_id');
+
+    // Clear the Admin token cookie
+    res.cookie('Admin_token', null, {
+      expires: new Date(Date.now()),
+      httpOnly: true,
+    });
+
+    // Uncomment this line to send a password change notification email
+    // passwordNotify(email);
+
+    await transaction.commit(); // Commit the transaction
+
+    // Redirect to login page with success message
+    res.render('superadmin/login', { output: 'Password changed successfully' });
+  } catch (error) {
+    console.error('Error:', error);
+
+    if (transaction) await transaction.rollback(); // Rollback the transaction on error
+
+    res.cookie('kwl_msg', `Failed to update password: ${error.message}`);
+    return res.redirect('/superadmin/profile');
+  } finally {
+    if (pool) pool.close(); // Release the pool
+  }
+};
+
+
+const changepass111 = async (req, res, next) => {
   const con = await connection();
 
   try {
@@ -869,15 +933,6 @@ const changepass = async (req, res, next) => {
       return res.redirect('/superadmin/profile')
      
     }
-
-
-    // if (opass !== existingPass) {    
-    //   return res.render('superadmin/profile',{"output":"Old password is incorrect"})
-    // }
-    // if (npass !== cpass) {
-    //  return res.render('superadmin/profile',{"output":"New password and confirm password do not match"})
-     
-    // }
    
     var hashedPass = hashPassword(cpass);
    

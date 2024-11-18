@@ -108,7 +108,7 @@ div[style*="overflow-x: auto;"] {
                                         <% } else if (booking.booking_status == 'Completed') { %>
                                             <img src="../images/icons/completed.png" class="status-image" style="width:30px;height:30px;">
                                         <% } else if (booking.booking_status == 'Rescheduled') { %>
-                                            <img src="../images/icons/completed.png" class="status-image" style="width:30px;height:30px;">
+                                            <img src="../images/icons/rescheduled.png" class="status-image" style="width:30px;height:30px;">
                                         <% } else { %>
                                             <img src="../images/icons/inactive.png" class="status-image" style="width:30px;height:30px;">
                                         <% } %>
@@ -131,7 +131,7 @@ div[style*="overflow-x: auto;"] {
                                                 <p class="kilstatus" style="color: red;"> Cancelled</p>
                                           <% } else { %>
                                             <p id="msg<%= booking.booking_id %>" style="color: rgb(0, 56, 141) !important;"></p>
-                                            <p class="kilstatus" style="color: rgb(9, 255, 0);"> Rescheduled</p>
+                                            <p class="kilstatus" style="color: #027ef1;"> Rescheduled</p>
                                           <% } %>                  
                                     
                 
@@ -470,26 +470,26 @@ document.addEventListener("DOMContentLoaded", function() {
    
    
                                             
-                                            validCharacters = /^\d{7,10}$/;
-                                            const numericOnlyPattern = /^\d+$/; // Checks for numeric-only input
-                                            const inputValue = inputField.value; 
+                                            validCharacters = /^\d{7,15}$/;
+                                            // const numericOnlyPattern = /^\d+$/; // Checks for numeric-only input
+                                            // const inputValue = inputField.value; 
 
-                                                        const numericValue = parseInt(inputValue, 10);
+                                            //             const numericValue = parseInt(inputValue, 10);
 
-                                                        if (!numericOnlyPattern.test(inputField.value)) {
-                                                            // Allow common validation to handle non-numeric characters
-                                                        } else if (inputValue.length > 10 || inputValue.length < 7  ) {                        
-                                                            addErrorMessage(inputParent, 'Mobile Number Must Be Between 7 And 10 Digits.');
-                                                            inputField.style.border = '2px solid red'; 
+                                            //             if (!numericOnlyPattern.test(inputField.value)) {
+                                            //                 // Allow common validation to handle non-numeric characters
+                                            //             } else if (inputValue.length > 10 || inputValue.length < 7  ) {                        
+                                            //                 addErrorMessage(inputParent, 'Mobile Number Must Be Between 7 And 10 Digits.');
+                                            //                 inputField.style.border = '2px solid red'; 
 
-                                                            if (event.type === 'change') {
-                                                                inputField.value = ''; 
-                                                            }    
-                                                            return;
-                                                            } 
+                                            //                 if (event.type === 'change') {
+                                            //                     inputField.value = ''; 
+                                            //                 }    
+                                            //                 return;
+                                            //                 } 
 
 
-                                                            inputField.style.border = '';
+                                            //                 inputField.style.border = '';
 
 
 
@@ -858,13 +858,13 @@ function updateBooking(booking_id, booking) {
                 <!-- First Name field -->
                 <div class="col-md-6">
                     <label>* First Name</label>
-                    <input type="text" id="fname" class="form-control" name="firstname" value="${booking.firstname}" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)"  required>
+                    <input maxlength="20" type="text" id="fname" class="form-control" name="firstname" value="${booking.firstname}" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)"  required>
                 </div>
                 
                 <!-- Last Name field -->
                 <div class="col-md-6">
                     <label>* Last Name</label>
-                    <input type="text" id="lname" class="form-control" name="lastname" value="${booking.lastname}" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required>
+                    <input maxlength="20" type="text" id="lname" class="form-control" name="lastname" value="${booking.lastname}" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required>
                 </div>
                 
                 <!-- Country Code and Mobile Number fields -->
@@ -905,50 +905,74 @@ function updateBooking(booking_id, booking) {
         },
         allowOutsideClick: false ,// Disable closing by clicking outside
         didOpen: () => {
-            // Now initialize intlTelInput when the modal has fully opened
-            var input = document.querySelector("#kilvishcontact");
-            var savedCountryCode = booking.country_code || '';  // Use saved country code from user data
-            var savedPhoneNumber = booking.contact || '';  // Use saved phone number from user data
+    // Initialize intlTelInput when the modal has fully opened
+    var input = document.querySelector("#kilvishcontact");
+    var savedCountryCode = booking.country_code || '';  // Use saved country code from user data
+    var savedPhoneNumber = booking.contact || '';  // Use saved phone number from user data
 
-            var iti = window.intlTelInput(input, {
-                preferredCountries: ["hk", "cn"], // Customize based on your needs
-                separateDialCode: true,
-                initialCountry: "auto",
-                geoIpLookup: function(success, failure) {
-                    fetch('https://ipinfo.io/json', {cache: 'reload'}).then(resp => resp.json()).then(resp => {
-                        var countryCode = (resp && resp.country) ? resp.country : "hk";
-                        success(countryCode);
-                    }).catch(() => success("hk"));
-                },
-                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.min.js", // Utility script
-            });
+    // Create error message container
+    var errorMsg = document.createElement("div");
+    errorMsg.id = "error-msg";
+    errorMsg.style.color = "red";
+    errorMsg.style.fontSize = "0.9em";
+    errorMsg.style.marginTop = "5px";
+    input.parentNode.appendChild(errorMsg);
 
-            if (savedCountryCode && savedPhoneNumber) {
-                // Combine country code and phone number if available
-                iti.setNumber(savedCountryCode + savedPhoneNumber);
-            }
+    var iti = window.intlTelInput(input, {
+        preferredCountries: ["hk", "cn"], // Customize based on your needs
+        separateDialCode: true,
+        initialCountry: "auto",
+        geoIpLookup: function(success, failure) {
+            fetch('https://ipinfo.io/json', { cache: 'reload' })
+                .then(resp => resp.json())
+                .then(resp => {
+                    var countryCode = (resp && resp.country) ? resp.country : "hk";
+                    success(countryCode);
+                }).catch(() => success("hk"));
+        },
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.min.js",
+    });
 
-            // Update hidden input field with full phone number
-            input.addEventListener("input", function() {
-                var fullPhoneNumber = iti.getNumber();
-                var countryCode = '+' + iti.getSelectedCountryData().dialCode;
-                document.querySelector("#fullkilvishcontact").value = fullPhoneNumber;
-                document.querySelector("#country_code").value = countryCode;
-            });
+    // If a saved phone number and country code exist, set the initial number
+    if (savedCountryCode && savedPhoneNumber) {
+        iti.setNumber(savedCountryCode + savedPhoneNumber);
+    }
 
-            input.addEventListener("countrychange", function() {
-                var fullPhoneNumber = iti.getNumber();
-                var countryCode = '+' + iti.getSelectedCountryData().dialCode;
-                document.querySelector("#fullkilvishcontact").value = fullPhoneNumber;
-                document.querySelector("#country_code").value = countryCode;
-            });
+    const errorMap = ["Invalid number", "Invalid country code", "Too short", "Too long", "Invalid number"];
 
-            // Initialize hidden field with the current value on page load
-            var fullPhoneNumber = iti.getNumber();
-            var countryCode = '+' + iti.getSelectedCountryData().dialCode;
-            document.querySelector("#fullkilvishcontact").value = fullPhoneNumber;
-            document.querySelector("#country_code").value = countryCode;
+    const validateNumber = () => {
+        var errorCode = iti.getValidationError();
+        var valid = iti.isValidNumber();
+
+        if (valid) {
+            errorMsg.textContent = ""; // Clear error message
+            input.style.borderColor = ""; // Reset border color
+        } else {
+            var msg = errorMap[errorCode] || "Invalid number";
+            errorMsg.textContent = msg; // Show error message
+            input.style.borderColor = "red"; // Highlight input box
         }
+
+        // Update hidden fields even if invalid
+        var fullPhoneNumber = iti.getNumber();
+        var countryCode = "+" + iti.getSelectedCountryData().dialCode;
+        document.querySelector("#fullkilvishcontact").value = fullPhoneNumber;
+        document.querySelector("#country_code").value = countryCode;
+    };
+
+    // Validate on input
+    input.addEventListener("input", validateNumber);
+
+    // Validate on country change
+    input.addEventListener("countrychange", validateNumber);
+
+    // Initialize hidden field with the current value on modal open
+    validateNumber();
+}
+
+
+
+        
     });
 
     // Add real-time validation for inputs (reuse the existing validation)
@@ -979,7 +1003,7 @@ function showAppointmentDetails(booking_id, booking) {
                 statusColor = '#007bff'; // info (blue)
                 break;
             case 'Rescheduled':
-                statusColor = '#6f42c1'; // purple
+                statusColor = '#027ef1'; // purple
                 break;
             default:
                 statusColor = '#17a2b8'; // default info color

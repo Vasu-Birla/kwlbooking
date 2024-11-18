@@ -70,7 +70,7 @@ router.route('/profile').post(isAuthenticatedAdmin,updateAdmin)
 router.route('/updateUserPic').post(isAuthenticatedAdmin,profileUpload.single('image'),updateUserPic)
 
 
-router.route('/updateAdmin').post( isAuthenticatedAdmin,profileUpload.single('profile_image'),updateAdmin)
+router.route('/updateAdmin').post( isAuthenticatedAdmin,profileUpload.single('image'),profilePost)
 
 router.route('/changepass').post( isAuthenticatedAdmin,profileUpload.single('profile_image'),changepass)
 

@@ -56,7 +56,7 @@
                                     <select name="option1" id="appointmentType" class="form-control select2" required aria-readonly="">
                                         <option value="">Select Service</option>
                                         <% if (booking) { %>
-                                          <option value="<%= booking.appointmentTypeID %>" data-calendar-id="<%= booking.calendarID %>" selected readonly>
+                                          <option value="<%= booking.appointmentTypeID %>" data-calendar-id="<%= booking.calendarID %>" data-type-name="<%= booking.type_name %>" selected readonly>
                                          
                                             <%= booking.type_name %>
                                         
@@ -100,7 +100,7 @@
                             <form id="kilform">
                                 <div class="row gy-4">
                                     <input type="hidden" id="calendarId" name="calendarId" value="<%= booking.calendarID %>">
-                                    <input type="hidden" id="typename" name="typename" value="" >
+                                    <input type="hidden" id="typename" name="typename" value="<%= booking.type_name %>" >
 
                                     <input type="hidden" id="booking_datetime" name="booking_datetime" value="<%= booking.booking_times %>">
                                  
@@ -257,7 +257,7 @@
                                     <strong>Appointment Type Name</strong>
                                 </div>
                                 <div class="col-md-6">
-                                    <span id="typename"></span>
+                                    <span id="typenames"></span>
                                 </div>
                                 <div class="col-md-6">
                                     <strong>Appointment Type</strong>
@@ -473,7 +473,7 @@ appointmentTypeSelect.addEventListener('change', function() {
         document.getElementById("confirmAgent").textContent = agent;
         document.getElementById("confirmAppName").textContent = appname;
         document.getElementById("confirmAppointmentType").textContent = appointmentType;
-        document.getElementById("typename").textContent = typename;
+        document.getElementById("typenames").textContent = typename;
         document.getElementById("confirmBLNumber").textContent = blNumber;
         document.getElementById("confirmVesselName").textContent = vname;
         document.getElementById("confirmVesselReportedDate").textContent = vreport;

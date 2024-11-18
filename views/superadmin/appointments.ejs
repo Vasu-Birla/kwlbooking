@@ -113,7 +113,7 @@ div[style*="overflow-x: auto;"] {
                                                     <% } else if (booking.booking_status == 'Completed') { %>
                                                         <img src="../images/icons/completed.png" class="status-image" style="width:30px;height:30px;">
                                                     <% } else if (booking.booking_status == 'Rescheduled') { %>
-                                                        <img src="../images/icons/completed.png" class="status-image" style="width:30px;height:30px;">
+                                                        <img src="../images/icons/rescheduled.png" class="status-image" style="width:30px;height:30px;">
                                                     <% } else { %>
                                                         <img src="../images/icons/inactive.png" class="status-image" style="width:30px;height:30px;">
                                                     <% } %>
@@ -133,10 +133,10 @@ div[style*="overflow-x: auto;"] {
                                                         <p class="kilstatus" style="color: rgb(12, 185, 238);;"> Completed</p>
                                                     <% } else if (booking.booking_status == 'Cancelled') { %>
                                                             <p id="msg<%=  booking.booking_id %>" style="color: green !important;"></p>
-                                                            <p class="kilstatus" style="color: red;"> Cancelled</p>
+                                                            <p class="kilstatus" style="color: green;"> Cancelled</p>
                                                       <% } else { %>
                                                         <p id="msg<%=  booking.booking_id %>" style="color: rgb(0, 56, 141) !important;"></p>
-                                                        <p class="kilstatus" style="color: rgb(9, 255, 0);"> Rescheduled</p>
+                                                        <p class="kilstatus" style="color: #027ef1;"> Rescheduled</p>
                                                       <% } %>                  
                                                 
                             
@@ -230,7 +230,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 statusColor = '#007bff'; // info (blue)
                 break;
             case 'Rescheduled':
-                statusColor = '#6f42c1'; // purple
+                statusColor = '#027ef1'; // purple
                 break;
             default:
                 statusColor = '#17a2b8'; // default info color
@@ -469,13 +469,13 @@ async function updateBookingold(booking_id, booking) {
                 <!-- First Name field -->
                 <div class="col-md-6">
                     <label>* First Name</label>
-                    <input type="text" id="fname" class="form-control" name="firstname" value="${booking.firstname}" >
+                    <input maxlength="20" type="text" id="fname" class="form-control" name="firstname" value="${booking.firstname}" >
                 </div>
                 
                 <!-- Last Name field -->
                 <div class="col-md-6">
                     <label>Last Name</label>
-                    <input type="text" id="lname" class="form-control" name="lastname" value="${booking.lastname}" >
+                    <input maxlength="20" type="text" id="lname" class="form-control" name="lastname" value="${booking.lastname}" >
                 </div>
                 
                 <!-- Country Code and Mobile Number fields -->
@@ -997,26 +997,26 @@ function updateBookingold(booking_id, booking) {
    
    
                                             
-                                            validCharacters = /^\d{7,10}$/;
-                                            const numericOnlyPattern = /^\d+$/; // Checks for numeric-only input
-                                            const inputValue = inputField.value; 
+                                            validCharacters = /^\d{7,15}$/;
+                                            // const numericOnlyPattern = /^\d+$/; // Checks for numeric-only input
+                                            // const inputValue = inputField.value; 
 
-                                                        const numericValue = parseInt(inputValue, 10);
+                                            //             const numericValue = parseInt(inputValue, 10);
 
-                                                        if (!numericOnlyPattern.test(inputField.value)) {
-                                                            // Allow common validation to handle non-numeric characters
-                                                        } else if (inputValue.length > 10 || inputValue.length < 7  ) {                        
-                                                            addErrorMessage(inputParent, 'Mobile Number Must Be Between 7 And 10 Digits.');
-                                                            inputField.style.border = '2px solid red'; 
+                                            //             if (!numericOnlyPattern.test(inputField.value)) {
+                                            //                 // Allow common validation to handle non-numeric characters
+                                            //             } else if (inputValue.length > 10 || inputValue.length < 7  ) {                        
+                                            //                 addErrorMessage(inputParent, 'Mobile Number Must Be Between 7 And 10 Digits.');
+                                            //                 inputField.style.border = '2px solid red'; 
 
-                                                            if (event.type === 'change') {
-                                                                inputField.value = ''; 
-                                                            }    
-                                                            return;
-                                                            } 
+                                            //                 if (event.type === 'change') {
+                                            //                     inputField.value = ''; 
+                                            //                 }    
+                                            //                 return;
+                                            //                 } 
 
 
-                                                            inputField.style.border = '';
+                                            //                 inputField.style.border = '';
 
 
 
