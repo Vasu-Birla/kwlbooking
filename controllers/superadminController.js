@@ -1206,6 +1206,8 @@ const rescheduleBooking = async (req, res, next) => {
   console.log(req.body)
   const { booking_id, selectedDateTimes, booking_date , booking_datetime , timezone} = req.body;
 
+  console.log("reqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq", req.body)
+
   let pool;
   let transaction;
 

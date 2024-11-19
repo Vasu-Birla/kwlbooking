@@ -4821,3 +4821,108 @@ URL Hit: https://acuityscheduling.com/api/v1/appointments/1369246526/reschedule
 Accessed By: User - kilvishbirla@gmail.com
 Purpose: Rescheduling Booking
 ------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 14:08:10
+URL Hit: https://acuityscheduling.com/api/v1/appointments/1369246526/reschedule
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Rescheduling Booking
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 14:08:21
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 14:08:26
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 14:08:58
+URL Hit: https://acuityscheduling.com/api/v1/appointments
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Creating New Booking
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 14:10:11
+URL Hit: https://acuityscheduling.com/api/v1/appointments
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Creating New Booking
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 14:10:44
+URL Hit: https://acuityscheduling.com/api/v1/appointments/1369342237?pastFormAnswers=false
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Fetching Single Appointment Details
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 14:10:46
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 14:10:46
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 14:11:00
+URL Hit: https://acuityscheduling.com/api/v1/appointments/1369342237/reschedule
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Rescheduling Booking
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 14:11:52
+URL Hit: https://acuityscheduling.com/api/v1/appointments/1369342237/reschedule
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Rescheduling Booking
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 14:14:17
+URL Hit: https://acuityscheduling.com/api/v1/appointments/1369342237/reschedule
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Rescheduling Booking
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 14:14:51
+URL Hit: https://acuityscheduling.com/api/v1/appointments/1369342237/reschedule
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Rescheduling Booking
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 14:15:12
+URL Hit: https://acuityscheduling.com/api/v1/appointments/1369342237?pastFormAnswers=false
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Fetching Single Appointment Details
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 14:15:14
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 14:15:14
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Fetching Date Aailabilities
+------------------------------

@@ -927,7 +927,7 @@ const confirmbooking = async (req, res, next) => {
        // const booking_datetime = `${booking_date},${booking_times}`
 
         // Format the date using the specified timezone
-const booking_date = moment.tz(datetime, timezone).format('MMMM DD, YYYY');
+// const booking_date = moment.tz(datetime, timezone).format('MMMM DD, YYYY');
 const booking_times = moment.tz(datetime, timezone).format('hh:mm A');
 
 // Combine the formatted date and time
@@ -1337,7 +1337,7 @@ const cancelBookingsimple = async (req, res, next) => {
 
 const rescheduleBooking = async (req, res, next) => {
   console.log(req.body)
-  const { booking_id, selectedDateTimes, booking_date ,booking_datetime } = req.body;
+  const { booking_id, selectedDateTimes, booking_date ,booking_datetime , timezone } = req.body;
 
   let pool;
   let transaction;
