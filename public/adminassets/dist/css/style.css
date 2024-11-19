@@ -119,12 +119,35 @@
 
 .time-slot:hover {
     background-color: #1977cc;
-    color: #ffffff;
+    color: #ffffff !important;
 }
 
 .selected-time {
     background-color: #1977cc;
-    color: #ffffff;
+    color: #ffffff !important;
+}
+
+/* Optional: When the time slot is clicked (if it's selected), also ensure text remains white */
+.time-slot.selected-time {
+  background-color: #1977cc;
+  color: #ffffff !important; /* Text color white */
+}
+
+.time-slot.selectedkil {
+  background-color: #1977cc;
+  color: #ffffff !important; /* Text color white */
+}
+
+span.selectedkil {
+  color: #fff !important;
+}
+
+
+
+
+/* Fallback to ensure visible text in case there are overriding styles */
+.time-slot.selected-time span {
+  color: #ffffff !important; /* Ensure text within the time slot is white */
 }
 
 /* Button Styling */

@@ -5,9 +5,7 @@
 
 
 <style>
-    span{
-    color: #133590;
-}
+ 
 
 
 .col-md-6 {
@@ -556,6 +554,57 @@ function renderAvailableDates(data) {
         //============================ Function to render available times on the page
 
         function renderAvailableTimes(times) {
+    console.log("Available Timeslots -> ", times);
+
+    const timeContainer = document.getElementById("timeSlots");
+    timeContainer.innerHTML = ""; // Clear existing timeslots
+
+    if (!times || times.length === 0) {
+        timeContainer.textContent = "No available times for this date.";
+        return;
+    }
+
+    for (const timeObj of times) {
+        const formattedTime = new Date(timeObj.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        const timeSlotDiv = document.createElement("div");
+        timeSlotDiv.classList.add("time-slot");
+        timeSlotDiv.dataset.time = formattedTime; // Store the time for easy selection
+        timeSlotDiv.dataset.datetime = timeObj.time; // Store full datetime
+
+        document.getElementById('timeSlotsSection').style.display = 'block';
+
+        const timeTextSpan = document.createElement("span");
+        timeTextSpan.textContent = formattedTime;
+
+        const slotsLeftText = document.createElement("span");
+        slotsLeftText.style.marginLeft = "10px";
+
+        if (timeObj.slotsAvailable > 0) {
+            timeSlotDiv.style.border = "2px solid green";
+            // slotsLeftText.style.color = "green";
+            slotsLeftText.textContent = `${timeObj.slotsAvailable} Slot${timeObj.slotsAvailable > 1 ? 's' : ''} left`;
+
+            // Enable click for available slots
+            timeSlotDiv.onclick = function () {
+                toggleTimeSelection(formattedTime, timeObj.time);
+            };
+        } else {
+            timeSlotDiv.style.border = "2px solid red";
+            // slotsLeftText.style.color = "red";
+            slotsLeftText.textContent = "0 Slots left";
+            timeSlotDiv.style.pointerEvents = 'none';
+        }
+
+        timeSlotDiv.appendChild(timeTextSpan);
+        timeSlotDiv.appendChild(slotsLeftText);
+
+        timeContainer.appendChild(timeSlotDiv);
+    }
+}
+
+
+        function renderAvailableTimesworking(times) {
 
 
             console.log("available Timeslots -> ",times)
@@ -726,7 +775,33 @@ function renderAvailableDates(data) {
         });
     }
 
+
     function toggleTimeSelection(slot, datetime) {
+    // Clear previous selection
+    document.querySelectorAll(".time-slot").forEach(el => {
+        el.classList.remove("selected-time");
+    });
+
+    // Mark the selected slot
+    const selectedSlot = [...document.querySelectorAll(".time-slot")].find(
+        el => el.dataset.time === slot && el.dataset.datetime === datetime
+    );
+
+    if (selectedSlot) {
+        selectedSlot.classList.add("selected-time");
+        console.log(`Selected time: ${slot}, datetime: ${datetime}`);
+    }
+
+    // Store the selection
+    selectedTimes = [slot];
+    selectedDateTimes = [datetime];
+}
+
+
+
+
+
+    function toggleTimeSelectionworking(slot, datetime) {
     // If the slot is already selected, do nothing
     if (selectedTimes.length > 0) {
         // Deselect previously selected slot and datetime

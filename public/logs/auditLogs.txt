@@ -3085,3 +3085,416 @@ URL Hit: https://acuityscheduling.com/api/v1/appointments/1367861326
 Accessed By: User - kilvishbirla@gmail.com
 Purpose: Updating Booking Deatils
 ------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 06:46:07
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 06:53:40
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 06:54:42
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 06:54:47
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 06:56:09
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 06:56:12
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:01:23
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:01:31
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:04:31
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:05:04
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:09:21
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:09:24
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:09:49
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:09:52
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:10:41
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:10:44
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:14:11
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:14:14
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:14:46
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:14:48
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:22:48
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:22:51
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:25:21
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:25:23
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:27:49
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:27:52
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=31449943&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:29:29
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:29:31
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:33:39
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:33:41
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=13808117&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:35:06
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:35:09
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=13808117&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:37:40
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:37:43
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:39:40
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:39:43
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:40:33
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:40:35
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:46:07
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:46:09
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=31449943&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:47:19
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:47:21
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:48:34
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:48:36
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=31449943&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:50:46
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:50:50
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=31449943&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:52:00
+URL Hit: https://acuityscheduling.com/api/v1/appointments
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Creating New Booking
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:52:35
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:52:39
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=31449943&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:52:46
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:53:22
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:53:25
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:54:14
+URL Hit: https://acuityscheduling.com/api/v1/appointments
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Creating New Booking
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:54:26
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:54:29
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=31449943&timezone=
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:54:32
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:55:41
+URL Hit: https://acuityscheduling.com/api/v1/appointments
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Creating New Booking
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:55:49
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-19 07:55:51
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Fetching Date Aailabilities
+------------------------------
