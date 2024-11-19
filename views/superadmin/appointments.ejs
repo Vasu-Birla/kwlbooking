@@ -85,13 +85,13 @@ div[style*="overflow-x: auto;"] {
                                         <% bookings.forEach((booking, index) => { %>
                                             <tr>
                                             
-                                                <td><a href="#" onclick="showAppointmentDetails('<%= booking.booking_id %>', '<%= JSON.stringify(booking) %>')" ><b><%= booking.booking_id %></b></a></td>
-                                                <td><a href="#" onclick="bookinglogs('<%= JSON.stringify(booking.logs) %>')" ><b>Open Log</b></a></td>
+                                                <td><a href="#" onclick="showAppointmentDetails('<%= booking.booking_id %>', '<%= JSON.stringify(booking) %>','<%= booking.timezone %>')" ><b><%= booking.booking_id %></b></a></td>
+                                                <td><a href="#" onclick="bookinglogs('<%= JSON.stringify(booking.logs) %>','<%= booking.timezone %>')" ><b>Open Log</b></a></td>
                                         
                                                 <td> <%= booking.booking_date  %> </td>
                                                 <!-- <td> <%= booking.booking_times  %> </td> -->
                                                 <td>
-                                                    <span class="booking-time" data-time="<%= booking.booking_times %>"></span>
+                                                    <span class="booking-time" data-timezone="<%= booking.timezone %>" data-time="<%= booking.booking_times %>"></span>
                                                 </td>
                                                 <td> <%= booking.trn  %> </td>
                                                 <td> <%= booking.firstname %> <%= booking.lastname %> </td>
@@ -241,7 +241,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
 // Use Moment.js to format the time in the user's local timezone
 
-const formattedTime = moment(originalTime, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
+//const formattedTime = moment(originalTime, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
+
+//----- using dynamic zone 
+const formattedTime = moment.tz(originalTime, timezone).format('hh:mm A');
+
 
         
         // Display booking details in the modal
@@ -339,8 +343,8 @@ const formattedTime = moment(originalTime, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm 
 
     function reschedule(booking_id) {
   document.cookie = `kwl_booking_id=${booking_id}`;
-  var msg = 'Booking '+booking_id+' Updated successfully'
-  document.cookie = `kwl_msg=${msg}`;
+//   var msg = 'Booking '+booking_id+' Updated successfully'
+//   document.cookie = `kwl_msg=${msg}`;
 // Redirect to the viewUser route
 window.location.href = '/superadmin/reschedule';
     
@@ -1304,15 +1308,18 @@ function updateBookingold(booking_id, booking) {
             default:
                 statusColor = '#17a2b8'; // default info color
         }
-               // Format the created_at date
-               const formattedCreatedAt = new Date(log.created_at).toLocaleString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            hour12: true
-        });
+        //        // Format the created_at date for localtimezone
+        //        const formattedCreatedAt = new Date(log.created_at).toLocaleString('en-US', {
+        //     year: 'numeric',
+        //     month: 'short',
+        //     day: 'numeric',
+        //     hour: 'numeric',
+        //     minute: 'numeric',
+        //     hour12: true
+        // });
+
+
+        const formattedCreatedAt = moment.tz(log.created_at, timezone).format('MMM DD, YYYY hh:mm A');
 
         // Add each log entry as a row in the table
         logContent += `
@@ -1342,18 +1349,36 @@ function updateBookingold(booking_id, booking) {
 
 
    
-document.addEventListener("DOMContentLoaded", function () {
-        // Select all elements with the booking time data attribute
-        document.querySelectorAll('.booking-time').forEach(function (element) {
-            const originalTime = element.getAttribute('data-time');
+// document.addEventListener("DOMContentLoaded", function () {
+//         // Select all elements with the booking time data attribute
+//         document.querySelectorAll('.booking-time').forEach(function (element) {
+//             const originalTime = element.getAttribute('data-time');
 
-            // Use Moment.js to format the time in the user's local timezone
+//             // Use Moment.js to format the time in the user's local timezone
         
-            const formattedTime = moment(originalTime, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
+//             const formattedTime = moment(originalTime, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
+
+//             // Set the formatted time as the text content of the element
+//             element.textContent = formattedTime;
+//         });
+//     });
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Select all elements with the booking time data attribute
+    document.querySelectorAll('.booking-time').forEach(function (element) {
+        const originalTime = element.getAttribute('data-time'); // ISO format time
+        const timezone = element.getAttribute('data-timezone'); // Provided timezone
+
+        if (originalTime && timezone) {
+            // Format the time according to the specified timezone
+            const formattedTime = moment.tz(originalTime, timezone).format('hh:mm A');
 
             // Set the formatted time as the text content of the element
             element.textContent = formattedTime;
-        });
+        }
     });
+});
+
 
 </script>

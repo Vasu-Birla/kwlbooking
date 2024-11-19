@@ -203,7 +203,7 @@ const appointments = async (req, res, next) => {
 
 
     const bookings = [];
-    for (const booking of result.recordset) {
+    for (let booking of result.recordset) {
       // Step 2.1: Fetch logs for the current booking
       const logsResult = await pool
         .request()
@@ -215,6 +215,30 @@ const appointments = async (req, res, next) => {
         // log.created_at = moment(log.created_at).format('YYYY-MM-DDTHH:mm:ssZ'); // Format created_at as needed
         return log;
       });
+
+
+
+      
+      //----------- add time zone to each booking ----------- 
+      const acuityResponse = await axios.get(
+        `https://acuityscheduling.com/api/v1/appointments/${booking.booking_id}?pastFormAnswers=false`,
+        {
+          auth: {
+            username: '19354905', // Use actual username
+            password: 'b0a1d960446f9efab07df16c4c16b444' // Use actual password
+          }
+        }
+      );
+      const acuityBooking = acuityResponse.data;
+   
+
+    // Step 3: Merge Acuity data into internal booking data, adding `appointmentTypeID` and `calendarID`
+     booking = {
+      ...booking,        
+      timezone:acuityBooking.timezone,
+      location:acuityBooking.location     
+    };
+    //----------- add time zone to each booking ----------- 
 
       // Step 2.3: Format booking_times
       // if (booking.booking_times) {
@@ -1041,8 +1065,11 @@ const reschedule = async (req, res, next) => {
     const booking = {
       ...internalBooking,
       appointmentTypeID: acuityBooking.appointmentTypeID,
-      calendarID: acuityBooking.calendarID,
-      acuityData: acuityBooking // Optionally, store other Acuity details if needed
+      type_name:acuityBooking.type,
+      calendarID: acuityBooking.calendarID,      
+      timezone:acuityBooking.timezone,
+      location:acuityBooking.location,
+      acuityData: acuityBooking
     };
 
     
@@ -1177,7 +1204,7 @@ const cancelBooking = async (req, res, next) => {
 
 const rescheduleBooking = async (req, res, next) => {
   console.log(req.body)
-  const { booking_id, selectedDateTimes, booking_date , booking_datetime } = req.body;
+  const { booking_id, selectedDateTimes, booking_date , booking_datetime , timezone} = req.body;
 
   let pool;
   let transaction;
@@ -1242,7 +1269,7 @@ const rescheduleBooking = async (req, res, next) => {
     UPDATE tbl_bookings
     SET 
         booking_date = '${booking_date}', 
-        booking_times = '${formattedDatetime}',
+        booking_times = '${datetime}',
         booking_status = 'Rescheduled'
     WHERE booking_id = ${booking_id}
 `;
@@ -1254,13 +1281,24 @@ const rescheduleBooking = async (req, res, next) => {
 
 
 
-        const new_time = moment(datetime, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
-        const old_time = moment(booking_datetime, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
-        const old_date = moment(booking_datetime, "YYYY-MM-DDTHHmm:ssZ").format('YYYY-MM-DD');
+        // const new_time = moment(datetime, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
+        // const old_time = moment(booking_datetime, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
+        // const old_date = moment(booking_datetime, "YYYY-MM-DDTHHmm:ssZ").format('YYYY-MM-DD');
 
 
-         const old_datetime = `${old_date},${new_time}`
-          const new_datetime = `${booking_date},${old_time}`
+        const new_time = moment.tz(datetime, timezone).format('hh:mm A');
+        const old_time = moment.tz(booking_datetime, timezone).format('hh:mm A');
+        const old_date = moment.tz(booking_datetime, timezone).format('YYYY-MM-DD');
+
+// Combine the formatted old date and new time into the old datetime
+const old_datetime = `${old_date}, ${new_time}`;
+
+// Combine the formatted booking date and old time into the new datetime
+const new_datetime = `${booking_date}, ${old_time}`;
+
+
+        //  const old_datetime = `${old_date},${new_time}`
+        //   const new_datetime = `${booking_date},${old_time}`
 
         var reason1 = 'Rescheduled'
 

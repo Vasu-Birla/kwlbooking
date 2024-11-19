@@ -269,6 +269,8 @@ const reschedule = async (req, res, next) => {
       appointmentTypeID: acuityBooking.appointmentTypeID,
       type_name:acuityBooking.type,
       calendarID: acuityBooking.calendarID,
+      timezone:acuityBooking.timezone,
+      location:acuityBooking.location,
       acuityData: acuityBooking // Optionally, store other Acuity details if needed
     };
 
@@ -341,8 +343,9 @@ const rescheduleinternal = async (req, res, next) => {
 const dates_availability = async (req, res, next) => { console.log("............data availabilty",req.query)
 
 
+  
   try {
-    const { appointmentTypeID, month } = req.query;
+    const { appointmentTypeID, month ,calendarId ,timezone } = req.query;
     
 
     if (!appointmentTypeID || !month) {
@@ -360,10 +363,12 @@ const dates_availability = async (req, res, next) => { console.log("............
     
         //----------------------   audit Logging -------------------------- 
 
-    var appointmentTypeID1 =  18478069
+    
+
+        var url =  `https://acuityscheduling.com/api/v1/availability/dates?month=${month}&appointmentTypeID=${appointmentTypeID}&calendarID=${calendarId}&timezone=${timezone}`
 
     const response = await axios.get(
-      `https://acuityscheduling.com/api/v1/availability/dates?month=${month}&appointmentTypeID=${appointmentTypeID}&timezone=`,
+      `https://acuityscheduling.com/api/v1/availability/dates?month=${month}&appointmentTypeID=${appointmentTypeID}&calendarID=${calendarId}&timezone=${timezone}`,
       {
         auth: {
           username: '19354905',
@@ -406,8 +411,42 @@ const appointment_types = async (req, res, next) => {
       }
     });
 
+    const calendarsresponse = await axios.get('https://acuityscheduling.com/api/v1/calendars', {
+      auth: {
+        username: '19354905',       // Replace with actual username
+        password: 'b0a1d960446f9efab07df16c4c16b444'  // Replace with actual password
+      }
+    });
+
+    const appointmentTypes = response.data;
+    const calendars = calendarsresponse.data;
+
+
+    
+
+    // Create a Map for quick calendar lookup
+    const calendarMap = new Map(calendars.map((cal) => [cal.id, cal]));
+
+    // Merge data
+    const mergedData = appointmentTypes.map((type) => {
+      const primaryCalendar = calendarMap.get(type.calendarIDs[0]); // Use the first calendar ID
+      return {
+        ...type,
+        ...(primaryCalendar
+          ? {
+              calendarId: primaryCalendar.id,
+              calendarName: primaryCalendar.name,
+              location: primaryCalendar.location,
+              timezone: primaryCalendar.timezone,
+            }
+          : {}),
+      };
+    });
+
+    console.log("mergedData----> ",mergedData)
+
     // Send the appointment types data back to the client
-    res.json(response.data);
+    res.json(mergedData);
   } catch (error) {
     console.error('Error fetching appointment types:', error);
     res.status(500).json({ message: 'Failed to fetch appointment types' });
@@ -804,7 +843,7 @@ const confirmbooking = async (req, res, next) => {
     trn, firstname, lastname, contact, country_code, user_email, agent_forwarder,
     appointment_by, appointment_type, bol_number, vessel_name, vessel_reported_date,
     chassis_number, declaration_number, container_number, number_of_items,
-    booking_date, booking_times, appointmentTypeID, calendarID, selectedDateTimes
+    booking_date, booking_times, appointmentTypeID, calendarID, selectedDateTimes ,timezone
   } = req.body;
 
   let pool;
@@ -884,8 +923,15 @@ const confirmbooking = async (req, res, next) => {
 
         var reason1 = 'Confirmed'
 
-        const booking_times = moment(datetime, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
-        const booking_datetime = `${booking_date},${booking_times}`
+        //const booking_times = moment(datetime, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
+       // const booking_datetime = `${booking_date},${booking_times}`
+
+        // Format the date using the specified timezone
+const booking_date = moment.tz(datetime, timezone).format('MMMM DD, YYYY');
+const booking_times = moment.tz(datetime, timezone).format('hh:mm A');
+
+// Combine the formatted date and time
+const booking_datetime = `${booking_date}, ${booking_times}`;
 
         await transaction.request()
         .input('user_role', sql.NVarChar, userRole)
@@ -1004,7 +1050,7 @@ const viewBookings = async (req, res, next) => {
 
     // Step 2: Iterate over bookings and fetch logs for each booking
     const bookings = [];
-    for (const booking of result.recordset) {
+    for (let booking of result.recordset) {
       // Step 2.1: Fetch logs for the current booking
       const logsResult = await pool
         .request()
@@ -1016,6 +1062,31 @@ const viewBookings = async (req, res, next) => {
         // log.created_at = moment(log.created_at).format('YYYY-MM-DDTHH:mm:ssZ'); // Format created_at as needed
         return log;
       });
+
+
+
+
+      //----------- add time zone to each booking ----------- 
+      const acuityResponse = await axios.get(
+        `https://acuityscheduling.com/api/v1/appointments/${booking.booking_id}?pastFormAnswers=false`,
+        {
+          auth: {
+            username: '19354905', // Use actual username
+            password: 'b0a1d960446f9efab07df16c4c16b444' // Use actual password
+          }
+        }
+      );
+      const acuityBooking = acuityResponse.data;
+   
+
+    // Step 3: Merge Acuity data into internal booking data, adding `appointmentTypeID` and `calendarID`
+     booking = {
+      ...booking,        
+      timezone:acuityBooking.timezone,
+      location:acuityBooking.location     
+    };
+    //----------- add time zone to each booking ----------- 
+  
 
       // Step 2.3: Format booking_times
       // if (booking.booking_times) {
@@ -1331,7 +1402,7 @@ const rescheduleBooking = async (req, res, next) => {
     UPDATE tbl_bookings
     SET 
         booking_date = '${booking_date}', 
-        booking_times = '${formattedDatetime}',
+        booking_times = '${datetime}',
         booking_status = 'Rescheduled'
     WHERE booking_id = ${booking_id}
 `;
@@ -1343,13 +1414,23 @@ const rescheduleBooking = async (req, res, next) => {
        
 
 
-        const new_time = moment(datetime, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
-        const old_time = moment(booking_datetime, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
-        const old_date = moment(booking_datetime, "YYYY-MM-DDTHHmm:ssZ").format('YYYY-MM-DD');
+        // const new_time = moment(datetime, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
+        // const old_time = moment(booking_datetime, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
+        // const old_date = moment(booking_datetime, "YYYY-MM-DDTHHmm:ssZ").format('YYYY-MM-DD');
 
 
-         const old_datetime = `${old_date},${new_time}`
-          const new_datetime = `${booking_date},${old_time}`
+        const new_time = moment.tz(datetime, timezone).format('hh:mm A');
+        const old_time = moment.tz(booking_datetime, timezone).format('hh:mm A');
+        const old_date = moment.tz(booking_datetime, timezone).format('YYYY-MM-DD');
+
+// Combine the formatted old date and new time into the old datetime
+const old_datetime = `${old_date}, ${new_time}`;
+
+// Combine the formatted booking date and old time into the new datetime
+const new_datetime = `${booking_date}, ${old_time}`;
+
+
+  
 
         var reason1 = 'Rescheduled'
 
