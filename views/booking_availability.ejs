@@ -844,7 +844,7 @@ function renderAvailableDates(data,timezone) {
 
 
 
-    function generateCalendar() {
+    function generateCalendarworkingwithougdays() {
         const daysContainer = document.getElementById("calendarDays");
         const monthYearLabel = document.getElementById("monthYear");
         monthYearLabel.textContent = `${monthNames[currentMonth]} ${currentYear}`;
@@ -863,7 +863,7 @@ function renderAvailableDates(data,timezone) {
         daysContainer.innerHTML = daysHTML;
     }
 
- function generateCalendarkharbwala() {
+ function generateCalendar() {
         const daysContainer = document.getElementById("calendarDays");
         const monthYearLabel = document.getElementById("monthYear");
 
@@ -885,7 +885,7 @@ function renderAvailableDates(data,timezone) {
 
         // Get the first day and last date of the current month
         const date = new Date(currentYear, currentMonth, 1);
-        const firstDay = (date.getDay() + 6) % 7; // Adjust to start the week on Monday
+        const firstDay = (date.getDay() + 7) % 7; // Adjust to start the week on Monday
         const lastDate = new Date(currentYear, currentMonth + 1, 0).getDate();
 
         // Add empty slots for days before the first day of the month
