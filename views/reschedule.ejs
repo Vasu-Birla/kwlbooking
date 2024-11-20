@@ -221,7 +221,7 @@
                                         <input type="text" id="cnumber" class="form-control" name="container_number" value="<%= booking.container_number %>" readonly>
                                     </div>
                                     <div class="col-md-6">
-                                        <label>* Number of Pieces/Packages</label>
+                                        <label>* Number of Pieces/Packages/Units</label>
                                         <input type="number" id="ppnumber" class="form-control" name="number_of_items" value="<%= booking.number_of_items %>" readonly>
                                     </div>
                                 </div>
@@ -489,7 +489,9 @@ appointmentTypeSelect.addEventListener('change', function() {
     function populateConfirmation() {
         const selectedDateText = selectedDate || "Not selected";
         const selectedTimesText = selectedTimes.length > 0 ? selectedTimes.join(", ") : "Not selected";
-        const appointmentType = document.getElementById("appointmentType").value || "N/A";
+        // const appointmentType = document.getElementById("appointmentType").value || "N/A";
+
+        const appointmentType = document.getElementById("apppersonal").value || "N/A";
 
         // Retrieve values from all the required input fields
         const trn = document.getElementById("trn").value || "N/A";

@@ -184,7 +184,7 @@ div:where(.swal2-container) .swal2-html-container {
 
                                     <div class="col-md-6">
                                         <label>*  Agent/Freight Forwarder </label>
-                                        <!-- <input type="text" id="apppersonal" class="form-control" name="appointment_type" placeholder="Enter the appointment type" required=""> -->
+                                      
                                         <select id="agent" class="form-control" name="agent_forwarder"  required style="appearance: auto;">
                                             <option value="">Select Agent</option>
                                             <option value="Agent1">Agent1</option>
@@ -194,7 +194,7 @@ div:where(.swal2-container) .swal2-html-container {
 
                                     <div class="col-md-6">
                                         <label>* Name of Individual Making Appointment (If not consignee)</label>
-                                        <input maxlength="20" type="text" id="appname" class="form-control" name="appointment_by" placeholder="Enter the name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="" readonly>
+                                        <input maxlength="20" type="text" id="appname" class="form-control" name="appointment_by" placeholder="Enter the name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" value="0" readonly>
                                     </div>
                                     <div class="col-md-6">
                                         <label>* Appointment Type (Personal/Commercial)</label>
@@ -225,14 +225,14 @@ div:where(.swal2-container) .swal2-html-container {
                                     </div>
                                     <div class="col-md-6">
                                         <label>* Customs Release/IMS4 Declaration Number</label>
-                                        <input maxlength="20" type="text" id="ims" class="form-control" name="declaration_number" placeholder="Customs Release/IMS4 Declaration Number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
+                                        <input maxlength="20" type="text" id="ims" class="form-control" name="declaration_number" placeholder="Customs Release/IMS4 Declaration Number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" value="0">
                                     </div>
                                     <div class="col-md-6">
                                         <label>Container Number</label>
-                                        <input maxlength="20" type="text" id="cnumber" class="form-control" name="container_number" placeholder="Enter the data" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
+                                        <input maxlength="20" type="text" id="cnumber" class="form-control" name="container_number" placeholder="Enter the data" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" value="0">
                                     </div>
                                     <div class="col-md-6">
-                                        <label>* Number of Pieces/Packages</label>
+                                        <label>* Number of Pieces/Packages/Units</label>
                                         <input type="number" min="0" id="ppnumber" class="form-control" name="number_of_items" placeholder="Enter the packages" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
                                     </div>
                                 </div>
@@ -517,7 +517,9 @@ appointmentTypeSelect.addEventListener('change', function() {
     function populateConfirmation() {
         const selectedDateText = selectedDate || "Not selected";
         const selectedTimesText = selectedTimes.length > 0 ? selectedTimes.join(", ") : "Not selected";
-        const appointmentType = document.getElementById("appointmentType").value || "N/A";
+       // const appointmentType = document.getElementById("appointmentType").value || "N/A";
+
+        const appointmentType = document.getElementById("apppersonal").value || "N/A";
 
         // Retrieve values from all the required input fields
         const trn = document.getElementById("trn").value || "N/A";
@@ -536,6 +538,8 @@ appointmentTypeSelect.addEventListener('change', function() {
         const cnumber = document.getElementById("cnumber").value || "N/A";
         const ppnumber = document.getElementById("ppnumber").value || "N/A";
         const typename = document.getElementById("typename").value || "N/A";
+
+
 
 
         
@@ -1567,8 +1571,8 @@ async function directConfirmBooking(email) {
 
                                         if (!numericOnlyPattern.test(inputField.value)) {
                                             // Allow common validation to handle non-numeric characters
-                                        } else if (inputValue.length > 3 || inputValue == 0  ) {                        
-                                            addErrorMessage(inputParent, 'Pacakge Number Cannot Be 0 Or Exceed 3 Digits');
+                                        } else if (inputValue.length > 3  ) {                        
+                                            addErrorMessage(inputParent, 'Pacakge Number Cannot Be  Exceed 3 Digits');
                                             inputField.style.border = '2px solid red'; 
 
                                             if (event.type === 'change') {
