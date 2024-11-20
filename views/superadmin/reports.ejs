@@ -96,7 +96,7 @@
 
                                                     
                                                     <option value="Pending">Pending</option>
-                                                    <option value="Confirmed">Confirmed</option>                                                    
+                                                    <option value="Confirmed">Scheduled</option>                                                    
                                                     <option value="Cancelled">Cancelled</option>
                                                     <option value="Rescheduled">Rescheduled</option>
                                                     <option value="Completed">Completed</option>
@@ -155,6 +155,9 @@
                                             <% bookings.forEach((booking, index) => { %>
 
 
+                                                <% if (booking.booking_status == 'Confirmed') { %>
+                                                    <% booking.booking_status = 'Scheduled'; %>
+                                                <% } %>
 
 
                                                 <tr>

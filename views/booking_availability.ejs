@@ -5,6 +5,20 @@
 
 
 <style>
+
+
+.calendar-day-name {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    font-size: 16px;
+    height: 50px;
+    width: 50px;
+    border: 1px solid #ddd;
+    background-color: #f0f0f0;
+}
  
 
 
@@ -193,7 +207,7 @@ div:where(.swal2-container) .swal2-html-container {
                                     </div>
 
                                     <div class="col-md-6">
-                                        <label>* Name of Individual Making Appointment (If not consignee)</label>
+                                        <label> Name of Individual Making Appointment (If not consignee)</label>
                                         <input maxlength="20" type="text" id="appname" class="form-control" name="appointment_by" placeholder="Enter the name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" value="0" readonly>
                                     </div>
                                     <div class="col-md-6">
@@ -224,11 +238,11 @@ div:where(.swal2-container) .swal2-html-container {
                                         <input maxlength="20" type="text" id="chassis" class="form-control" value="0" name="chassis_number" placeholder="Enter the number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
                                     </div>
                                     <div class="col-md-6">
-                                        <label>* Customs Release/IMS4 Declaration Number</label>
+                                        <label> Customs Release/IMS4 Declaration Number</label>
                                         <input maxlength="20" type="text" id="ims" class="form-control" name="declaration_number" placeholder="Customs Release/IMS4 Declaration Number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" value="0">
                                     </div>
                                     <div class="col-md-6">
-                                        <label>Container Number</label>
+                                        <label> Container Number</label>
                                         <input maxlength="20" type="text" id="cnumber" class="form-control" name="container_number" placeholder="Enter the data" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" value="0">
                                     </div>
                                     <div class="col-md-6">
@@ -337,7 +351,7 @@ div:where(.swal2-container) .swal2-html-container {
                                     <span id="confirmVesselName"></span>
                                 </div>
                                 <div class="col-md-6">
-                                    <strong>Vessel Reported Date</strong>
+                                    <strong>Expected Vessel Reported Date</strong>
                                 </div>
                                 <div class="col-md-6">
                                     <span id="confirmVesselReportedDate"></span>
@@ -361,7 +375,7 @@ div:where(.swal2-container) .swal2-html-container {
                                     <span id="confirmContainerNumber"></span>
                                 </div>
                                 <div class="col-md-6">
-                                    <strong>Number of Pieces/Packages</strong>
+                                    <strong>Number of Pieces/Packages/Units</strong>
                                 </div>
                                 <div class="col-md-6">
                                     <span id="confirmPPNumber"></span>
@@ -849,6 +863,47 @@ function renderAvailableDates(data,timezone) {
         daysContainer.innerHTML = daysHTML;
     }
 
+ function generateCalendarkharbwala() {
+        const daysContainer = document.getElementById("calendarDays");
+        const monthYearLabel = document.getElementById("monthYear");
+
+        // Define the names of the months and days
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+        // Update the month and year label
+        monthYearLabel.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+
+        // Create the weekday header with only the first letter
+        let daysHTML = "";
+        dayNames.forEach(day => {
+            daysHTML += `<div class="calendar-day-name">${day.charAt(0)}</div>`;
+        });
+
+        // Get the first day and last date of the current month
+        const date = new Date(currentYear, currentMonth, 1);
+        const firstDay = (date.getDay() + 6) % 7; // Adjust to start the week on Monday
+        const lastDate = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+        // Add empty slots for days before the first day of the month
+        for (let i = 0; i < firstDay; i++) {
+            daysHTML += `<div class="calendar-day empty"></div>`;
+        }
+
+        // Add days of the current month
+        for (let i = 1; i <= lastDate; i++) {
+            const formattedDate = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+            const isAvailable = availableDates.includes(formattedDate);
+            daysHTML += `<div class="calendar-day ${isAvailable ? 'available' : 'disabled'}" onclick="${isAvailable ? `selectDate(${i})` : ''}">${i}</div>`;
+        }
+
+        // Render the calendar
+        daysContainer.innerHTML = daysHTML;
+    } 
+
     function setupEventListeners() {
         document.getElementById('appointmentType').addEventListener('change', fetchAvailableDates);
         document.getElementById('prevMonthBtn').addEventListener('click', prevMonth);
@@ -862,7 +917,10 @@ function renderAvailableDates(data,timezone) {
     const formattedDate = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     selectedDate = formattedDate;
     
-    document.getElementById('cal_date').innerHTML = moment(selectedDate).format('MMMM DD, YYYY');
+    // document.getElementById('cal_date').innerHTML = moment(selectedDate).format('MMMM DD, YYYY');
+
+    document.getElementById('cal_date').innerHTML = moment(selectedDate).format('dddd, MMMM DD, YYYY');
+
 
     // Deselect all days and highlight the selected day
     document.querySelectorAll(".calendar-day").forEach(dayEl => dayEl.classList.remove("selected-day"));
@@ -1934,6 +1992,8 @@ document.addEventListener("DOMContentLoaded", function () {
         preferredCountries: ["jm", "us"], // Customize based on your needs
         separateDialCode: true,
         initialCountry: "jm",
+        autoPlaceholder: "off", // Disable auto-placeholder
+        autoHideDialCode: false, // Prevent hiding the dial code
         utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.min.js",
     });
 
@@ -1965,8 +2025,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Validate on country change
     input.addEventListener("countrychange", validateNumber);
 
-    // Initialize hidden fields on page load
-    validateNumber();
+  
 });
 
    

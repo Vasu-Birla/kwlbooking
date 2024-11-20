@@ -220,24 +220,24 @@ const appointments = async (req, res, next) => {
 
       
       //----------- add time zone to each booking ----------- 
-      const acuityResponse = await axios.get(
-        `https://acuityscheduling.com/api/v1/appointments/${booking.booking_id}?pastFormAnswers=false`,
-        {
-          auth: {
-            username: '19354905', // Use actual username
-            password: 'b0a1d960446f9efab07df16c4c16b444' // Use actual password
-          }
-        }
-      );
-      const acuityBooking = acuityResponse.data;
+    //   const acuityResponse = await axios.get(
+    //     `https://acuityscheduling.com/api/v1/appointments/${booking.booking_id}?pastFormAnswers=false`,
+    //     {
+    //       auth: {
+    //         username: '19354905', // Use actual username
+    //         password: 'b0a1d960446f9efab07df16c4c16b444' // Use actual password
+    //       }
+    //     }
+    //   );
+    //   const acuityBooking = acuityResponse.data;
    
 
-    // Step 3: Merge Acuity data into internal booking data, adding `appointmentTypeID` and `calendarID`
-     booking = {
-      ...booking,        
-      timezone:acuityBooking.timezone,
-      location:acuityBooking.location     
-    };
+    // // Step 3: Merge Acuity data into internal booking data, adding `appointmentTypeID` and `calendarID`
+    //  booking = {
+    //   ...booking,        
+    //   timezone:acuityBooking.timezone,
+    //   location:acuityBooking.location     
+    // };
     //----------- add time zone to each booking ----------- 
 
       // Step 2.3: Format booking_times
@@ -248,10 +248,12 @@ const appointments = async (req, res, next) => {
       // }
 
       // Step 2.4: Push formatted booking with logs into the array
+
+    
       bookings.push(booking);
     }
 
-    
+    console.log("finished processsssssssssssssssssssssssss")
    // console.log('bookings:', bookings);
     res.render('superadmin/appointments', { output: output , bookings:bookings});
   } catch (error) {
@@ -1066,9 +1068,7 @@ const reschedule = async (req, res, next) => {
       ...internalBooking,
       appointmentTypeID: acuityBooking.appointmentTypeID,
       type_name:acuityBooking.type,
-      calendarID: acuityBooking.calendarID,      
-      timezone:acuityBooking.timezone,
-      location:acuityBooking.location,
+      calendarID: acuityBooking.calendarID,
       acuityData: acuityBooking
     };
 

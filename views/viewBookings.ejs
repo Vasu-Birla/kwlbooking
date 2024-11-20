@@ -119,7 +119,7 @@ div[style*="overflow-x: auto;"] {
                                       
                                         <% if (booking.booking_status == 'Confirmed') { %>
                                             <p id="msg<%=  booking.booking_id %>" style="color: orange;"></p>
-                                            <p class="kilstatus" style="color: green;"> Confirmed</p>
+                                            <p class="kilstatus" style="color: green;"> Scheduled</p>
                                           <% } else if (booking.booking_status == 'Pending') { %>
                                             <p id="msg<%=  booking.booking_id %>" style="color: green !important;"></p>
                                             <p class="kilstatus" style="color: #a6ad96;"> Pending</p>
@@ -1020,6 +1020,10 @@ function showAppointmentDetails(booking_id, booking, timezone) {
 //----- using dynamic zone 
 const formattedTime = moment.tz(originalTime, timezone).format('hh:mm A');
 
+if(booking.booking_status =='Confirmed'){
+    booking.booking_status = 'Scheduled'
+}
+
         
         // Display booking details in the modal
         Swal.fire({
@@ -1071,7 +1075,7 @@ const formattedTime = moment.tz(originalTime, timezone).format('hh:mm A');
                         <strong>Vessel Name:</strong><span>${booking.vessel_name || 'N/A'}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; padding: 5px 0;">
-                        <strong>Vessel Reported Date:</strong><span>${booking.vessel_reported_date || 'N/A'}</span>
+                        <strong>Expected Vessel Reported Date:</strong><span>${booking.vessel_reported_date || 'N/A'}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; padding: 5px 0;">
                         <strong>Bill of Lading Number:</strong><span>${booking.bol_number || 'N/A'}</span>
@@ -1086,7 +1090,7 @@ const formattedTime = moment.tz(originalTime, timezone).format('hh:mm A');
                         <strong>Container Number:</strong><span>${booking.container_number || 'N/A'}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; padding: 5px 0;">
-                        <strong>Number of Pieces/Packages:</strong><span>${booking.number_of_items || 'N/A'}</span>
+                        <strong>Number of Pieces/Packages/Units:</strong><span>${booking.number_of_items || 'N/A'}</span>
                     </div>
                 </div>
             `,

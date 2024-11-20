@@ -269,8 +269,6 @@ const reschedule = async (req, res, next) => {
       appointmentTypeID: acuityBooking.appointmentTypeID,
       type_name:acuityBooking.type,
       calendarID: acuityBooking.calendarID,
-      timezone:acuityBooking.timezone,
-      location:acuityBooking.location,
       acuityData: acuityBooking // Optionally, store other Acuity details if needed
     };
 
@@ -846,6 +844,8 @@ const confirmbooking = async (req, res, next) => {
     booking_date, booking_times, appointmentTypeID, calendarID, selectedDateTimes ,timezone
   } = req.body;
 
+  var location = ''
+
   let pool;
   let transaction;
 
@@ -904,7 +904,7 @@ const confirmbooking = async (req, res, next) => {
         const bookingId = acuityResponse.data.id;
 
         // Inline query string to insert data into the table
-        const query = `
+        const querywithouttimezone = `
           INSERT INTO tbl_bookings (
             booking_id, trn, firstname, lastname, contact, country_code, user_email,
             agent_forwarder, appointment_by, appointment_type, bol_number,
@@ -917,6 +917,23 @@ const confirmbooking = async (req, res, next) => {
             '${container_number}', '${number_of_items}', '${booking_date}', '${datetime}'
           )
         `;
+
+
+        const query = `
+  INSERT INTO tbl_bookings (
+    booking_id, trn, firstname, lastname, contact, country_code, user_email,
+    agent_forwarder, appointment_by, appointment_type, bol_number,
+    vessel_name, vessel_reported_date, chassis_number, declaration_number,
+    container_number, number_of_items, booking_date, booking_times,
+    timezone, location
+  ) VALUES (
+    ${bookingId}, '${trn}', '${firstname}', '${lastname}', '${contact}', '${country_code}', '${user_email}',
+    '${agent_forwarder}', '${appointment_by}', '${appointment_type}', '${bol_number}',
+    '${vessel_name}', '${vessel_reported_date}', '${chassis_number}', '${declaration_number}',
+    '${container_number}', '${number_of_items}', '${booking_date}', '${datetime}',
+    '${timezone}', '${location}'
+  )
+`;
 
         // Perform the insert query
         await transaction.request().query(query);
@@ -1067,24 +1084,24 @@ const viewBookings = async (req, res, next) => {
 
 
       //----------- add time zone to each booking ----------- 
-      const acuityResponse = await axios.get(
-        `https://acuityscheduling.com/api/v1/appointments/${booking.booking_id}?pastFormAnswers=false`,
-        {
-          auth: {
-            username: '19354905', // Use actual username
-            password: 'b0a1d960446f9efab07df16c4c16b444' // Use actual password
-          }
-        }
-      );
-      const acuityBooking = acuityResponse.data;
+    //   const acuityResponse = await axios.get(
+    //     `https://acuityscheduling.com/api/v1/appointments/${booking.booking_id}?pastFormAnswers=false`,
+    //     {
+    //       auth: {
+    //         username: '19354905', // Use actual username
+    //         password: 'b0a1d960446f9efab07df16c4c16b444' // Use actual password
+    //       }
+    //     }
+    //   );
+    //   const acuityBooking = acuityResponse.data;
    
 
-    // Step 3: Merge Acuity data into internal booking data, adding `appointmentTypeID` and `calendarID`
-     booking = {
-      ...booking,        
-      timezone:acuityBooking.timezone,
-      location:acuityBooking.location     
-    };
+    // // Step 3: Merge Acuity data into internal booking data, adding `appointmentTypeID` and `calendarID`
+    //  booking = {
+    //   ...booking,        
+    //   timezone:acuityBooking.timezone,
+    //   location:acuityBooking.location     
+    // };
     //----------- add time zone to each booking ----------- 
   
 

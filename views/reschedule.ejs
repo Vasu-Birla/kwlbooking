@@ -872,7 +872,11 @@ function generateCalendar() {
     const formattedDate = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     selectedDate = formattedDate;
 
-    document.getElementById('cal_date').innerHTML = moment(selectedDate).format('MMMM DD, YYYY');
+    //document.getElementById('cal_date').innerHTML = moment(selectedDate).format('MMMM DD, YYYY');
+
+    document.getElementById('cal_date').innerHTML = moment(selectedDate).format('dddd, MMMM DD, YYYY');
+
+    
 
     // Deselect all days and highlight the selected day
     document.querySelectorAll(".calendar-day").forEach(dayEl => dayEl.classList.remove("selected-day"));
