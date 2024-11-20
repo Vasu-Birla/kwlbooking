@@ -302,7 +302,7 @@ div:where(.swal2-container) .swal2-html-container {
                                     <span id="confirmAgent"></span>
                                 </div>
                                 <div class="col-md-6">
-                                    <strong>Name of Individual Making Appointment</strong>
+                                    <strong>Name of Individual Making Appointment (If not consignee)</strong>
                                 </div>
                                 <div class="col-md-6">
                                     <span id="confirmAppName"></span>
@@ -1931,7 +1931,7 @@ document.addEventListener("DOMContentLoaded", function () {
     input.parentNode.appendChild(errorMsg);
 
     var iti = window.intlTelInput(input, {
-        preferredCountries: ["us", "in"], // Customize based on your needs
+        preferredCountries: ["jm", "us"], // Customize based on your needs
         separateDialCode: true,
         initialCountry: "jm",
         utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.min.js",

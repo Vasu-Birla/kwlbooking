@@ -598,9 +598,9 @@ function updateBooking(booking_id, booking) {
             var savedPhoneNumber = booking.contact || '';  // Use saved phone number from user data
 
             var iti = window.intlTelInput(input, {
-                preferredCountries: ["hk", "cn"], // Customize based on your needs
+                preferredCountries: ["jm", "in"], // Customize based on your needs
                 separateDialCode: true,
-                initialCountry: "auto",
+                initialCountry: "jm",
                 geoIpLookup: function(success, failure) {
                     fetch('https://ipinfo.io/json', {cache: 'reload'}).then(resp => resp.json()).then(resp => {
                         var countryCode = (resp && resp.country) ? resp.country : "hk";
