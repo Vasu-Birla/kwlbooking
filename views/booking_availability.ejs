@@ -6,6 +6,11 @@
 
 <style>
 
+div#error-msg {
+    padding: 10p;
+    margin-left: 15px !important;
+}
+
 
 .calendar-day-name {
     font-weight: bold;
@@ -1994,6 +1999,8 @@ document.addEventListener("DOMContentLoaded", function () {
         initialCountry: "jm",
         autoPlaceholder: "off", // Disable auto-placeholder
         autoHideDialCode: false, // Prevent hiding the dial code
+        nationalMode: false, // Ensure the number is shown without spaces
+        formatOnDisplay: false, // Disable auto-formatting on display
         utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.min.js",
     });
 

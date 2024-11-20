@@ -7,6 +7,11 @@
 
 <style>
 
+
+div:where(.swal2-container) .swal2-html-container {
+    overflow: visible !important;
+}
+
     
 /* Adjust table layout on smaller screens */
 div[style*="overflow-x: auto;"] {
@@ -538,7 +543,7 @@ function updateBooking(booking_id, booking) {
 
     // Create the form structure for editing inside SweetAlert
     const htmlForm = `
-        <form id="kilform" action="/updateBooking" method="POST">
+        <form id="kilform" action="/superadmin/updateBooking" method="POST">
             <div class="row gy-4">
                 <!-- Hidden input for calendarId -->
                 <input type="hidden" id="calendarId" name="calendarId" value="${booking.calendarID}">
@@ -606,6 +611,9 @@ function updateBooking(booking_id, booking) {
                 preferredCountries: ["jm", "in"], // Customize based on your needs
                 separateDialCode: true,
                 initialCountry: "jm",
+                separateDialCode: true,
+                nationalMode: false, // Ensure the number is shown without spaces
+                formatOnDisplay: false, // Disable auto-formatting on display
                 geoIpLookup: function(success, failure) {
                     fetch('https://ipinfo.io/json', {cache: 'reload'}).then(resp => resp.json()).then(resp => {
                         var countryCode = (resp && resp.country) ? resp.country : "hk";

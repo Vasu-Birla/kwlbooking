@@ -718,7 +718,10 @@ async function fetchAvailableDates() {
                 toggleTimeSelection(formattedTime, timeObj.time);
             };
 
+
+
             if (timeObj.time === booking.booking_times) {
+                
                     timeSlotDiv.classList.add("selected-time");
                     selectedTimes.push(formattedTime);
                     selectedDateTimes.push(timeObj.time);
@@ -839,6 +842,8 @@ function generateCalendar() {
     const firstDay = date.getDay();
     const lastDate = new Date(currentYear, currentMonth + 1, 0).getDate();
     let daysHTML = "";
+
+    
 
     for (let i = 0; i < firstDay; i++) daysHTML += `<div class="calendar-day"></div>`;
     for (let i = 1; i <= lastDate; i++) {

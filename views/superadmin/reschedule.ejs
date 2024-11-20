@@ -6,6 +6,22 @@
 
 
 <style>
+
+    
+.calendar-day-name {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    font-size: 16px;
+    height: 50px;
+    width: 50px;
+    border: 1px solid #ddd;
+    background-color: #f0f0f0;
+}
+ 
+
     span{
     color: #133590;
 }
@@ -80,8 +96,13 @@
     <section class="appointment section">
         <div class="container">
             <div class="row">
+
+                <div class="col-md-1">
+
+
+                </div>
             
-                <div class="col-md-12 colcontainer">
+                <div class="col-md-10 colcontainer">
 
                     <!-- Tab Headers -->
                     <div class="tabs">
@@ -723,6 +744,14 @@ async function fetchAvailableDates() {
             timeSlotDiv.onclick = function () {
                 toggleTimeSelection(formattedTime, timeObj.time);
             };
+
+
+                    // Check if this time matches the booking time and pre-select it
+                    if (timeObj.time === booking.booking_times) {
+                    timeSlotDiv.classList.add("selected-time");
+                    selectedTimes.push(formattedTime);
+                    selectedDateTimes.push(timeObj.time);
+                }
         } else {
             timeSlotDiv.style.border = "2px solid red";
             // slotsLeftText.style.color = "red";
@@ -905,6 +934,13 @@ function generateCalendar() {
     const firstDay = date.getDay();
     const lastDate = new Date(currentYear, currentMonth + 1, 0).getDate();
     let daysHTML = "";
+
+    const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+dayNames.forEach(day => {
+        daysHTML += `<div class="calendar-day-name">${day.charAt(0)}</div>`;
+    });
+
 
     for (let i = 0; i < firstDay; i++) daysHTML += `<div class="calendar-day"></div>`;
     for (let i = 1; i <= lastDate; i++) {
