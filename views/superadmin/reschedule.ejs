@@ -105,7 +105,7 @@
                                     <select name="option1" id="appointmentType" class="form-control select2" required aria-readonly="">
                                         <option value="">Select Service</option>
                                         <% if (booking) { %>
-                                          <option value="<%= booking.appointmentTypeID %>" data-location="<%= booking.location %>" data-timezone="<%= booking.timezone %>" data-calendar-id="<%= booking.calendarID %>" data-type-name="<%= booking.type_name %>" selected readonly>
+                                          <option value="<%= booking.appointmentTypeID %>" data-location="<%= booking.location %>" data-timezone="<%= booking.timezone %>" data-calendar-id="<%= booking.calendarID %>" data-type-name="<%= booking.type_name %>" selected readonly style="appearance: auto;">
                                             Your Click N Collect Appointment
                                           </option>
                                         <% } %>
@@ -196,7 +196,7 @@
                                         <input type="text" id="agent" class="form-control" name="agent_forwarder" value="<%= booking.agent_forwarder %>" readonly>
                                     </div>
                                     <div class="col-md-6">
-                                        <label>* Name of Individual Making Appointment</label>
+                                        <label>* Name of Individual Making Appointment (If not consignee)</label>
                                         <input type="text" id="appname" class="form-control" name="appointment_by" value="<%= booking.appointment_by %>" readonly>
                                     </div>
                                     <div class="col-md-6">
@@ -207,12 +207,12 @@
                                         <label>* Bill of Lading Number</label>
                                         <input type="text" id="blnumber" class="form-control" name="bol_number" value="<%= booking.bol_number %>" readonly>
                                     </div>
-                                    <div class="col-md-12">
+                                    <div class="col-md-6">
                                         <label>* Vessel Name</label>
                                         <input type="text" id="vname" class="form-control" name="vessel_name" value="<%= booking.vessel_name %>" readonly>
                                     </div>
-                                    <div class="col-md-12">
-                                        <label>* Vessel Reported Date</label>
+                                    <div class="col-md-6">
+                                        <label>* Expected Vessel Reported Date</label>
                                         <input type="date" id="vreport" class="form-control" name="vessel_reported_date" value="<%= booking.vessel_reported_date %>" readonly>
                                     </div>
                                     <div class="col-md-6">

@@ -1001,7 +1001,10 @@ function updateBookingold(booking_id, booking) {
    
    
                                             
-                                            validCharacters = /^\d{7,15}$/;
+                                            //validCharacters = /^\d{7,15}$/;
+
+                                            validCharacters = /^[\d\-\s]{0,20}$/; // alllow dash(-) and space 
+
                                             // const numericOnlyPattern = /^\d+$/; // Checks for numeric-only input
                                             // const inputValue = inputField.value; 
 
