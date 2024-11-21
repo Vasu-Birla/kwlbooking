@@ -7145,3 +7145,10 @@ URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&a
 Accessed By: User - Guest Mode
 Purpose: Fetching Date Aailabilities
 ------------------------------
+
+------------------------------
+Date and Time: 2024-11-21 13:40:46
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
