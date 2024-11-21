@@ -7,6 +7,14 @@
 
 <style>
 
+.calendar-day.disabled {
+    pointer-events: none; /* Prevents click interaction */
+    color: #ccc; /* Grayed-out text */
+    background-color: #f9f9f9; /* Subtle background */
+    cursor: not-allowed; /* Show "not allowed" cursor */
+}
+
+
     
 .calendar-day-name {
     font-weight: bold;
@@ -217,7 +225,7 @@
                                         <input type="text" id="agent" class="form-control" name="agent_forwarder" value="<%= booking.agent_forwarder %>" readonly>
                                     </div>
                                     <div class="col-md-6">
-                                        <label>* Name of Individual Making Appointment (If not consignee)</label>
+                                        <label> Name of Individual Making Appointment (If not consignee)</label>
                                         <input type="text" id="appname" class="form-control" name="appointment_by" value="<%= booking.appointment_by %>" readonly>
                                     </div>
                                     <div class="col-md-6">
@@ -241,7 +249,7 @@
                                         <input type="text" id="chassis" class="form-control" name="chassis_number" value="<%= booking.chassis_number %>" readonly>
                                     </div>
                                     <div class="col-md-6">
-                                        <label>* Customs Release/IMS4 Declaration Number</label>
+                                        <label> Customs Release/IMS4 Declaration Number</label>
                                         <input type="text" id="ims" class="form-control" name="declaration_number" value="<%= booking.declaration_number %>" readonly>
                                     </div>
                                     <div class="col-md-6">
@@ -419,7 +427,7 @@
     let selectedTimes = [];
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     let currentMonth = moment().month();
-    let currentYear = 2024;
+    let currentYear = moment().year();
     let availableDates = []; // Array to store available dates
     let calendarId =document.getElementById('calendarId').value
     let appointmentTypeID =document.getElementById("appointmentType").value
@@ -431,6 +439,20 @@
 };
 
 let selectedTimezone = 'America/Jamaica';
+
+
+if (booking.booking_date) {
+    let kilbookingDate = moment(booking.booking_date); // Parse the date using moment
+     currentMonth = kilbookingDate.month(); // Get zero-based month (e.g., December = 11)
+     currentYear = kilbookingDate.year(); // Get year (e.g., 2024)
+
+
+     document.getElementById('cal_date').innerHTML = moment(booking.booking_date).format('dddd, MMMM DD, YYYY');
+    
+    console.log('Current Month:', currentMonth + 1); // Add 1 to make it human-readable (e.g., December = 12)
+    console.log('Current Year:', currentYear);
+}
+
 
 
 
@@ -570,6 +592,7 @@ appointmentTypeSelect.addEventListener('change', function() {
     }
 
     async function loadAppointmentTypes() {
+        return;
         try {
             const { data } = await axios.get('/appointment_types');
             const appointmentTypeSelect = document.getElementById('appointmentType');
@@ -935,7 +958,7 @@ function generateCalendar() {
     const lastDate = new Date(currentYear, currentMonth + 1, 0).getDate();
     let daysHTML = "";
 
-    const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 dayNames.forEach(day => {
         daysHTML += `<div class="calendar-day-name">${day.charAt(0)}</div>`;

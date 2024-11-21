@@ -213,7 +213,7 @@ div:where(.swal2-container) .swal2-html-container {
 
                                     <div class="col-md-6">
                                         <label> Name of Individual Making Appointment (If not consignee)</label>
-                                        <input maxlength="20" type="text" id="appname" class="form-control" name="appointment_by" placeholder="Enter the name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" value="0" readonly>
+                                        <input maxlength="20" type="text" id="appname" class="form-control" name="appointment_by" placeholder="Enter the name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)"  readonly>
                                     </div>
                                     <div class="col-md-6">
                                         <label>* Appointment Type (Personal/Commercial)</label>
@@ -240,15 +240,15 @@ div:where(.swal2-container) .swal2-html-container {
                                     </div>
                                     <div class="col-md-6" id="chassisContainer" style="display: none;">
                                         <label>* Chassis No (in the case of Motor Unit Appointments)</label>
-                                        <input maxlength="20" type="text" id="chassis" class="form-control" value="0" name="chassis_number" placeholder="Enter the number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
+                                        <input maxlength="20" type="text" id="chassis" class="form-control" name="chassis_number" placeholder="Enter the number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
                                     </div>
                                     <div class="col-md-6">
                                         <label> Customs Release/IMS4 Declaration Number</label>
-                                        <input maxlength="20" type="text" id="ims" class="form-control" name="declaration_number" placeholder="Customs Release/IMS4 Declaration Number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" value="0">
+                                        <input maxlength="20" type="text" id="ims" class="form-control" name="declaration_number" placeholder="Customs Release/IMS4 Declaration Number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" >
                                     </div>
                                     <div class="col-md-6">
                                         <label> Container Number</label>
-                                        <input maxlength="20" type="text" id="cnumber" class="form-control" name="container_number" placeholder="Enter the data" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" value="0">
+                                        <input maxlength="20" type="text" id="cnumber" class="form-control" name="container_number" placeholder="Enter the data" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" >
                                     </div>
                                     <div class="col-md-6">
                                         <label>* Number of Pieces/Packages/Units</label>
@@ -420,7 +420,7 @@ div:where(.swal2-container) .swal2-html-container {
     let selectedTimes = [];
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     let currentMonth = moment().month();
-    let currentYear = 2024;
+    let currentYear = moment().year();
     let availableDates = []; // Array to store available dates
     let calendarId =0
     let appointmentTypeID =0
@@ -433,6 +433,8 @@ div:where(.swal2-container) .swal2-html-container {
 // Fetch the select element by ID
 const appointmentTypeSelect = document.getElementById('appointmentType');
 const chassisContainer = document.getElementById('chassisContainer');
+
+const chassisInput = document.getElementById('chassis');
 
 
 // Add an event listener to handle changes in the select element
@@ -468,8 +470,10 @@ appointmentTypeSelect.addEventListener('change', function() {
       const validIDs = ['70702351', '13801622', '16120840', '16581501'];
         if (validIDs.includes(appointmentTypeID)) {
             chassisContainer.style.display = 'block'; // Show the Chassis No field
+            chassisInput.setAttribute('required', '');
         } else {
             chassisContainer.style.display = 'none'; // Hide the Chassis No field
+            chassisInput.removeAttribute('required'); // Remove required attribute
         }
 
 });
@@ -877,7 +881,7 @@ function renderAvailableDates(data,timezone) {
             "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"
         ];
-        const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
         // Update the month and year label
         monthYearLabel.textContent = `${monthNames[currentMonth]} ${currentYear}`;
@@ -1597,16 +1601,15 @@ async function directConfirmBooking(email) {
           
    
    
-            validCharacters = /^[\d-]{0,20}$/;
+            validCharacters = /^[\d-]{11,11}$/;
+            
                             const numericOnlyPattern = /^\d+$/; // Checks for numeric-only input
                             const inputValue = inputField.value; 
                       
                                         const numericValue = parseInt(inputValue, 10);
 
-                                        if (!numericOnlyPattern.test(inputField.value)) {
-                                            // Allow common validation to handle non-numeric characters
-                                        } else if (inputValue.length > 20 || inputValue == 0  ) {                        
-                                            addErrorMessage(inputParent, 'TRN Cannot Be 0 Or Exceed 20 Digits');
+                                       if (inputValue.length > 11 || inputValue.length < 11 ) {                        
+                                            addErrorMessage(inputParent, 'TRN must be exactly 9 digits');
                                             inputField.style.border = '2px solid red'; 
 
                                             if (event.type === 'change') {
