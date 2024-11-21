@@ -45,7 +45,7 @@ router.route('/logout').get(logout)
 //---------- appointments ------------- 
 
 
-router.route('/appointments').get(appointments);
+router.route('/appointments').get(isAuthenticatedAdmin,appointments);
 
 
 

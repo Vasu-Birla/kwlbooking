@@ -125,7 +125,7 @@ const home = async (req, res, next) => {
       // Rollback if an error occurs
       if (transaction) await transaction.rollback();
       console.error('Error:', error);
-      res.status(500).send('Internal Server Error');
+     res.render('superadmin/kil500', { output: `${error}` });
   } finally {
       // Close the pool to release resources
       if (pool) pool.close();
@@ -1540,6 +1540,70 @@ const updateBooking11 = async (req, res) => {
 //-----------------------------Reportssssssssssssss-> 
 
 const reports = async (req, res, next) => {
+  let pool;
+  const output = req.cookies.kwl_msg || '';
+  const { startDate, endDate, option1 } = req.body; // Assuming the data comes from POST body for filters
+
+  console.log("filter data ->", req.body);
+
+  try {
+    pool = await connection();
+
+    // Build the dynamic query based on filters
+    let query = 'SELECT * FROM tbl_bookings WHERE 1=1';
+
+    // Check if startDate and endDate are provided
+    if (startDate && endDate) {
+      const formattedStartDate = moment(startDate).format('YYYY-MM-DD');
+      const formattedEndDate = moment(endDate).format('YYYY-MM-DD');
+      
+      // If option1 is empty, filter by created_at, otherwise filter by booking_date
+      if (option1 === '') {
+        query += ` AND CAST(created_at AS DATE) BETWEEN '${formattedStartDate}' AND '${formattedEndDate}'`;
+      } else {
+        query += ` AND booking_date BETWEEN '${formattedStartDate}' AND '${formattedEndDate}'`;
+      }
+    }
+
+    // Apply booking_status filter if option1 is provided (not empty)
+    if (option1 && option1 !== '') {
+      query += ` AND booking_status = '${option1}'`;
+    }
+
+    console.log("Query to execute:", query);
+
+    const result = await pool.request().query(query);
+
+    const bookings = result.recordset.map((booking) => {
+      if (booking.booking_times) {
+        booking.booking_times = moment(booking.booking_times, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
+      } else {
+        booking.booking_times = 'N/A';
+      }
+      return booking;
+    });
+
+    console.log("reports ", bookings);
+
+    // Return filtered data as HTML for AJAX requests
+    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+      const renderedfilteredReports = await ejs.renderFile('views/superadmin/bookings_partial.ejs', { bookings });
+      res.json({ html: renderedfilteredReports });
+    } else {
+      res.render('superadmin/reports', { output: output, bookings: bookings });
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    res.render('superadmin/kil500', { output: `${error}` });
+  } finally {
+    if (pool) {
+      pool.close();
+    }
+  }
+};
+
+
+const reportswithtransactionworking = async (req, res, next) => {
   const pool = await connection();
   const transaction = new sql.Transaction(pool);
   const output = req.cookies.kwl_msg || '';
@@ -1675,9 +1739,40 @@ console.log("reports ", bookings)
 
 
 
-
-
 const auditLogs = async (req, res, next) => {
+  const output = req.cookies.kwl_msg || ''; // Handling cookie message
+
+  let pool;
+
+  try {
+    pool = await connection(); // Establish database connection
+
+    // Query to fetch audit logs in descending order by created_at
+    const result = await pool.request().query(`
+      SELECT log_id, user_role, user_name, reason, acuity_url, created_at
+      FROM tbl_logs
+      ORDER BY created_at DESC
+    `);
+
+    console.log(result.recordset);
+
+    // Render the audit logs page with the fetched data
+    res.render('superadmin/auditLogs', {
+      output: output,
+      auditLogs: result.recordset // Pass the audit logs to the template
+    });
+
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).send('Internal Server Error');
+  } finally {
+    // Close the pool to release resources
+    if (pool) pool.close();
+  }
+};
+
+
+const auditLogswithtraction = async (req, res, next) => {
   const output = req.cookies.kwl_msg || ''; // Handling cookie message
 
   let pool;

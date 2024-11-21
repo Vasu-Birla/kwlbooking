@@ -1904,7 +1904,7 @@ const login = async (req, res, next) => {
   } catch (error) {
     if (transaction) await transaction.rollback(); // Rollback transaction on error
     console.error("error ->", error.message);
-    res.render('kil500', { output: 'Internal Server Error' });
+    res.render('kil500', { output: `${error}` });
   } finally {
     if (pool) pool.close(); // Close the connection pool
   }

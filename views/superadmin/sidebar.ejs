@@ -9,6 +9,15 @@ a:hover {color: #fb9f07;text-decoration: none;}
 .btn-secondary:hover {color: #fff;background-color: #feb510;border-color: #fdb51b;}
 .dropdown-item.active, .dropdown-item:active {color: #fff;text-decoration: none;background-color: #dc3545;}
 .callout.callout-info {border-left-color: #dc3545;}
+
+
+
+.nav-link[style*="pointer-events: none"] {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
 </style>
 
 <!-- Main Sidebar Container -->
@@ -76,6 +85,35 @@ a:hover {color: #fb9f07;text-decoration: none;}
 
 
 <script>
+    // function highlightActiveLink() {
+    //     const savedPath = localStorage.getItem('activePath') || window.location.pathname;
+
+    //     // Remove active class from all links
+    //     document.querySelectorAll('.nav-link').forEach((link) => {
+    //         link.classList.remove('active');
+    //     });
+
+    //     // Highlight the active link
+    //     const activeLink = document.querySelector(`.nav-link[href="${savedPath}"]`);
+    //     if (activeLink) {
+    //         activeLink.classList.add('active'); // Add active class to the link itself
+    //     }
+    // }
+
+    // document.addEventListener('DOMContentLoaded', () => {
+    //     highlightActiveLink();
+
+    //     // Save active path to local storage on link click
+    //     document.querySelectorAll('.nav-link').forEach((link) => {
+    //         link.addEventListener('click', () => {
+    //             localStorage.setItem('activePath', link.getAttribute('href'));
+    //         });
+    //     });
+    // });
+</script>
+
+
+<script>
     function highlightActiveLink() {
         const savedPath = localStorage.getItem('activePath') || window.location.pathname;
 
@@ -94,11 +132,27 @@ a:hover {color: #fb9f07;text-decoration: none;}
     document.addEventListener('DOMContentLoaded', () => {
         highlightActiveLink();
 
-        // Save active path to local storage on link click
+        // Add click event listener to all nav links
         document.querySelectorAll('.nav-link').forEach((link) => {
-            link.addEventListener('click', () => {
-                localStorage.setItem('activePath', link.getAttribute('href'));
+            link.addEventListener('click', (e) => {
+                const currentPath = window.location.pathname;
+                const linkPath = link.getAttribute('href');
+
+                // Prevent navigation if the link is already active
+                if (currentPath === linkPath) {
+                    e.preventDefault();
+                    console.log("You are already on this page!"); // Optional feedback
+                    return false;
+                }
+
+                // Save active path to local storage
+                localStorage.setItem('activePath', linkPath);
+
+                // Optionally, you can disable the link visually until the new page loads
+                link.style.pointerEvents = 'none';
+                link.style.opacity = '0.6';
             });
         });
     });
 </script>
+
