@@ -117,7 +117,7 @@ function decrypt64(text) {
 
 //----------------------- send Login OTP ------------ 
 
-const sendWelcomeMsg1 = async (email, otp) => {
+const sendWelcomeMsg = async (email, otp) => {
 
   
     try {
@@ -320,7 +320,7 @@ let transaction;
 
 
 
-  const sendWelcomeMsg = async (email, otp) => {
+  const sendWelcomeMsg1 = async (email, otp) => {
 
     let pool;
 let transaction;
