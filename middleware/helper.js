@@ -117,7 +117,7 @@ function decrypt64(text) {
 
 //----------------------- send Login OTP ------------ 
 
-const sendWelcomeMsg = async (email, otp) => {
+const sendWelcomeMsg1 = async (email, otp) => {
 
   
     try {
@@ -142,8 +142,8 @@ const sendWelcomeMsg = async (email, otp) => {
         //-------- with Own Server ----------
         const transporter = nodemailer.createTransport({
             host: process.env.SMTP_HOST, // SMTP server
-            port: 25, // SMTP port
-            secure: false, // Use SSL/TLS
+            port: process.env.SMTP_PORT, // SMTP port
+            secure: true, // Use SSL/TLS
             auth: {
               user: AppEmail,
               pass: AppPassword
@@ -211,7 +211,7 @@ const sendWelcomeMsg = async (email, otp) => {
         console.log("Email sent successfully.");
     } catch (error) {
         console.error('Error in sendMailOTP:', error);
-       // throw new Error('Error in sending Welcome email');
+        throw new Error('Error in sending Welcome email');
     } finally {
       console.log("")
     }
@@ -320,8 +320,8 @@ let transaction;
 
 
 
-  const sendWelcomeMsgwithgmail = async (email, otp) => {
-    const con = await connection();
+  const sendWelcomeMsg = async (email, otp) => {
+
     let pool;
 let transaction;
   
