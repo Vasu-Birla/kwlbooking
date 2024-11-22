@@ -134,8 +134,15 @@
                                     <select name="option1" id="appointmentType" class="form-control select2" required aria-readonly="">
                                         <option value="">Select Service</option>
                                         <% if (booking) { %>
-                                          <option value="<%= booking.appointmentTypeID %>" data-location="<%= booking.location %>" data-timezone="<%= booking.timezone %>" data-calendar-id="<%= booking.calendarID %>" data-type-name="<%= booking.type_name %>" selected readonly style="appearance: auto;">
+                                          <!-- <option value="<%= booking.appointmentTypeID %>" data-location="<%= booking.location %>" data-timezone="<%= booking.timezone %>" data-calendar-id="<%= booking.calendarID %>" data-type-name="<%= booking.type_name %>" selected readonly style="appearance: auto;">
                                             Your Click N Collect Appointment
+                                          </option> -->
+
+                                          <option value="<%= booking.appointmentTypeID %>"  data-location="<%= booking.location %>" data-timezone="<%= booking.timezone %>" data-calendar-id="<%= booking.calendarID %>" data-type-name="<%= booking.type_name %>" selected readonly>
+                                         
+                                            <%= booking.type_name %>
+                                        
+
                                           </option>
                                         <% } %>
                                       </select>
@@ -361,7 +368,7 @@
                                     <span id="confirmVesselName"></span>
                                 </div>
                                 <div class="col-md-6">
-                                    <strong>Vessel Reported Date</strong>
+                                    <strong> Expected Vessel Reported Date</strong>
                                 </div>
                                 <div class="col-md-6">
                                     <span id="confirmVesselReportedDate"></span>
@@ -540,8 +547,11 @@ appointmentTypeSelect.addEventListener('change', function() {
 
 
     function populateConfirmation() {
+        alert(selectedTimes)
         const selectedDateText = selectedDate || "Not selected";
-        const selectedTimesText = selectedTimes.length > 0 ? selectedTimes.join(", ") : "Not selected";
+       // const selectedTimesText = selectedTimes.length > 0 ? selectedTimes.join(", ") : "Not selected";
+        const selectedTimesText = selectedTimes.length > 0 ? selectedTimes[0] : "Not selected";
+
         // const appointmentType = document.getElementById("appointmentType").value || "N/A";
 
         const appointmentType = document.getElementById("apppersonal").value || "N/A";

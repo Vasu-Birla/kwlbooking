@@ -235,8 +235,7 @@ const appointments = async (req, res, next) => {
     // // Step 3: Merge Acuity data into internal booking data, adding `appointmentTypeID` and `calendarID`
     //  booking = {
     //   ...booking,        
-    //   timezone:acuityBooking.timezone,
-    //   location:acuityBooking.location     
+    //   type_name:acuityBooking.type 
     // };
     //----------- add time zone to each booking ----------- 
 
@@ -253,7 +252,7 @@ const appointments = async (req, res, next) => {
       bookings.push(booking);
     }
 
-    console.log("finished processsssssssssssssssssssssssss")
+    console.log("finished processsssssssssssssssssssssssss",bookings)
    // console.log('bookings:', bookings);
     res.render('superadmin/appointments', { output: output , bookings:bookings});
   } catch (error) {
@@ -1074,7 +1073,7 @@ const reschedule = async (req, res, next) => {
 
     
 
-    console.log(booking)
+    console.log("super admin reschedule -> ",booking)
 
     await transaction.commit(); // Commit the transaction if successful
 
@@ -1151,6 +1150,10 @@ const cancelBooking = async (req, res, next) => {
       await request.query(updateSql);
 
 
+      
+      const bookingtime = moment.tz(booking_datetime, timezone).format('hh:mm A');
+      const bookingdate = moment.tz(booking_datetime, timezone).format('YYYY-MM-DD');
+      const bookingdatetime = `${bookingdate}, ${bookingtime}`;
 
       await transaction.request()
       .input('user_role', sql.NVarChar, userRole)
@@ -1158,7 +1161,7 @@ const cancelBooking = async (req, res, next) => {
       .input('reason', sql.NVarChar, status)
       .input('acuity_url', sql.NVarChar, acuityUrl)
       .input('booking_id', sql.Int, id)
-      .input('booking_datetime', sql.NVarChar, booking_datetime || '') // use empty string if null
+      .input('booking_datetime', sql.NVarChar, bookingdatetime || '') // use empty string if null
       .input('new_datetime', sql.NVarChar,'') // use empty string if null
       .query(`
           INSERT INTO tbl_booking_logs 
@@ -1293,10 +1296,10 @@ const rescheduleBooking = async (req, res, next) => {
         const old_date = moment.tz(booking_datetime, timezone).format('YYYY-MM-DD');
 
 // Combine the formatted old date and new time into the old datetime
-const old_datetime = `${old_date}, ${new_time}`;
+const old_datetime = `${old_date}, ${old_time}`;
 
 // Combine the formatted booking date and old time into the new datetime
-const new_datetime = `${booking_date}, ${old_time}`;
+const new_datetime = `${booking_date}, ${new_time}`;
 
 
         //  const old_datetime = `${old_date},${new_time}`
@@ -1352,7 +1355,7 @@ const new_datetime = `${booking_date}, ${old_time}`;
 
 const updateBooking = async (req, res) => {
 
-  const { booking_id, firstname, lastname, country_code, contact ,admin_note, booking_datetime } = req.body;
+  const { booking_id, firstname, lastname, country_code, contact ,admin_note, booking_datetime ,timezone } = req.body;
 
   if (!booking_id || !firstname || !lastname || !country_code || !contact) {
     return res.status(400).json({
@@ -1428,13 +1431,18 @@ const updateBooking = async (req, res) => {
 
     var reason1 = 'Updated'
 
+    const bookingtime = moment.tz(booking_datetime, timezone).format('hh:mm A');
+const bookingdate = moment.tz(booking_datetime, timezone).format('YYYY-MM-DD');
+const bookingdatetime = `${bookingdate}, ${bookingtime}`;
+
+
     await transaction.request()
     .input('user_role', sql.NVarChar, userRole)
     .input('user_name', sql.NVarChar, userName)
     .input('reason', sql.NVarChar, reason1)
     .input('acuity_url', sql.NVarChar, acuityUrl)
     .input('booking_id', sql.Int, booking_id)
-    .input('booking_datetime', sql.NVarChar, booking_datetime || '') // use empty string if null
+    .input('booking_datetime', sql.NVarChar, bookingdatetime || '') // use empty string if null
     .input('new_datetime', sql.NVarChar,'') // use empty string if null
     .query(`
         INSERT INTO tbl_booking_logs 

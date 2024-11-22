@@ -100,7 +100,12 @@ div[style*="overflow-x: auto;"] {
                                                 </td>
                                                 <td> <%= booking.trn  %> </td>
                                                 <td> <%= booking.firstname %> <%= booking.lastname %> </td>
-                                                <td> <%= booking.country_code %> <%= booking.contact %></td>
+                                                <!-- <td> <%= booking.country_code %> <%= booking.contact %></td> -->
+
+                                                <td>
+                                                    <%= booking.country_code ? booking.country_code + ' ' + booking.contact : booking.contact %>
+                                                  </td>
+                                                  
                                           
             
                                                 
@@ -162,7 +167,7 @@ div[style*="overflow-x: auto;"] {
             
                                                  
             
-                                                    <a href="#" onclick="updateBooking('<%= booking.booking_id %>', '<%= JSON.stringify(booking) %>')" class="btn btn-info" data-toggle="tooltip" title="Update"> <i class="fa fa-edit" aria-hidden="true"></i> </a>
+                                                    <a href="#" onclick="updateBooking('<%= booking.booking_id %>', '<%= JSON.stringify(booking) %>','<%= booking.timezone %>')" class="btn btn-info" data-toggle="tooltip" title="Update"> <i class="fa fa-edit" aria-hidden="true"></i> </a>
             
                                                     <a href="#" onclick="reschedule('<%= booking.booking_id %>')" class="btn btn-warning" data-toggle="tooltip" title="Reschedule"><i class="fa fa-history" aria-hidden="true"></i>          </a>
             
@@ -216,7 +221,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
 
-    function showAppointmentDetails(booking_id, booking) {
+    function showAppointmentDetails(booking_id, booking,timezone) {
         booking = JSON.parse(booking); // Parse the booking data
 
 
@@ -300,6 +305,10 @@ if(booking.booking_status =='Confirmed'){
                     </div>
                     <div style="display: flex; justify-content: space-between; padding: 5px 0;">
                         <strong>Appointment Type:</strong><span>${booking.appointment_type || 'N/A'}</span>
+                    </div>
+
+                     <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                        <strong>Appointment Type Name:</strong><span>${booking.type_name || 'N/A'}</span>
                     </div>
                     
                     <h5 style="background-color: #f7f9fc; padding: 10px 15px; border-radius: 8px; color: #7a6200; font-weight: bold; text-align: center; margin-top: 20px; margin-bottom: 20px; border-bottom: 2px solid #ddd;">Shipment Details</h5>
@@ -536,10 +545,10 @@ async function updateBookingold(booking_id, booking) {
 
 
 
-function updateBooking(booking_id, booking) {
+function updateBooking(booking_id, booking, timezone) {
     booking = JSON.parse(booking);
     console.log("booking ",booking)
-    var booking_datetime = `${booking.booking_date},${booking.booking_times}`
+    var booking_datetime = booking.booking_times
 
     // Create the form structure for editing inside SweetAlert
     const htmlForm = `
@@ -549,6 +558,8 @@ function updateBooking(booking_id, booking) {
                 <input type="hidden" id="calendarId" name="calendarId" value="${booking.calendarID}">
                  <input type="hidden" id="booking_id" name="booking_id" value="${booking_id}">
                   <input type="hidden"  name="booking_datetime" value="${booking_datetime}">
+                  <input type="hidden"  name="timezone" value="${timezone}">
+
                 <!-- Hidden input for booking_id -->
 
                 
@@ -602,53 +613,74 @@ function updateBooking(booking_id, booking) {
         },
         allowOutsideClick: false ,// Disable closing by clicking outside
         didOpen: () => {
-            // Now initialize intlTelInput when the modal has fully opened
-            var input = document.querySelector("#kilvishcontact");
-            var savedCountryCode = booking.country_code || '';  // Use saved country code from user data
-            var savedPhoneNumber = booking.contact || '';  // Use saved phone number from user data
+    // Initialize intlTelInput when the modal has fully opened
+    var input = document.querySelector("#kilvishcontact");
+    var savedCountryCode = booking.country_code || '';  // Use saved country code from user data
+    var savedPhoneNumber = booking.contact || '';  // Use saved phone number from user data
 
-            var iti = window.intlTelInput(input, {
-                preferredCountries: ["jm", "in"], // Customize based on your needs
-                separateDialCode: true,
-                initialCountry: "jm",
-                separateDialCode: true,
-                nationalMode: false, // Ensure the number is shown without spaces
-                formatOnDisplay: false, // Disable auto-formatting on display
-                geoIpLookup: function(success, failure) {
-                    fetch('https://ipinfo.io/json', {cache: 'reload'}).then(resp => resp.json()).then(resp => {
-                        var countryCode = (resp && resp.country) ? resp.country : "hk";
-                        success(countryCode);
-                    }).catch(() => success("hk"));
-                },
-                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.min.js", // Utility script
-            });
+    // Create error message container
+    var errorMsg = document.createElement("div");
+    errorMsg.id = "error-msg";
+    errorMsg.style.color = "red";
+    errorMsg.style.fontSize = "0.9em";
+    errorMsg.style.marginTop = "5px";
+    input.parentNode.appendChild(errorMsg);
 
-            if (savedCountryCode && savedPhoneNumber) {
-                // Combine country code and phone number if available
-                iti.setNumber(savedCountryCode + savedPhoneNumber);
-            }
+    var iti = window.intlTelInput(input, {
+        preferredCountries: ["jm", "in"], // Customize based on your needs
+        separateDialCode: true,
+        initialCountry: "jm",
+        separateDialCode: true,
+        nationalMode: false, // Ensure the number is shown without spaces
+        formatOnDisplay: false, // Disable auto-formatting on display
+        geoIpLookup: function(success, failure) {
+            fetch('https://ipinfo.io/json', { cache: 'reload' })
+                .then(resp => resp.json())
+                .then(resp => {
+                    var countryCode = (resp && resp.country) ? resp.country : "hk";
+                    success(countryCode);
+                }).catch(() => success("hk"));
+        },
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.min.js",
+    });
 
-            // Update hidden input field with full phone number
-            input.addEventListener("input", function() {
-                var fullPhoneNumber = iti.getNumber();
-                var countryCode = '+' + iti.getSelectedCountryData().dialCode;
-                document.querySelector("#fullkilvishcontact").value = fullPhoneNumber;
-                document.querySelector("#country_code").value = countryCode;
-            });
+    // If a saved phone number and country code exist, set the initial number
+    if (savedCountryCode && savedPhoneNumber) {
+        iti.setNumber(savedCountryCode + savedPhoneNumber);
+    }
 
-            input.addEventListener("countrychange", function() {
-                var fullPhoneNumber = iti.getNumber();
-                var countryCode = '+' + iti.getSelectedCountryData().dialCode;
-                document.querySelector("#fullkilvishcontact").value = fullPhoneNumber;
-                document.querySelector("#country_code").value = countryCode;
-            });
+    const errorMap = ["Invalid number", "Invalid country code", "Too short", "Too long", "Invalid number"];
 
-            // Initialize hidden field with the current value on page load
-            var fullPhoneNumber = iti.getNumber();
-            var countryCode = '+' + iti.getSelectedCountryData().dialCode;
-            document.querySelector("#fullkilvishcontact").value = fullPhoneNumber;
-            document.querySelector("#country_code").value = countryCode;
+    const validateNumber = () => {
+        var errorCode = iti.getValidationError();
+        var valid = iti.isValidNumber();
+
+        if (valid) {
+            errorMsg.textContent = ""; // Clear error message
+            input.style.borderColor = ""; // Reset border color
+        } else {
+            var msg = errorMap[errorCode] || "Invalid number";
+            errorMsg.textContent = msg; // Show error message
+            input.style.borderColor = "red"; // Highlight input box
         }
+
+        // Update hidden fields even if invalid
+        var fullPhoneNumber = iti.getNumber();
+        var countryCode = "+" + iti.getSelectedCountryData().dialCode;
+        document.querySelector("#fullkilvishcontact").value = fullPhoneNumber;
+        document.querySelector("#country_code").value = countryCode;
+    };
+
+    // Validate on input
+    input.addEventListener("input", validateNumber);
+
+    // Validate on country change
+    input.addEventListener("countrychange", validateNumber);
+
+    // Initialize hidden field with the current value on modal open
+    validateNumber(); // Add this line to populate the hidden fields
+}
+
     });
 
     // Add real-time validation for inputs (reuse the existing validation)
@@ -1280,7 +1312,7 @@ function updateBookingold(booking_id, booking) {
 
 
 
-   function bookinglogs(logs) {
+   function bookinglogs(logs,timezone) {
     logs = JSON.parse(logs); // Parse the logs data
 
     // Initialize the HTML table for SweetAlert

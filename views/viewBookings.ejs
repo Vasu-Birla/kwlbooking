@@ -96,7 +96,12 @@ div[style*="overflow-x: auto;"] {
                                     </td>
                                     <td> <%= booking.trn  %> </td>
                                     <td> <%= booking.firstname %> <%= booking.lastname %> </td>
-                                    <td> <%= booking.country_code %> <%= booking.contact %></td>
+                                    <!-- <td> <%= booking.country_code %> <%= booking.contact %></td> -->
+
+                                    <td>
+                                        <%= booking.country_code ? booking.country_code + ' ' + booking.contact : booking.contact %>
+                                      </td>
+                                      
                               
 
                                     
@@ -158,7 +163,7 @@ div[style*="overflow-x: auto;"] {
 
                                      
 
-                                        <a href="#" onclick="updateBooking('<%= booking.booking_id %>', '<%= JSON.stringify(booking) %>')" class="btn btn-info" data-toggle="tooltip" title="Update"> <i class="fa fa-edit" aria-hidden="true"></i> </a>
+                                        <a href="#" onclick="updateBooking('<%= booking.booking_id %>', '<%= JSON.stringify(booking) %>','<%= booking.timezone %>')" class="btn btn-info" data-toggle="tooltip" title="Update"> <i class="fa fa-edit" aria-hidden="true"></i> </a>
 
                                         <a href="#" onclick="reschedule('<%= booking.booking_id %>')" class="btn btn-warning" data-toggle="tooltip" title="Reschedule"><i class="fa fa-history" aria-hidden="true"></i>          </a>
 
@@ -847,10 +852,10 @@ function cancelBooking(booking_id, newStatus,booking) {
 
 
 
-function updateBooking(booking_id, booking) {
+function updateBooking(booking_id, booking,timezone) {
     booking = JSON.parse(booking);
     console.log("booking ",booking)
-    var booking_datetime = `${booking.booking_date},${booking.booking_times}`
+    var booking_datetime = booking.booking_times;
 
     // Create the form structure for editing inside SweetAlert
     const htmlForm = `
@@ -859,6 +864,10 @@ function updateBooking(booking_id, booking) {
                 <!-- Hidden input for calendarId -->
                 <input type="hidden" id="calendarId" name="calendarId" value="${booking.calendarID}">
                  <input type="hidden" id="booking_id" name="booking_id" value="${booking_id}">
+
+                  <input type="hidden"  name="timezone" value="${timezone}">
+
+                 
                   <input type="hidden"  name="booking_datetime" value="${booking_datetime}">
                 <!-- Hidden input for booking_id -->
 
@@ -978,7 +987,7 @@ function updateBooking(booking_id, booking) {
     input.addEventListener("countrychange", validateNumber);
 
     // Initialize hidden field with the current value on modal open
-    //validateNumber();
+    validateNumber(); // Add this line to populate the hidden fields
 }
 
 
