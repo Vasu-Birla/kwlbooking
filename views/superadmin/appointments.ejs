@@ -90,7 +90,7 @@ div[style*="overflow-x: auto;"] {
                                         <% bookings.forEach((booking, index) => { %>
                                             <tr>
                                             
-                                                <td><a href="#" onclick="showAppointmentDetails('<%= booking.booking_id %>', '<%= JSON.stringify(booking) %>','<%= booking.timezone %>')" ><b><%= booking.booking_id %></b></a></td>
+                                                <td><a href="#" onclick="showAppointmentDetails('<%= booking.booking_id %>', '<%= JSON.stringify(booking) %>','<%= booking.timezone %>')" ><b><%= booking.booking_id %>  <%= booking.booking_by  %> </b></a></td>
                                                 <td><a href="#" onclick="bookinglogs('<%= JSON.stringify(booking.logs) %>','<%= booking.timezone %>')" ><b>Open Log</b></a></td>
                                         
                                                 <td> <%= booking.booking_date  %> </td>
