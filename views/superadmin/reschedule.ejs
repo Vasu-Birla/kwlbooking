@@ -477,7 +477,7 @@ appointmentTypeSelect.addEventListener('change', function() {
     // Fetch the data-calendar-id using getAttribute
      calendarId = selectedOption.getAttribute('data-calendar-id');
      typename = selectedOption.getAttribute('data-type-name');
-     alert(typename)
+     //alert(typename)
 
      document.getElementById('calendarId').value = calendarId;
      document.getElementById('typename').value = typename;
@@ -547,7 +547,7 @@ appointmentTypeSelect.addEventListener('change', function() {
 
 
     function populateConfirmation() {
-        alert(selectedTimes)
+       // alert(selectedTimes)
         const selectedDateText = selectedDate || "Not selected";
        // const selectedTimesText = selectedTimes.length > 0 ? selectedTimes.join(", ") : "Not selected";
         const selectedTimesText = selectedTimes.length > 0 ? selectedTimes[0] : "Not selected";
