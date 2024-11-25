@@ -936,6 +936,9 @@ const confirmbooking = async (req, res, next) => {
         const bookingId = acuityResponse.data.id;
         const created_at = moment(acuityResponse.data.datetimeCreated, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYY-MM-DD HH:mm:ss.SSSSSSSZ');
 
+        console.log("created_att",created_at)
+        console.log("booking_date",booking_date)
+        
         
         // Inline query string to insert data into the table
         const querywithouttimezone = `

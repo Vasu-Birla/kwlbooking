@@ -1103,7 +1103,7 @@ const cancelBooking = async (req, res, next) => {
   let pool;
   let transaction;
   let acuityResponse;
-  const { id, status, cancelNote ,booking_datetime } = req.body;
+  const { id, status, cancelNote ,booking_datetime ,timezone } = req.body;
 
 
 
@@ -1183,13 +1183,13 @@ const cancelBooking = async (req, res, next) => {
       });
     }
   } catch (error) {
+    console.log("error in cancelling",error)
     if (transaction) await transaction.rollback();
-    console.error('Errorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr:', error.response.data);
+   // console.error('Errorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr:', error.response.data);
     //res.status(error.status).json({ success: false, msg: 'Internal Server Error' });
           if(error.response.data){
             acuityResponse = error.response.data;
-          }
-            
+          }            
 
         return res.status(200).json({
       success: false,
@@ -1547,7 +1547,74 @@ const updateBooking11 = async (req, res) => {
 
 //-----------------------------Reportssssssssssssss-> 
 
+
 const reports = async (req, res, next) => {
+  console.log("filtering report", req.body)
+ // return
+  let pool;
+  const output = req.cookies.kwl_msg || '';
+  const { startDate, endDate, option1, dateType } = req.body; // Include dateType in the request body
+
+  console.log("Filter data ->", req.body);
+
+  try {
+    pool = await connection();
+
+    // Build the dynamic query based on filters
+    let query = 'SELECT * FROM tbl_bookings WHERE 1=1';
+
+    // Check if startDate and endDate are provided
+    if (startDate && endDate) {
+      const formattedStartDate = moment(startDate).format('YYYY-MM-DD');
+      const formattedEndDate = moment(endDate).format('YYYY-MM-DD');
+      
+      // Determine which column to use based on the selected date type
+      if (dateType === 'creationDate') {
+        query += ` AND CAST(created_at AS DATE) BETWEEN '${formattedStartDate}' AND '${formattedEndDate}'`;
+      } else if (dateType === 'bookingDate') {
+        query += ` AND booking_date BETWEEN '${formattedStartDate}' AND '${formattedEndDate}'`;
+      }
+    }
+
+    // Apply booking_status filter if option1 is provided (not empty)
+    if (option1 && option1 !== '') {
+      query += ` AND booking_status = '${option1}'`;
+    }
+
+    console.log("Query to execute:", query);
+
+    const result = await pool.request().query(query);
+
+    const bookings = result.recordset.map((booking) => {
+      // if (booking.booking_times) {
+      //   booking.booking_times = moment(booking.booking_times, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
+      // } else {
+      //   booking.booking_times = 'N/A';
+      // }
+      return booking;
+    });
+
+    console.log("Reports ", bookings);
+
+    // Return filtered data as HTML for AJAX requests
+    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+      const renderedfilteredReports = await ejs.renderFile('views/superadmin/bookings_partial.ejs', { bookings });
+      res.json({ html: renderedfilteredReports });
+    } else {
+      res.render('superadmin/reports', { output: output, bookings: bookings });
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    res.render('superadmin/kil500', { output: `${error}` });
+  } finally {
+    if (pool) {
+      pool.close();
+    }
+  }
+};
+
+
+const reportswithoutdatetypefilter = async (req, res, next) => {
   let pool;
   const output = req.cookies.kwl_msg || '';
   const { startDate, endDate, option1 } = req.body; // Assuming the data comes from POST body for filters
@@ -1611,138 +1678,6 @@ const reports = async (req, res, next) => {
 };
 
 
-const reportswithtransactionworking = async (req, res, next) => {
-  const pool = await connection();
-  const transaction = new sql.Transaction(pool);
-  const output = req.cookies.kwl_msg || '';
-  const { startDate, endDate, option1 } = req.body; // Assuming the data comes from POST body for filters
-
-  console.log("filter data ->",  req.body);
-
-  try {
-    await transaction.begin(); // Begin the transaction
-
-    const request = transaction.request();
-
-    // Build the dynamic query based on filters
-    let query = 'SELECT * FROM tbl_bookings WHERE 1=1';
-
-    // Check if startDate and endDate are provided
-    if (startDate && endDate) {
-      const formattedStartDate = moment(startDate).format('YYYY-MM-DD');
-      const formattedEndDate = moment(endDate).format('YYYY-MM-DD');
-      
-      // If option1 is empty, filter by created_at, otherwise filter by booking_date
-      if (option1 === '') {
-        query += ` AND CAST(created_at AS DATE) BETWEEN '${formattedStartDate}' AND '${formattedEndDate}'`;
-      } else {
-        query += ` AND booking_date BETWEEN '${formattedStartDate}' AND '${formattedEndDate}'`;
-      }
-    }
-
-    // Apply booking_status filter if option1 is provided (not empty)
-    if (option1 && option1 !== '') {
-      query += ` AND booking_status = '${option1}'`;
-    }
-
-    console.log("Query to execute:", query);
-
-    const result = await pool.request().query(query);
-
-    const bookings = result.recordset.map((booking) => {
-      if (booking.booking_times) {
-        booking.booking_times = moment(booking.booking_times, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
-      } else {
-        booking.booking_times = 'N/A';
-      }
-      return booking;
-    });
-
-    console.log("reports ", bookings);
-
-    // Return filtered data as HTML for AJAX requests
-    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
-      const renderedfilteredReports = await ejs.renderFile('views/superadmin/bookings_partial.ejs', { bookings });
-      res.json({ html: renderedfilteredReports });
-    } else {
-      res.render('superadmin/reports', { output: output, bookings: bookings });
-    }
-
-    await transaction.commit();
-  } catch (error) {
-    if (transaction) {
-      await transaction.rollback();
-    }
-    console.error('Error:', error);
-    res.render('superadmin/kil500', { output: `${error}` });
-  } finally {
-    if (pool) {
-      pool.close();
-    }
-  }
-};
-
-
-
-const reports1 = async (req, res, next) => {
-  const pool = await connection();
-  const transaction = new sql.Transaction(pool);
-  const output = req.cookies.kwl_msg || '';
-  const { startDate, endDate, option1 } = req.body; // Assuming the data comes from POST body for filters
-
-  console.log("filter data ->",  req.body)
-
-  try {
-    await transaction.begin(); // Begin the transaction
-
-    const request = transaction.request();
-
-    // Build the dynamic query based on filters
-    let query = 'SELECT * FROM tbl_bookings WHERE 1=1';
-
-    if (startDate && endDate) {
-      query += ` AND booking_date BETWEEN '${startDate}' AND '${endDate}'`;
-    }
-
-    if (option1) {
-      query += ` AND booking_status = '${option1}'`;
-    }
-
-    const result = await pool.request().query(query);
-
-    const bookings = result.recordset.map((booking) => {
-      if (booking.booking_times) {
-        booking.booking_times = moment(booking.booking_times, "YYYY-MM-DDTHHmm:ssZ").format('hh:mm A');
-      } else {
-        booking.booking_times = 'N/A';
-      }
-      return booking;
-    });
-
-
-
-console.log("reports ", bookings)
-
-    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
-      const renderedfilteredReports = await ejs.renderFile('views/superadmin/bookings_partial.ejs', { bookings });
-      res.json({ html: renderedfilteredReports });
-    } else {
-      res.render('superadmin/reports', { output: output , bookings: bookings });
-    }
-
-    await transaction.commit();
-  } catch (error) {
-    if (transaction) {
-      await transaction.rollback();
-    }
-    console.error('Error:', error);
-    res.render('superadmin/kil500', { output: `${error}` });
-  } finally {
-    if (pool) {
-      pool.close();
-    }
-  }
-};
 
 
 

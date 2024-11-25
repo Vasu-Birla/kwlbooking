@@ -167,7 +167,7 @@ div[style*="overflow-x: auto;"] {
 
                                         <a href="#" onclick="reschedule('<%= booking.booking_id %>')" class="btn btn-warning" data-toggle="tooltip" title="Reschedule"><i class="fa fa-history" aria-hidden="true"></i>          </a>
 
-                                        <a href="#"  onclick="cancelBooking('<%= booking.booking_id %>','Cancelled','<%= JSON.stringify(booking) %>')" class="btn btn-danger" data-toggle="tooltip" title="Cancel Booking"><i class="fa fa-close" aria-hidden="true"></i></a>                                        
+                                        <a href="#"  onclick="cancelBooking('<%= booking.booking_id %>','Cancelled','<%= JSON.stringify(booking) %>','<%= booking.timezone %>')" class="btn btn-danger" data-toggle="tooltip" title="Cancel Booking"><i class="fa fa-close" aria-hidden="true"></i></a>                                        
                                           
 
                                         <% } else { %>                                             
@@ -762,7 +762,7 @@ window.location.href = '/reschedule';
 }
 
 
-function cancelBooking(booking_id, newStatus,booking) {
+function cancelBooking(booking_id, newStatus,booking, timezone) {
 
     booking = JSON.parse(booking);
 
@@ -796,7 +796,8 @@ function cancelBooking(booking_id, newStatus,booking) {
                         id: booking_id,
                         status: newStatus,
                         cancelNote: cancelNote, // Send the cancel note
-                        booking_datetime:booking_datetime
+                        booking_datetime:booking_datetime,
+                        timezone:timezone
                     }
                 });
             } else {

@@ -12,6 +12,26 @@
         color: #dc3545;
         padding: 0 19px 0 19px;
     }
+
+    .btn-group .btn {
+    background-color: #f8f9fa; /* Default light background */
+    color: #495057; /* Text color */
+    border: 1px solid #ced4da;
+    transition: all 0.3s ease; /* Smooth transition */
+  }
+
+  .btn-group .btn.active, 
+  .btn-group .btn:focus, 
+  .btn-group .btn:hover {
+    background-color: #007bff; /* Blue background for active/focus state */
+    color: white; /* White text color */
+    border-color: #007bff; /* Blue border */
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5); /* Soft glow effect */
+  }
+
+  .btn-group .btn:not(.active):hover {
+    background-color: #e9ecef; /* Slightly darker on hover */
+  }
     
 </style>
 
@@ -72,6 +92,19 @@
                                      
 
 
+                                        <div class="col-md-12" style="margin-bottom: 15px;">
+                                            <div class="form-group">
+                                                <label><strong>Select Date Type:</strong></label><br>
+                                                <div class="btn-group" data-toggle="buttons">
+                                                    <label class="btn btn-primary active" style="margin-right: 10px;">
+                                                        <input type="radio" name="dateType" value="creationDate" autocomplete="off" checked> Creation Date
+                                                    </label>
+                                                    <label class="btn btn-primary">
+                                                        <input type="radio" name="dateType" value="bookingDate" autocomplete="off"> Booking Date
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
 
 
                                         <div class="col-md-3">
@@ -111,7 +144,9 @@
                                             <div class="form-group"><br>
                                                 <center>
                                                     <button type="submit" name="search" class="btn btn-danger">SEARCH</button>
-                                                    <button type="button" class="btn btn-info" onclick="this.form.reset();">Reset</button>
+                                                    <!-- <button type="button" class="btn btn-info" onclick="this.form.reset();">Reset</button> -->
+                                                    <button type="button" class="btn btn-info" id="resetButton">Reset</button>
+
                                                 </center>
                                             </div>
                                         </div>
@@ -132,6 +167,7 @@
                                         <thead>
                                             <tr>
                                                 <th>Sr. No.</th>
+                                                <th>Booking Date/Time</th>
                                                 <th>TRN</th>
                                                 <th>First Name</th>
                                                 <th>Last Name</th>
@@ -163,6 +199,7 @@
 
                                                 <tr>
                                                   <td><%= index + 1 %></td>
+                                                  <td> <%= booking.booking_date  %> , <span class="booking-time" data-timezone="<%= booking.timezone %>" data-time="<%= booking.booking_times %>"></span> </td>
                                                   <td><%= booking.trn %></td>
                                                   <td><%= booking.firstname %></td>
                                                   <td><%= booking.lastname %></td>
@@ -322,51 +359,157 @@ $(function () {
 
 
 <script>
-    $(document).ready(function() {
-      // Handle form submission via AJAX
-      $('form').on('submit', function(e) {
-        e.preventDefault();
+//     $(document).ready(function() {
+//       // Handle form submission via AJAX
+//       $('form').on('submit', function(e) {
+//         e.preventDefault();
     
-        var startDate = $('#dp4').val();
-        var endDate = $('#dp5').val();
-        var status = $('#option').val();
+//         var startDate = $('#dp4').val();
+//         var endDate = $('#dp5').val();
+//         var status = $('#option').val();
+
+        
+//         var dateType = $('input[name="dateType"]:checked').val();
     
-        $.ajax({
-          type: 'POST',
-          url: '/superadmin/reports', // Adjust this route as necessary
-          data: { 
-            startDate: startDate,
-            endDate: endDate,
-            option1: status
-          },
-          success: function(response) {
-            // Update the table with the filtered results
-            // $('table tbody').html(response.html);
-            // $("table").replaceWith(response.html);
-           // Destroy the existing DataTable instance
+//         $.ajax({
+//           type: 'POST',
+//           url: '/superadmin/reports', // Adjust this route as necessary
+//           data: { 
+//             startDate: startDate,
+//             endDate: endDate,
+//             option1: status,
+//             dateType:dateType
+//           },
+//           success: function(response) {
+//             // Update the table with the filtered results
+//             // $('table tbody').html(response.html);
+//             // $("table").replaceWith(response.html);
+//            // Destroy the existing DataTable instance
+//         var table = $('#example1').DataTable();
+//         table.destroy();
+
+// // Replace the table with the filtered data
+// $("table").replaceWith(response.html);
+
+// // Reinitialize DataTable with the correct settings
+// $('#example1').DataTable({
+//   "lengthChange": true, // Enable the Entries per Page dropdown
+//   "lengthMenu": [10, 25, 50, 100], // Customize the dropdown options (optional)
+//   "responsive": true,
+//   "autoWidth": false,
+//   "buttons": ["excel", "pdf", "csv", "colvis"]
+// }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+            
+            
+//           },
+//           error: function() {
+//             alert('Error fetching filtered reports');
+//           }
+//         });
+//       });
+//     });
+
+
+
+
+
+
+
+$(document).ready(function() {
+  // Handle form submission via AJAX (existing code remains unchanged)
+  $('form').on('submit', function(e) {
+    e.preventDefault();
+    fetchFilteredData(); // Call the fetch function on submit
+  });
+
+  // Handle reset button click
+  $('#resetButton').on('click', function() {
+    $('form')[0].reset();  // Reset the form fields
+    fetchFilteredData(true);  // Fetch all data without filters
+  });
+
+  // Function to fetch data with or without filters
+  function fetchFilteredData(reset = false) {
+    var dataPayload = {};  // Initialize an empty object for AJAX data
+
+    if (!reset) {  // Apply filters only if not resetting
+      dataPayload.startDate = $('#dp4').val();
+      dataPayload.endDate = $('#dp5').val();
+      dataPayload.option1 = $('#option').val();
+      dataPayload.dateType = $('input[name="dateType"]:checked').val();
+    }
+
+    $.ajax({
+      type: 'POST',
+      url: '/superadmin/reports', // Adjust this route as necessary
+      data: dataPayload,  // Send empty data for reset
+      success: function(response) {
+        // Destroy the existing DataTable instance
         var table = $('#example1').DataTable();
         table.destroy();
 
-// Replace the table with the filtered data
-$("table").replaceWith(response.html);
+        // Replace the table with the data
+        $("table").replaceWith(response.html);
 
-// Reinitialize DataTable with the correct settings
-$('#example1').DataTable({
-  "lengthChange": true, // Enable the Entries per Page dropdown
-  "lengthMenu": [10, 25, 50, 100], // Customize the dropdown options (optional)
-  "responsive": true,
-  "autoWidth": false,
-  "buttons": ["excel", "pdf", "csv", "colvis"]
-}).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-            
-            
-          },
-          error: function() {
-            alert('Error fetching filtered reports');
-          }
-        });
-      });
+        // Reinitialize DataTable
+        $('#example1').DataTable({
+          "lengthChange": true,
+          "lengthMenu": [10, 25, 50, 100],
+          "responsive": true,
+          "autoWidth": false,
+          "buttons": ["excel", "pdf", "csv", "colvis"]
+        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+
+         // Reapply the time formatting after the new table content is loaded
+         formatBookingTimes();
+
+      },
+      error: function() {
+        alert('Error fetching reports');
+      }
     });
+  }
+});
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Select all elements with the booking time data attribute
+    document.querySelectorAll('.booking-time').forEach(function (element) {
+        const originalTime = element.getAttribute('data-time'); // ISO format time
+        const timezone = element.getAttribute('data-timezone'); // Provided timezone
+
+        if (originalTime && timezone) {
+            // Format the time according to the specified timezone
+            const formattedTime = moment.tz(originalTime, timezone).format('hh:mm A');
+
+            // Set the formatted time as the text content of the element
+            element.textContent = formattedTime;
+        }
+    });
+});
+
+
+function formatBookingTimes() {
+
+  document.querySelectorAll('.booking-time').forEach(function (element) {
+    const originalTime = element.getAttribute('data-time'); // ISO format time
+    const timezone = element.getAttribute('data-timezone'); // Provided timezone
+
+    if (originalTime && timezone) {
+      // Format the time according to the specified timezone
+      const formattedTime = moment.tz(originalTime, timezone).format('hh:mm A');
+
+      // Set the formatted time as the text content of the element
+      element.textContent = formattedTime;
+    }
+  });
+}
+
+
     </script>
     
 

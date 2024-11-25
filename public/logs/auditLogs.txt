@@ -7859,3 +7859,80 @@ URL Hit: https://acuityscheduling.com/api/v1/appointments/1371260544/reschedule
 Accessed By: User - kilvishbirla@gmail.com
 Purpose: Rescheduling Booking
 ------------------------------
+
+------------------------------
+Date and Time: 2024-11-24 05:35:10
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-24 05:35:19
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-24 05:37:58
+URL Hit: https://acuityscheduling.com/api/v1/appointments
+Accessed By: User - kilvishbirla@gmail.com
+Purpose: Creating New Booking
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-24 06:37:06
+URL Hit: https://acuityscheduling.com/api/v1/appointments/1372076233?pastFormAnswers=false
+Accessed By: superadmin - kilvishbirla@gmail.com
+Purpose: Fetching Single Appointment Details
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-24 06:37:12
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=18478069&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-24 06:56:41
+URL Hit: https://acuityscheduling.com/api/v1/appointments/1366700879/cancel?admin=true
+Accessed By: superadmin - kilvishbirla@gmail.com
+Purpose: Cancelling Booking
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-24 06:59:22
+URL Hit: https://acuityscheduling.com/api/v1/appointments/1364672626/cancel?admin=true
+Accessed By: superadmin - kilvishbirla@gmail.com
+Purpose: Cancelling Booking
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-24 07:03:55
+URL Hit: https://acuityscheduling.com/api/v1/appointments/1366700879/cancel?admin=true
+Accessed By: superadmin - kilvishbirla@gmail.com
+Purpose: Cancelling Booking
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-24 07:04:37
+URL Hit: https://acuityscheduling.com/api/v1/appointments/1368527154?pastFormAnswers=false
+Accessed By: superadmin - kilvishbirla@gmail.com
+Purpose: Fetching Single Appointment Details
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-24 07:04:43
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=November&appointmentTypeID=13808117&timezone=
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-11-24 07:06:16
+URL Hit: https://acuityscheduling.com/api/v1/appointments/1368527154/reschedule?admin=true
+Accessed By: superadmin - kilvishbirla@gmail.com
+Purpose: Rescheduling Booking
+------------------------------
