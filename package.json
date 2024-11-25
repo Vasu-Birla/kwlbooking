@@ -259,6 +259,7 @@
     "has-unicode": "^2.0.1",
     "hasha": "^2.2.0",
     "hasown": "^2.0.2",
+    "helmet": "^8.0.0",
     "homedir-polyfill": "^1.0.3",
     "html-encoding-sniffer": "^4.0.0",
     "html-pdf": "^3.0.1",

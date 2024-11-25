@@ -42,6 +42,18 @@
                      <% } else { %>
                         <p id="kilmessage" class="error-text"><%= output %></p>
                      <% } %>
+
+
+                     
+              <% if (output.includes('another')) { %>
+                <div class="alert alert-warning">
+                    <p>Seems you have been logged in to some other device. Kindly logout from the previous device and try again.</p>
+                    <form method="post" action="/superadmin/logout">
+                        <input type="hidden" name="admin_id" value="<%= admin_id %>">
+                        <button class="btn btn-primary btn-block" type="submit">Logout & Proceed </button>
+                    </form>
+                </div>
+            <% } else { %>
                        <!-- /alert msgs -->
                 <form method="post" action="/superadmin/login">
                     <div class="input-group mb-3">
@@ -68,6 +80,8 @@
                         <div class="col-4"></div>
                     </div>
                 </form>
+
+                <% } %>
             </div><!-- // card-body -->
         </div><!-- // card -->
     </div><!-- // login-box -->

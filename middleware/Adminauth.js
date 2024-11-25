@@ -12,6 +12,16 @@ const isAuthenticatedAdmin = async (req, res, next) => {
     }
   
     try {
+
+
+
+      const result1 = await pool.request()
+  .input('user_id', sql.Int, 1) // Replace 1 with dynamic user_id if needed
+  .query('SELECT * FROM active_sessions WHERE user_id = @user_id');
+
+const existingSessions = result1.recordset[0]; // Get the first result if it exists
+const storedToken = existingSessions ? existingSessions.token : null; // Safely access token if exists
+
       const decodedData = jwt.verify(Admin_token, process.env.JWT_SECRET);
       const pool = await connection();
   
@@ -24,6 +34,10 @@ const isAuthenticatedAdmin = async (req, res, next) => {
       if (!admin) {
         return res.redirect('/superadmin/login');
       }
+
+      if(Admin_token != storedToken ){
+        return res.redirect('/superadmin/login');
+    }  
   
       req.admin = admin;
       res.app.locals.loggeduser = admin;

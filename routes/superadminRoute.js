@@ -42,6 +42,9 @@ router.route('/login').post(loginAdmin)
 router.route('/logout').get(logout)
 
 
+router.route('/logout').post(logout)
+
+
 //---------- appointments ------------- 
 
 

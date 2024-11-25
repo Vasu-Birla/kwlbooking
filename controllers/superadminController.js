@@ -1,6 +1,7 @@
 //import connection from "../config.js";
 
 import { connection, sql } from '../config.js';
+import jwt from 'jsonwebtoken';
 
 import axios from 'axios';
 
@@ -318,8 +319,125 @@ const login = async (req, res, next) => {
   }
 };
 
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_DURATION = 30 * 60 * 1000; // 30 minutes
 
 const loginAdmin = async (req, res, next) => {
+  let pool;
+  try {
+    pool = await connection();
+    const { username, password } = req.body;
+
+    // If username or password is missing
+    if (!username || !password) {
+      return res.render('superadmin/login', { output: 'Please Enter Username and Password' });
+    }
+
+    // Fetch admin user
+    const adminQuery = `
+      SELECT * 
+      FROM tbl_admin 
+      WHERE username = @username
+    `;
+    const adminResult = await pool.request().input('username', username).query(adminQuery);
+    const admin = adminResult.recordset[0];
+
+    if (!admin) {
+      return res.render('superadmin/login', { output: 'Invalid Username' });
+    }
+
+    // Check login attempts
+    const attemptsQuery = `
+      SELECT * 
+      FROM login_attempts_admin 
+      WHERE admin_id = @adminId
+    `;
+    const attemptsResult = await pool.request().input('adminId', admin.admin_id).query(attemptsQuery);
+    const loginAttempt = attemptsResult.recordset[0];
+
+    if (loginAttempt) {
+      const now = new Date();
+      if (loginAttempt.lockout_until && now < loginAttempt.lockout_until) {
+        const remainingTime = Math.ceil((loginAttempt.lockout_until - now) / 60000); // Remaining time in minutes
+        return res.render('superadmin/login', { output: `Account locked. Try again after ${remainingTime} minutes.` });
+      }
+    }
+
+    // Compare password
+    const isValid = comparePassword(password, admin.password);
+
+    if (!isValid) {
+      // Update login attempts
+      if (loginAttempt) {
+        const attempts = loginAttempt.attempts + 1;
+        let lockoutUntil = null;
+        if (attempts >= MAX_ATTEMPTS) {
+          lockoutUntil = new Date(Date.now() + LOCKOUT_DURATION);
+        }
+        const updateAttemptsQuery = `
+          UPDATE login_attempts_admin
+          SET attempts = @attempts, last_attempt = GETDATE(), lockout_until = @lockoutUntil
+          WHERE admin_id = @adminId
+        `;
+        await pool
+          .request()
+          .input('attempts', attempts)
+          .input('lockoutUntil', lockoutUntil)
+          .input('adminId', admin.admin_id)
+          .query(updateAttemptsQuery);
+      } else {
+        const insertAttemptQuery = `
+          INSERT INTO login_attempts_admin (admin_id, attempts, last_attempt, lockout_until)
+          VALUES (@adminId, 1, GETDATE(), NULL)
+        `;
+        await pool.request().input('adminId', admin.admin_id).query(insertAttemptQuery);
+      }
+      return res.render('superadmin/login', { output: 'Incorrect Password' });
+    }
+
+    // Reset failed attempts on successful login
+    const resetAttemptsQuery = `
+      DELETE FROM login_attempts_admin 
+      WHERE admin_id = @adminId
+    `;
+    await pool.request().input('adminId', admin.admin_id).query(resetAttemptsQuery);
+
+    // =============================== active seetion start ===============================
+
+              const activeSessionQuery = `
+              SELECT * FROM active_sessions_admin WHERE admin_id = @admin_id
+            `;
+            const activeSessionResult = await pool.request()
+              .input('admin_id', sql.Int, admin.admin_id)
+              .query(activeSessionQuery);
+
+            const activeSession = activeSessionResult.recordset[0];
+
+            if (activeSession) {
+              return res.render('superadmin/login', {
+                output: 'You are already logged in from another device.',
+                admin_id:admin.admin_id
+
+              });
+            }
+            // =============================== active seetion end ===============================
+
+    // Send success response
+    sendTokenAdmin(admin, 200, res);
+    
+  } catch (error) {
+    console.error('Error during login:', error);
+    res.render('superadmin/login', { output: 'An error occurred. Please try again later.' });
+  } finally {
+    if (pool) {
+     // pool.close();
+    }
+  }
+};
+
+
+
+const loginAdminwithoutlock = async (req, res, next) => {
   const pool = await connection();
 
   try {
@@ -362,6 +480,48 @@ const loginAdmin = async (req, res, next) => {
 
 
 const logout = async (req, res) => {
+  let pool;
+
+  try {
+    // Establish MSSQL connection
+    pool = await connection();
+
+    // Get the admin ID from the JWT token (if implemented)
+    const admin_id  = req.body.admin_id
+
+    console.log("adminToken", admin_id)
+
+
+
+      // Clear the active session for the admin
+      const deleteSessionQuery = `
+        DELETE FROM active_sessions_admin WHERE admin_id = @admin_id
+      `;
+      await pool.request()
+        .input('admin_id', sql.Int, admin_id)
+        .query(deleteSessionQuery);
+
+
+    // Clear the Admin_token cookie
+    res.cookie('Admin_token', null, {
+      expires: new Date(Date.now()),
+      httpOnly: true,
+    });
+
+    // Redirect to the superadmin login page
+    res.redirect('/superadmin/login');
+  } catch (error) {
+    console.error('Error logging out admin:', error);
+    res.render('superadmin/kil500', { output: `${error}` });
+  } finally {
+    if (pool) pool.close();
+  }
+};
+
+
+
+
+const logoutoldworking = async (req, res) => {
   try {
     res.cookie("Admin_token", null, {
       expires: new Date(Date.now()),

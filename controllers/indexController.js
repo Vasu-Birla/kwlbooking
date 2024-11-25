@@ -552,6 +552,7 @@ const getBookingOtp = async (req, res, next) => {
 
 
 
+
 const verifyOTP = async (req, res, next) => {
   console.log(req.body,"verify")
   const { email, otp } = req.body;
@@ -1892,7 +1893,115 @@ const getLoginOtpWithReqInput = async (req, res, next) => {
 
 
 
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_DURATION = 30 * 60 * 1000; // 30 minutes
+
 const verifyLoginOtp = async (req, res, next) => {
+  const { email, otp } = req.body;
+  let pool;
+
+  try {
+    pool = await connection();
+
+    // Check if email and OTP are provided
+    if (!email || !otp) {
+      return res.status(400).json({ success: false, message: 'Email and OTP are required' });
+    }
+
+    // Check login attempts
+    const attemptsQuery = `
+      SELECT * 
+      FROM login_attempts_user 
+      WHERE user_email = @userEmail
+    `;
+    const attemptsResult = await pool
+      .request()
+      .input('userEmail', sql.VarChar, email)
+      .query(attemptsQuery);
+    const loginAttempt = attemptsResult.recordset[0];
+
+    if (loginAttempt) {
+      const now = new Date();
+      if (loginAttempt.lockout_until && now < loginAttempt.lockout_until) {
+        const remainingTime = Math.ceil((loginAttempt.lockout_until - now) / 60000); // Remaining time in minutes
+        return res.status(400).json({
+          success: false,
+          message: `Account locked. Try again after ${remainingTime} minutes.`,
+        });
+      }
+    }
+
+    // Check if OTP is valid and not expired
+    const otpQuery = `
+      SELECT * 
+      FROM tbl_login_otp 
+      WHERE email = @userEmail AND otp = @otp AND expires_at > GETDATE()
+    `;
+    const otpResult = await pool
+      .request()
+      .input('userEmail', sql.VarChar, email)
+      .input('otp', sql.VarChar, otp)
+      .query(otpQuery);
+
+    if (otpResult.recordset.length === 0) {
+      // Increment login attempts
+      if (loginAttempt) {
+        const attempts = loginAttempt.attempts + 1;
+        let lockoutUntil = null;
+        if (attempts >= MAX_ATTEMPTS) {
+          lockoutUntil = new Date(Date.now() + LOCKOUT_DURATION);
+        }
+        const updateAttemptsQuery = `
+          UPDATE login_attempts_user
+          SET attempts = @attempts, last_attempt = GETDATE(), lockout_until = @lockoutUntil
+          WHERE user_email = @userEmail
+        `;
+        await pool
+          .request()
+          .input('attempts', sql.Int, attempts)
+          .input('lockoutUntil', sql.DateTime, lockoutUntil)
+          .input('userEmail', sql.VarChar, email)
+          .query(updateAttemptsQuery);
+      } else {
+        const insertAttemptQuery = `
+          INSERT INTO login_attempts_user (user_email, attempts, last_attempt, lockout_until)
+          VALUES (@userEmail, 1, GETDATE(), NULL)
+        `;
+        await pool
+          .request()
+          .input('userEmail', sql.VarChar, email)
+          .query(insertAttemptQuery);
+      }
+      return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
+    }
+
+    // OTP is valid, reset login attempts
+    const resetAttemptsQuery = `
+      DELETE FROM login_attempts_user 
+      WHERE user_email = @userEmail
+    `;
+    await pool.request().input('userEmail', sql.VarChar, email).query(resetAttemptsQuery);
+
+    // Remove OTP from database
+    const deleteOtpQuery = `
+      DELETE FROM tbl_login_otp 
+      WHERE email = @userEmail
+    `;
+    await pool.request().input('userEmail', sql.VarChar, email).query(deleteOtpQuery);
+
+    // Successful verification
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error('Error during OTP verification:', error);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  } finally {
+    if (pool) pool.close();
+  }
+};
+
+
+
+const verifyLoginOtpwithoutlock = async (req, res, next) => {
   const { email, otp } = req.body;
   let pool;
 

@@ -623,7 +623,7 @@ if (result.success) {
         
     } else {
         // alert('Invalid or expired OTP');
-        errorMessageDiv.textContent = 'Invalid or expired OTP';
+        errorMessageDiv.textContent = result.message;
         errorMessageDiv.style.color = 'red';
         return;
     }

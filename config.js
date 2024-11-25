@@ -15,8 +15,8 @@ const config = {
   pool: {
     max: 30,       // Maximum number of connections in the pool
     min: 0,        // Minimum number of connections in the pool
-    idleTimeoutMillis: 30000,  // Timeout for idle connections
-    acquireTimeoutMillis: 30000 // Timeout for acquiring a new connection
+    idleTimeoutMillis: 60000,  // Timeout for idle connections
+    acquireTimeoutMillis: 60000 // Timeout for acquiring a new connection
   }
 };
 
