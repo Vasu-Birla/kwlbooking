@@ -934,6 +934,10 @@ const confirmbooking = async (req, res, next) => {
 
         console.log("acuityResponse.data--> new booking data -> ",acuityResponse.data)
         const bookingId = acuityResponse.data.id;
+
+        const type_name = acuityResponse.data.type;
+
+        
         const created_at = moment(acuityResponse.data.datetimeCreated, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYY-MM-DD HH:mm:ss.SSSSSSSZ');
 
         console.log("created_att",created_at)
@@ -962,13 +966,13 @@ const confirmbooking = async (req, res, next) => {
     agent_forwarder, appointment_by, appointment_type, bol_number,
     vessel_name, vessel_reported_date, chassis_number, declaration_number,
     container_number, number_of_items, booking_date, booking_times,
-    timezone, location, created_at
+    timezone, location, created_at, type_name
   ) VALUES (
     ${bookingId}, '${trn}', '${firstname}', '${lastname}', '${contact}', '${country_code}', '${user_email}',
     '${agent_forwarder}', '${appointment_by}', '${appointment_type}', '${bol_number}',
     '${vessel_name}', '${vessel_reported_date}', '${chassis_number}', '${declaration_number}',
     '${container_number}', '${number_of_items}', '${booking_date}', '${datetime}',
-    '${timezone}', '${location}', '${created_at}'
+    '${timezone}', '${location}', '${created_at}', '${type_name}'
   )
 `;
 
