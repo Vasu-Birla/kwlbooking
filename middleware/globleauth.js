@@ -8,11 +8,20 @@ import { connection, sql } from '../config.js';
     const { User_kwl_token } = req.cookies;
 
     try {
+        const pool = await connection();
         if (User_kwl_token) {        
             // Decode and verify the token
             const decodedData = jwt.verify(User_kwl_token, process.env.JWT_SECRET);
                 
-            const pool = await connection();
+            
+      const result1 = await pool.request()
+      .input('user_email', sql.NVarChar, decodedData.user_email) // Replace 1 with dynamic user_id if needed
+      .query('SELECT * FROM active_sessions_user WHERE user_email = @user_email');
+    
+    const existingSessions = result1.recordset[0]; // Get the first result if it exists
+    const storedToken = existingSessions ? existingSessions.token : null; // Safely access token if exists
+    
+         
 
             const result = await pool.request()
                 .input('user_email', sql.NVarChar, decodedData.user_email)
@@ -25,6 +34,15 @@ import { connection, sql } from '../config.js';
                 res.app.locals.dashboard_type = 'Guest';
                 return res.redirect('/#popup1');
             }
+
+            
+      if(User_kwl_token != storedToken ){
+        res.cookie("User_kwl_token", null, {
+            expires: new Date(Date.now()),
+            httpOnly: true
+          });
+        return res.redirect('/#popup1');
+    } 
 
             // User authenticated successfully
             req.user = user;

@@ -15,7 +15,8 @@ import { login , home, error404, error500, loginAdmin,profile,profilePost,logout
   rescheduleBooking,
   updateBooking,
   reports,
-  auditLogs
+  auditLogs,
+  logoutandProceed
 } from "../controllers/superadminController.js";
 import { isAuthenticatedAdmin } from "../middleware/Adminauth.js";
 
@@ -43,6 +44,10 @@ router.route('/logout').get(logout)
 
 
 router.route('/logout').post(logout)
+
+router.route('/logoutandProceed').post(logoutandProceed)
+
+
 
 
 //---------- appointments ------------- 

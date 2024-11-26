@@ -1,7 +1,7 @@
 //import connection from "../config.js"
 
 import { connection, sql } from '../config.js';
-import {sendTokenUser} from "../utils/jwtToken.js";
+import {sendTokenUser, sendTokenUserogoutandProceed} from "../utils/jwtToken.js";
 import axios from 'axios';
 import moment from 'moment-timezone';
 
@@ -1159,7 +1159,6 @@ const viewBookings = async (req, res, next) => {
       bookings.push(booking);
     }
 
-    console.log(bookings)
 
     // Render the view with the bookings and logs
     res.render('viewBookings', { output: output, bookings: bookings });
@@ -2001,6 +2000,9 @@ const verifyLoginOtp = async (req, res, next) => {
 
 
 
+
+
+
 const verifyLoginOtpwithoutlock = async (req, res, next) => {
   const { email, otp } = req.body;
   let pool;
@@ -2052,6 +2054,7 @@ const login = async (req, res, next) => {
 
     // Fetch user details from tbl_bookings
     const userResult = await request.query('SELECT * FROM tbl_bookings WHERE user_email = @email');
+    const user = userResult.recordset[0];
 
     if (userResult.recordset.length === 0) {
       // Email not registered
@@ -2059,9 +2062,30 @@ const login = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Email not registered' });
     }
 
+    
+    // =============================== active seetion start ===============================
+
+    const activeSessionQuery = `
+    SELECT * FROM active_sessions_user WHERE user_email = @user_email
+  `;
+  const activeSessionResult = await pool.request()
+    .input('user_email', sql.NVarChar, user.user_email) // Corrected data type to sql.NVarChar
+    .query(activeSessionQuery);
+  
+  const activeSession = activeSessionResult.recordset[0];
+  
+  if (activeSession) {
+    return res.render('index', {
+      output: 'You are already logged in from another device.',
+      user_email: user.user_email,
+       showModal: true // Flag to show the modal
+    });
+  }
+  // =============================== active seetion end ===============================
+
     // User exists, send token
-    const user = userResult.recordset[0];
-    sendTokenUser(user, 200, res);
+ 
+    sendTokenUser(user, 200, res,pool);
 
     await transaction.commit(); // Commit the transaction if successful
   } catch (error) {
@@ -2069,13 +2093,123 @@ const login = async (req, res, next) => {
     console.error("error ->", error.message);
     res.render('kil500', { output: `${error}` });
   } finally {
-    if (pool) pool.close(); // Close the connection pool
+    // if (pool) pool.close(); // Close the connection pool
+  }
+};
+
+
+
+
+
+const logoutandProceed = async (req, res) => {
+  console.log("logoutandProceed")
+  let pool;
+
+  try {
+    // Establish MSSQL connection
+    pool = await connection();
+
+    // Get the user ID from the JWT token (if implemented)
+    const user_email  = req.body.user_email
+
+        // Fetch user user
+    const userQuery = `
+      SELECT * 
+      FROM tbl_bookings 
+      WHERE user_email = @user_email
+    `;
+    const userResult = await pool.request().input('user_email', user_email).query(userQuery);
+    const user = userResult.recordset[0];
+   const { token, options }  =  await sendTokenUserogoutandProceed(user, 200, res);
+
+
+    const activeSessionQuery = `
+    SELECT * FROM active_sessions_user WHERE user_email = @user_email
+  `;
+
+  const activeSessionResult = await pool
+  .request()
+  .input('user_email', sql.NVarChar, user.user_email)
+  .query(activeSessionQuery);
+
+
+  
+  const activeSession = activeSessionResult.recordset[0];
+  
+  // If there is an active session, delete it
+  if (activeSession) {
+    const deleteSessionQuery = `
+      DELETE FROM active_sessions_user WHERE user_email = @user_email
+    `;
+    await pool
+      .request()
+      .input('user_email', sql.NVarChar, user.user_email)
+      .query(deleteSessionQuery);
+  }
+
+  // Store the new session
+  const insertSessionQuery = `
+    INSERT INTO active_sessions_user (user_email, token) 
+    VALUES (@user_email, @token)
+  `;
+  await pool
+    .request()
+    .input('user_email', sql.NVarChar, user.user_email)
+    .input('token', sql.NVarChar, token)
+    .query(insertSessionQuery);
+
+
+    res.status(200).cookie('User_kwl_token',token,options).redirect('/viewBookings')     
+
+  } catch (error) {
+    console.error('Error logging out user:', error);
+    res.render('kil500', { output: `${error}` });
+  } finally {
+   if (pool) pool.close();
   }
 };
 
 
 
 const logout = async (req, res) => {
+  let pool;
+
+  try {
+    // Establish MSSQL connection
+    pool = await connection();
+
+
+ const user_email = req.user ? req.user.user_email : 'Guest Mode';
+
+      // Clear the active session for the admin
+      const deleteSessionQuery = `
+        DELETE FROM active_sessions_user WHERE user_email = @user_email
+      `;
+      await pool.request()
+        .input('user_email', sql.NVarChar, user_email)
+        .query(deleteSessionQuery);
+
+
+        res.cookie("User_kwl_token", null, {
+          expires: new Date(Date.now()),
+          httpOnly: true
+        });
+
+    // Redirect to the superadmin login page
+    res.redirect('/');
+  } catch (error) {
+    console.error('Error logging out admin:', error);
+    res.render('kil500', { output: `${error}` });
+  } finally {
+    if (pool) pool.close();
+  }
+};
+
+
+
+const logoutold = async (req, res) => {
+
+  const userName = req.user ? req.user.user_email : 'Guest Mode';
   try {
     res.cookie("User_kwl_token", null, {
       expires: new Date(Date.now()),
@@ -2358,7 +2492,8 @@ const fetchAndSyncAcuityBookings1 = async (req, res, next) => {
 //--------------------- Export Start ------------------------------------------
 export { home , book , booking_availability , viewBookings , getLoginOtp ,verifyLoginOtp   , login , logout ,
   dates_availability , appointment_types , time_availability , getBookingOtp , verifyOTP , confirmbooking ,
-  check_times , cancelBooking , reschedule ,rescheduleBooking ,updateBooking, acuityBookings , fetchAndSyncAcuityBookings
+  check_times , cancelBooking , reschedule ,rescheduleBooking ,updateBooking, acuityBookings , fetchAndSyncAcuityBookings ,
+  logoutandProceed
 
  }
 

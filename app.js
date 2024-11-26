@@ -91,7 +91,8 @@ app.use(async (req, res, next) => {
     
       app.locals.host  =  process.env.Host;
       app.locals.currentUrl = req.originalUrl;
-
+      app.locals.showModal = true;
+  
       // const [locations] = await con.query('SELECT * FROM tbl_locations');
       // app.locals.locations = locations;        
       // req.locations = locations;

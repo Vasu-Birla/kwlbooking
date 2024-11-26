@@ -78,7 +78,7 @@
       });
   });
 </script>
-
+<input id="kiloutput" value="<%= output %>">
 </body>
 </html>
 
@@ -105,6 +105,20 @@
         <div id="errmsg1"></div>
         <span id="otpStatus"></span>
         <div id="loader1" style="display:none; font-size:16px; color:rgb(8, 233, 102); margin-bottom:15px;"></div>
+
+
+
+
+        <% if (output && output.includes('another')) { %>
+            <div class="alert alert-warning">
+              <p><%= output %></p>
+              <form method="post" action="/logoutandProceed">
+                <input type="hidden" name="user_email" value="<%= user_email %>">
+                <button class="btn btn-primary btn-block" type="submit">Logout & Proceed</button>
+              </form>
+            </div>
+          <% } else { %>
+
 
         <form id="loginForm" method="post" action="/login">   
         <div class="form-group row">
@@ -141,6 +155,8 @@
         </div>
 
         </form>
+
+        <% } %>
       </div>
     </div>
   </div>
@@ -149,7 +165,18 @@
 
 <script>
 //------- login modal script 
+window.onload = function() {
 
+    
+
+    var kiloutput = document.getElementById('kiloutput').value;
+
+
+    // If there's an output message that contains the word 'another', show the modal
+ if (kiloutput && kiloutput.includes('another')) {
+    document.querySelector('a[href="#popup1"]').click();  // Simulate the click event on the modal trigger
+ }
+  };
 
 
   document.addEventListener("DOMContentLoaded", function() {

@@ -13,7 +13,7 @@ import * as url from 'url';
 import fs from 'fs';
 import path from 'path';
 
-import {sendTokenAdmin} from "../utils/jwtToken.js";
+import {sendTokenAdmin , sendTokenAdminlogoutandProceed} from "../utils/jwtToken.js";
 import {hashPassword, comparePassword } from '../middleware/helper.js'
 import moment from 'moment-timezone';
 import { contains } from "cheerio";
@@ -423,15 +423,15 @@ const loginAdmin = async (req, res, next) => {
             // =============================== active seetion end ===============================
 
     // Send success response
-    sendTokenAdmin(admin, 200, res);
+    sendTokenAdmin(admin, 200, res,pool);
     
   } catch (error) {
     console.error('Error during login:', error);
     res.render('superadmin/login', { output: 'An error occurred. Please try again later.' });
   } finally {
-    if (pool) {
-     // pool.close();
-    }
+    // if (pool) {
+    //  pool.close();
+    // }
   }
 };
 
@@ -466,14 +466,86 @@ const loginAdminwithoutlock = async (req, res, next) => {
       return res.render('superadmin/login', { output: 'Incorrect Password' });
     }
 
-    sendTokenAdmin(admin, 200, res);
+    sendTokenAdmin(admin, 200, res, pool);
   } catch (error) {
     console.error('Error during login:', error);
     res.render('superadmin/login', { output: 'An error occurred. Please try again later.' });
   } finally {
-    if (pool) {
-      pool.close();
-    }
+    // if (pool) {
+    //   pool.close();
+    // }
+  }
+};
+
+
+const logoutandProceed = async (req, res) => {
+  console.log("logoutandProceed")
+  let pool;
+
+  try {
+    // Establish MSSQL connection
+    pool = await connection();
+
+    // Get the admin ID from the JWT token (if implemented)
+    const admin_id  = req.body.admin_id
+
+        // Fetch admin user
+    const adminQuery = `
+      SELECT * 
+      FROM tbl_admin 
+      WHERE admin_id = @admin_id
+    `;
+    const adminResult = await pool.request().input('admin_id', admin_id).query(adminQuery);
+    const admin = adminResult.recordset[0];
+
+    console.log("admin--> ", admin)
+
+   const { token, options }  =  await sendTokenAdminlogoutandProceed(admin, 200, res);
+
+
+    const activeSessionQuery = `
+    SELECT * FROM active_sessions_admin WHERE admin_id = @admin_id
+  `;
+
+  const activeSessionResult = await pool
+  .request()
+  .input('admin_id', sql.Int, admin.admin_id)
+  .query(activeSessionQuery);
+
+
+  
+  const activeSession = activeSessionResult.recordset[0];
+  
+  // If there is an active session, delete it
+  if (activeSession) {
+    const deleteSessionQuery = `
+      DELETE FROM active_sessions_admin WHERE admin_id = @admin_id
+    `;
+    await pool
+      .request()
+      .input('admin_id', sql.Int, admin.admin_id)
+      .query(deleteSessionQuery);
+  }
+
+  // Store the new session
+  const insertSessionQuery = `
+    INSERT INTO active_sessions_admin (admin_id, token) 
+    VALUES (@admin_id, @token)
+  `;
+  await pool
+    .request()
+    .input('admin_id', sql.Int, admin.admin_id)
+    .input('token', sql.NVarChar, token)
+    .query(insertSessionQuery);
+
+
+    res.status(200).cookie('Admin_token', token, options).redirect('/superadmin');
+
+  } catch (error) {
+    console.error('Error logging out admin:', error);
+    res.render('superadmin/kil500', { output: `${error}` });
+  } finally {
+    if (pool) pool.close();
   }
 };
 
@@ -1929,7 +2001,8 @@ const auditLogswithtraction = async (req, res, next) => {
 export {home, loginAdmin ,login , logout ,error404 , error500,  index,profile,profilePost,
    updateUserPic,updateAdmin ,changepass ,  ForgotPassword,sendOTP,verifyOTP,resetpassword , 
    
-   appointments , reschedule,cancelBooking,updateBooking , rescheduleBooking , reports, auditLogs
+   appointments , reschedule,cancelBooking,updateBooking , rescheduleBooking , reports, auditLogs,
+   logoutandProceed
    
   
 

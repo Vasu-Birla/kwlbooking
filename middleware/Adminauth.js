@@ -6,24 +6,26 @@ import { connection, sql } from '../config.js';
 
 const isAuthenticatedAdmin = async (req, res, next) => {
     const { Admin_token } = req.cookies;
+    const pool = await connection();
   
+   
     if (!Admin_token) {
       return res.redirect('/superadmin/login');
     }
   
     try {
 
-
+      const decodedData = jwt.verify(Admin_token, process.env.JWT_SECRET);
 
       const result1 = await pool.request()
-  .input('user_id', sql.Int, 1) // Replace 1 with dynamic user_id if needed
-  .query('SELECT * FROM active_sessions WHERE user_id = @user_id');
+  .input('admin_id', sql.Int, decodedData.id) // Replace 1 with dynamic user_id if needed
+  .query('SELECT * FROM active_sessions_admin WHERE admin_id = @admin_id');
 
 const existingSessions = result1.recordset[0]; // Get the first result if it exists
 const storedToken = existingSessions ? existingSessions.token : null; // Safely access token if exists
 
-      const decodedData = jwt.verify(Admin_token, process.env.JWT_SECRET);
-      const pool = await connection();
+     
+      
   
       const result = await pool.request()
         .input('admin_id', sql.Int, decodedData.id)
@@ -36,6 +38,11 @@ const storedToken = existingSessions ? existingSessions.token : null; // Safely 
       }
 
       if(Admin_token != storedToken ){
+        res.cookie('Admin_token', null, {
+          expires: new Date(Date.now()),
+          httpOnly: true,
+        });
+    
         return res.redirect('/superadmin/login');
     }  
   

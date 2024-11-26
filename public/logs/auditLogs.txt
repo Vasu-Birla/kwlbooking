@@ -8069,3 +8069,10 @@ URL Hit: https://acuityscheduling.com/api/v1/appointment-types
 Accessed By: User - Guest Mode
 Purpose: Fetching Date Appointment Types
 ------------------------------
+
+------------------------------
+Date and Time: 2024-11-26 05:39:32
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: User - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------

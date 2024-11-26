@@ -26,6 +26,7 @@ const allowedRedirects = [
     '/login',
     '/logout',
     '/acuityBookings',
+    '/logoutandProceed',
 
     // Routes under '/superadmin'
     '/superadmin',
@@ -49,6 +50,7 @@ const allowedRedirects = [
     '/superadmin/auditLogs',
     '/superadmin/error404',
     '/superadmin/error500',
+    '/superadmin/logoutandProceed'
 ];
 
 const validateRedirectUrl = (req, res, next) => {
