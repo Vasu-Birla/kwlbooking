@@ -838,6 +838,7 @@ const confirmbookingwithoutloop = async (req, res, next) => {
 
 
 const confirmbooking = async (req, res, next) => {
+  console.log("new booking ")
   const {
     trn, firstname, lastname, contact, country_code, user_email, agent_forwarder,
     appointment_by, appointment_type, bol_number, vessel_name, vessel_reported_date,

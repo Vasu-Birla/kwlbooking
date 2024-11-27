@@ -26,12 +26,19 @@ const sendTokenAdminlogoutandProceed = async (admin, statusCode, res)=>{
   console.log("Correct ")
   const token =  getJWTToken(admin.admin_id ); 
   //options for tokens  
+      // const options = {
+      //     expires: new Date(
+      //         Date.now() + process.env.COOKIE_EXPIRE*24*60*60*1000
+      //     ), 
+      //     httpOnly:true
+      // }   
+      
       const options = {
-          expires: new Date(
-              Date.now() + process.env.COOKIE_EXPIRE*24*60*60*1000
-          ), 
-          httpOnly:true
-      }      
+        expires: new Date(Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000),
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // Use Secure flag only in production
+        sameSite: 'Strict', // Optional: Prevents CSRF attacks by limiting cross-site cookie usage
+      };
   // // Send token in JSON response
   // return res.status(statusCode).json({
   //   success: true,
@@ -61,9 +68,16 @@ const sendTokenAdmin = async (admin, statusCode, res,pool) => {
       const token = getJWTToken(admin.admin_id);
   
       // Options for tokens
+      // const options = {
+      //   expires: new Date(Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000),
+      //   httpOnly: true,
+      // };
+
       const options = {
         expires: new Date(Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000),
         httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // Use Secure flag only in production
+        sameSite: 'Strict', // Optional: Prevents CSRF attacks by limiting cross-site cookie usage
       };
   
       // Check if there are existing active sessions for the admin

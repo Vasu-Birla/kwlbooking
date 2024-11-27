@@ -557,9 +557,8 @@ const logout = async (req, res) => {
   try {
     // Establish MSSQL connection
     pool = await connection();
-
-    // Get the admin ID from the JWT token (if implemented)
-    const admin_id  = req.body.admin_id
+    
+    const admin_id = req.admin ? req.admin.admin_id : 1;
 
     console.log("adminToken", admin_id)
 
@@ -1097,6 +1096,8 @@ const changepass = async (req, res, next) => {
     const existingPass = req.admin.password;
     const email = req.admin.email;
 
+    var admin = req.admin
+
     const { opass, npass, cpass } = req.body;
 
     // Validate the old password
@@ -1132,6 +1133,35 @@ const changepass = async (req, res, next) => {
       expires: new Date(Date.now()),
       httpOnly: true,
     });
+
+
+
+
+    
+    const activeSessionQuery = `
+    SELECT * FROM active_sessions_admin WHERE admin_id = @admin_id
+  `;
+
+  const activeSessionResult = await pool
+  .request()
+  .input('admin_id', sql.Int, admin.admin_id)
+  .query(activeSessionQuery);
+
+
+  
+  const activeSession = activeSessionResult.recordset[0];
+  
+  // If there is an active session, delete it
+  if (activeSession) {
+    const deleteSessionQuery = `
+      DELETE FROM active_sessions_admin WHERE admin_id = @admin_id
+    `;
+    await pool
+      .request()
+      .input('admin_id', sql.Int, admin.admin_id)
+      .query(deleteSessionQuery);
+  }
+
 
     // Uncomment this line to send a password change notification email
     // passwordNotify(email);

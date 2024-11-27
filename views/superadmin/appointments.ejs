@@ -483,6 +483,7 @@ async function updateBookingold(booking_id, booking) {
     // Step 2: Create the form structure for editing inside SweetAlert with adminNote included
     const htmlForm = `
         <form id="kilform" action="/superadmin/updateBooking" method="POST">
+               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div class="row gy-4">
                 <!-- Hidden inputs -->
                 <input type="hidden" id="calendarId" name="calendarId" value="${booking.calendarID}">
@@ -554,6 +555,7 @@ function updateBooking(booking_id, booking, timezone) {
     // Create the form structure for editing inside SweetAlert
     const htmlForm = `
         <form id="kilform" action="/superadmin/updateBooking" method="POST">
+               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div class="row gy-4">
                 <!-- Hidden input for calendarId -->
                 <input type="hidden" id="calendarId" name="calendarId" value="${booking.calendarID}">

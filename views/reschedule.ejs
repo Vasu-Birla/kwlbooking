@@ -150,6 +150,7 @@
                         <!-- Contact Information Tab -->
                         <div class="tab-content">
                             <form id="kilform">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                 <div class="row gy-4">
                                     <input type="hidden" id="calendarId" name="calendarId" value="<%= booking.calendarID %>">
                                     <input type="hidden" id="typename" name="typename" value="<%= booking.type_name %>" >
@@ -826,11 +827,12 @@ async function fetchAvailableDates() {
     });
 }
   async function checkAvailability(selectedDate, formattedTime , datetime) {
+    const csrfToken = document.querySelector('input[name="_csrf"]').value;
     try {
         // Make a POST request to check availability
         const response = await fetch('/check_times', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'CSRF-Token': csrfToken },
             body: JSON.stringify({
                 date: selectedDate,
                 time: formattedTime,
@@ -1174,7 +1176,7 @@ function addErrorMessage(container, message) {
 // Function to handle the booking confirmation with OTP verification and final confirmation
 async function confirmBooking() {
     const email = document.getElementById("email").value;
-
+    const csrfToken = document.querySelector('input[name="_csrf"]').value;
 
     const loggeduserData = document.getElementById('loggeduserData').value;
 const loggeduser = loggeduserData ? JSON.parse(loggeduserData) : null;
@@ -1204,7 +1206,7 @@ const loggeduser = loggeduserData ? JSON.parse(loggeduserData) : null;
         // Send OTP request to the server
         const response = await fetch('/getBookingOtp', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' , 'CSRF-Token': csrfToken },
             body: JSON.stringify({ email })
         });
         const result = await response.json();
@@ -1244,13 +1246,14 @@ const loggeduser = loggeduserData ? JSON.parse(loggeduserData) : null;
 
 // Function to verify the OTP
 async function verifyOTP() {
+    const csrfToken = document.querySelector('input[name="_csrf"]').value;
     const email = document.getElementById("email").value;
     const otp = document.getElementById("otpInput").value;
 
     try {
         const response = await fetch('/verifyOTP', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'CSRF-Token': csrfToken },
             body: JSON.stringify({ email, otp })
         });
         const result = await response.json();
@@ -1283,6 +1286,8 @@ async function verifyOTP() {
 
 // Function to handle direct booking confirmation
 async function directConfirmBooking(email) {
+    const csrfToken = document.querySelector('input[name="_csrf"]').value;
+
     try {
 
 
@@ -1318,7 +1323,7 @@ async function directConfirmBooking(email) {
 
         const bookingResponse = await fetch('/rescheduleBooking', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'CSRF-Token': csrfToken },
                 body: JSON.stringify(formData)
             });
 

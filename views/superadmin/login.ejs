@@ -49,6 +49,7 @@
                 <div class="alert alert-warning">
                     <p>Seems you have been logged in to some other device. Kindly logout from the previous device and try again.</p>
                     <form method="post" action="/superadmin/logoutandProceed">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>"> <!-- CSRF Token -->
                         <input type="hidden" name="admin_id" value="<%= admin_id %>">
                         <button class="btn btn-primary btn-block" type="submit">Logout & Proceed </button>
                     </form>
@@ -56,6 +57,7 @@
             <% } else { %>
                        <!-- /alert msgs -->
                 <form method="post" action="/superadmin/login">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>"> <!-- CSRF Token -->
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" name="username" id="username" placeholder="Enter username" autocomplete="off" required>
                         <div class="input-group-append">

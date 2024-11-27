@@ -2,6 +2,7 @@ import http from 'http';
 import express from 'express';
 import * as url from 'url';
 import * as path from 'path';
+import csurf from 'csurf';
 import cookie from 'cookie-parser';
 import dotenv from 'dotenv'
 import helmet from 'helmet';
@@ -23,12 +24,57 @@ const port = 3015;
 const __dirname = url.fileURLToPath(new URL('.',import.meta.url));
 
 //----------------------  global  Middleware start ----------------
+
+app.use(cookie());
+
 app.use(express.json({limit:'50mb'}));
 app.use(express.urlencoded({limit: '50mb', extended: true}));
 app.use(express.static(path.join(__dirname,"public")));
-app.use(cookie());
-app.use(requestIp.mw());
 
+
+//========== CSRF Start Middleware ======================
+
+// const csrfMiddleware = csurf({ cookie: true });
+// app.use(csrfMiddleware);
+// app.use((req, res, next) => {
+//   res.locals.csrfToken = req.csrfToken();
+//   next();
+// });
+//========== CSRF End ======================
+
+
+//========== CSRF Start Middleware ======================
+
+// Define CSRF middleware with cookie
+const csrfMiddleware = csurf({ cookie: true });
+
+// Skip CSRF for specific routes by using a condition
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api') || req.path === '/kilvish') {
+    return next(); // Skip CSRF for /api and / routes
+  }
+  csrfMiddleware(req, res, next); // Apply CSRF protection for other routes
+});
+
+// Set csrfToken for the rest of the routes (only where CSRF protection is applied)
+app.use((req, res, next) => {
+  if (!(req.path.startsWith('/api') || req.path === 'kilvish')) {
+    res.locals.csrfToken = req.csrfToken(); // Set csrfToken for non-skipped routes
+  }
+  next();
+});
+
+//========== CSRF End ======================
+
+
+
+
+
+
+app.use((req, res, next) => {
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  next();
+});
 
 
 

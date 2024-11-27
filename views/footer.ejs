@@ -113,6 +113,7 @@
             <div class="alert alert-warning">
               <p><%= output %></p>
               <form method="post" action="/logoutandProceed">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <input type="hidden" name="user_email" value="<%= user_email %>">
                 <button class="btn btn-primary btn-block" type="submit">Logout & Proceed</button>
               </form>
@@ -121,6 +122,7 @@
 
 
         <form id="loginForm" method="post" action="/login">   
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <div class="form-group row">
           <div class="col-lg-12 form-group">
            
@@ -594,10 +596,15 @@ if (!email) {
     // loaderDiv.textContent = 'Sending OTP...';
 
 
+        // Retrieve the CSRF token from the hidden input field
+        const csrfToken = document.querySelector('input[name="_csrf"]').value;
+
+
 const response = await fetch('/getLoginOtp', {
     method: 'POST',
     headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'CSRF-Token': csrfToken // Include CSRF token in the headers
     },
     body: JSON.stringify({ email })
 });
@@ -627,6 +634,7 @@ async function login() {
 const email = document.getElementById('loginEmail').value;
 const otp = document.getElementById('loginOtp').value;
 const errorMessageDiv = document.getElementById('errmsg1');
+const csrfToken = document.querySelector('input[name="_csrf"]').value;
 
 if (!email || !otp) {
     errorMessageDiv.textContent = 'Please enter both email and OTP';
@@ -638,7 +646,8 @@ if (!email || !otp) {
 const response = await fetch('/verifyLoginOtp', {
     method: 'POST',
     headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'CSRF-Token': csrfToken // Include CSRF token in the headers
     },
     body: JSON.stringify({ email, otp })
 });

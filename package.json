@@ -122,6 +122,7 @@
     "css-tree": "^2.3.1",
     "css-what": "^6.1.0",
     "cssstyle": "^4.0.1",
+    "csurf": "^1.10.0",
     "dashdash": "^1.14.1",
     "data-uri-to-buffer": "^6.0.2",
     "data-urls": "^5.0.0",

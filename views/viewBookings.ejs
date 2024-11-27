@@ -861,6 +861,7 @@ function updateBooking(booking_id, booking,timezone) {
     // Create the form structure for editing inside SweetAlert
     const htmlForm = `
         <form id="kilform" action="/updateBooking" method="POST">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div class="row gy-4">
                 <!-- Hidden input for calendarId -->
                 <input type="hidden" id="calendarId" name="calendarId" value="${booking.calendarID}">

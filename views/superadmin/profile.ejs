@@ -114,6 +114,7 @@
                                 <!-- Tab 1 -->
                                 <div class="active tab-pane" id="timeline">
                                     <form class="form-horizontal" id="kileditfrom" action="/superadmin/updateAdmin" action="" method="post" enctype="multipart/form-data">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                         
                                         <div class="form-group row">
                                             <label for="inputName" class="col-sm-2 col-form-label">First Name *</label>
@@ -165,6 +166,7 @@
                                 <!-- Tab 2 -->
                                 <div class="tab-pane" id="settings">
                                     <form class="form-horizontal" id="kilfrom" method="post" action="/superadmin/changepass">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                         <div class="form-group row">
                                             <label for="inputCurrentPassword" class="col-sm-3 col-form-label">Current Password</label>
                                             <div class="col-sm-9">
