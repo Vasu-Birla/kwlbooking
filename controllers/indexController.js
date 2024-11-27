@@ -1075,7 +1075,7 @@ const check_times = async (req, res, next) => {
     res.status(200).json(response.data);
 
   } catch (error) {
-   // console.error("Error checking times: ", error);
+    console.error("Error checking times: ", error);
     res.status(500).json({ error: 'Internal Server Error', message: error.message });
   }
 };
