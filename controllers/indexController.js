@@ -2353,8 +2353,7 @@ const fetchAndSyncAcuityBookings = async (req, res, next) => {
     transaction = new sql.Transaction(pool);
     await transaction.begin();
 
-    console.log("acuityBookingsacuityBookings........",acuityBookings)
-   
+  
 
 
     for (const appointment of acuityBookings) {

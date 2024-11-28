@@ -158,7 +158,10 @@ div:where(.swal2-container) .swal2-html-container {
 
                                     <div class="time-slots" id="timeSlotsSection" style="display:none;">
 
-                                        <input type="number" id="slotUnit" min="1" placeholder="Enter slot units" />
+                                        <label>* Number of Slots</label>
+                                        <input type="number" id="slotUnit" class="form-control" value="0" placeholder="Enter number of slots" min="1" required>
+                                        <br>
+                                        
 
 
                                    <label>Select time</label>
@@ -509,6 +512,7 @@ div:where(.swal2-container) .swal2-html-container {
     let typename = ''
     let selectedDateTimes=[]
     let selectedTimezone = 'America/Jamaica';
+    let globaltimes = [];
 
 
     const agentList = [
@@ -859,7 +863,9 @@ function renderAvailableDates(data,timezone) {
                 params: { appointmentTypeID, date }
             });
 
+            globaltimes = response.data;
             renderAvailableTimes(response.data);
+           
         } catch (error) {
             console.error("Error fetching available times:", error.message);
         }
@@ -867,7 +873,165 @@ function renderAvailableDates(data,timezone) {
 
         //============================ Function to render available times on the page
 
-        function renderAvailableTimes(times) {
+        document.getElementById('slotUnit').addEventListener('input', function() {
+    // Re-render available times based on the updated slot unit value
+    renderAvailableTimes(globaltimes);  // Assuming `times` is your available time slots array
+});
+
+function renderAvailableTimes(times) {
+    console.log("Available Timeslots -> ", times);
+
+    const appointmentTypeSelect = document.getElementById('appointmentType');
+    const selectedOption = appointmentTypeSelect.options[appointmentTypeSelect.selectedIndex];
+    calendarId = selectedOption.getAttribute('data-calendar-id');
+    timezone = selectedOption.getAttribute('data-timezone');
+
+    const timeContainer = document.getElementById("timeSlots");
+    timeContainer.innerHTML = ""; // Clear existing timeslots
+
+    const slotUnit = parseInt(document.getElementById('slotUnit').value); // Get the value of slot input
+
+    if (!times || times.length === 0) {
+        timeContainer.textContent = "No available times for this date.";
+        return;
+    }
+
+    times.forEach(timeObj => {
+        const formattedTime = new Intl.DateTimeFormat('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: timezone,
+        }).format(new Date(timeObj.time));
+
+        const timeSlotDiv = document.createElement("div");
+        timeSlotDiv.classList.add("time-slot");
+        timeSlotDiv.dataset.time = formattedTime;
+        timeSlotDiv.dataset.datetime = timeObj.time;
+
+        document.getElementById('timeSlotsSection').style.display = 'block';
+
+        const timeTextSpan = document.createElement("span");
+        timeTextSpan.textContent = formattedTime;
+
+        const slotsLeftText = document.createElement("span");
+        slotsLeftText.style.marginLeft = "10px";
+
+        // If the available slots are greater than or equal to the required number of slots, allow selection
+        if (timeObj.slotsAvailable >= slotUnit) {
+            timeSlotDiv.style.border = "2px solid green";  // Green border for available slots
+            slotsLeftText.textContent = `${timeObj.slotsAvailable} Slot${timeObj.slotsAvailable > 1 ? 's' : ''} left`;
+
+            // Enable click for available slots
+            timeSlotDiv.onclick = function () {
+                toggleTimeSelection(formattedTime, timeObj.time);
+            };
+        } else {
+            timeSlotDiv.style.border = "2px solid red";  // Red border for unavailable slots
+            slotsLeftText.textContent = `${timeObj.slotsAvailable} Slot${timeObj.slotsAvailable > 1 ? 's' : ''} left`;
+            timeSlotDiv.style.pointerEvents = 'none';  // Disable click for unavailable slots
+        }
+
+        timeSlotDiv.appendChild(timeTextSpan);
+        timeSlotDiv.appendChild(slotsLeftText);
+
+        timeContainer.appendChild(timeSlotDiv);
+    });
+}
+
+function toggleTimeSelection(slot, datetime) {
+    // Clear previous selection
+    document.querySelectorAll(".time-slot").forEach(el => {
+        el.classList.remove("selected-time");
+    });
+
+    // Mark the selected slot
+    const selectedSlot = [...document.querySelectorAll(".time-slot")].find(
+        el => el.dataset.time === slot && el.dataset.datetime === datetime
+    );
+
+    if (selectedSlot) {
+        selectedSlot.classList.add("selected-time");
+        console.log(`Selected time: ${slot}, datetime: ${datetime}`);
+    }
+
+    // Store the selection
+    selectedTimes = [slot];
+    selectedDateTimes = [datetime];
+}
+
+
+
+        function renderAvailableTimesworkingold(times) {
+    console.log("Available Timeslots -> ", times);
+
+    const appointmentTypeSelect = document.getElementById('appointmentType');
+    const selectedOption = appointmentTypeSelect.options[appointmentTypeSelect.selectedIndex];
+    calendarId = selectedOption.getAttribute('data-calendar-id');
+    timezone = selectedOption.getAttribute('data-timezone');
+
+    const timeContainer = document.getElementById("timeSlots");
+    timeContainer.innerHTML = ""; // Clear existing timeslots
+
+    const slotUnit = document.getElementById('slotUnit').value; // Get the value of slot input
+
+    if (!times || times.length === 0) {
+        timeContainer.textContent = "No available times for this date.";
+        return;
+    }
+
+    // Filter times based on slot availability
+    const filteredTimes = times.filter(timeObj => timeObj.slotsAvailable >= slotUnit);
+
+    if (filteredTimes.length === 0) {
+        timeContainer.textContent = "No available times with the required number of slots.";
+        return;
+    }
+
+    filteredTimes.forEach(timeObj => {
+        const formattedTime = new Intl.DateTimeFormat('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: timezone,
+        }).format(new Date(timeObj.time));
+
+        const timeSlotDiv = document.createElement("div");
+        timeSlotDiv.classList.add("time-slot");
+        timeSlotDiv.dataset.time = formattedTime;
+        timeSlotDiv.dataset.datetime = timeObj.time;
+
+        document.getElementById('timeSlotsSection').style.display = 'block';
+
+        const timeTextSpan = document.createElement("span");
+        timeTextSpan.textContent = formattedTime;
+
+        const slotsLeftText = document.createElement("span");
+        slotsLeftText.style.marginLeft = "10px";
+
+        if (timeObj.slotsAvailable >= slotUnit) {
+            timeSlotDiv.style.border = "2px solid green";
+            slotsLeftText.textContent = `${timeObj.slotsAvailable} Slot${timeObj.slotsAvailable > 1 ? 's' : ''} left`;
+
+            // Enable click for available slots
+            timeSlotDiv.onclick = function () {
+                toggleTimeSelection(formattedTime, timeObj.time);
+            };
+        } else {
+            timeSlotDiv.style.border = "2px solid red";
+            slotsLeftText.textContent = "0 Slots left";
+            timeSlotDiv.style.pointerEvents = 'none';
+        }
+
+        timeSlotDiv.appendChild(timeTextSpan);
+        timeSlotDiv.appendChild(slotsLeftText);
+
+        timeContainer.appendChild(timeSlotDiv);
+    });
+}
+
+
+
+
+        function renderAvailableTimessingleslot(times) {
     console.log("Available Timeslots -> ", times);
 
     const appointmentTypeSelect = document.getElementById('appointmentType');
@@ -1031,7 +1195,30 @@ function renderAvailableDates(data,timezone) {
 }
 
 
-    function toggleTimeSelection(slot, datetime) {
+function toggleTimeSelection(slot, datetime) {
+    const selectedSlot = [...document.querySelectorAll(".time-slot")].find(
+        el => el.dataset.time === slot && el.dataset.datetime === datetime
+    );
+
+    if (selectedSlot) {
+        // Toggle the 'selected-time' class for the clicked slot
+        selectedSlot.classList.toggle("selected-time");
+
+        // If the slot is selected, add it to the selected arrays, otherwise remove it
+        if (selectedSlot.classList.contains("selected-time")) {
+            console.log(`Selected time: ${slot}, datetime: ${datetime}`);
+            selectedTimes.push(slot);         // Add the time to the array
+            selectedDateTimes.push(datetime); // Add the datetime to the array
+        } else {
+            // If deselected, remove it from the selected arrays
+            selectedTimes = selectedTimes.filter(time => time !== slot);
+            selectedDateTimes = selectedDateTimes.filter(time => time !== datetime);
+        }
+    }
+}
+
+
+    function toggleTimeSelectionsingle(slot, datetime) {
     // Clear previous selection
     document.querySelectorAll(".time-slot").forEach(el => {
         el.classList.remove("selected-time");

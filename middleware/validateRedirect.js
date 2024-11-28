@@ -49,6 +49,7 @@ const allowedRedirects = [
     '/superadmin/updateBooking',
     '/superadmin/reports',
     '/superadmin/auditLogs',
+    '/superadmin/auditlogs',
     '/superadmin/error404',
     '/superadmin/error500',
     '/superadmin/logoutandProceed'

@@ -1771,7 +1771,7 @@ async function directConfirmBooking(email) {
                          validCharacters = /^[a-zA-Z\s-]*$/; // with - hypen
 
 
-                         if(inputField.name === 'lastname'){
+                         if(inputField.name === 'firstname' || inputField.name === 'lastname'){
                                             var firstName = document.getElementById('fname').value;
                         var lastName = document.getElementById('lname').value;
                 // Combine first name and last name with hyphens
