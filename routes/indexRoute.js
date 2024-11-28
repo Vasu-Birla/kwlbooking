@@ -1,5 +1,5 @@
 import express from 'express'
-import { acuityBookings, appointment_types, book, booking_availability, cancelBooking, check_times, confirmbooking, dates_availability, fetchAndSyncAcuityBookings, getBookingOtp, getLoginOtp, home, login, logout, logoutandProceed, reschedule, rescheduleBooking, time_availability, updateBooking, verifyLoginOtp, verifyOTP, viewBookings } from '../controllers/indexController.js';
+import { acuityBookings, appointment_types, book, booking, booking_availability, cancelBooking, check_times, confirmbooking, dates_availability, fetchAndSyncAcuityBookings, getBookingOtp, getLoginOtp, home, login, logout, logoutandProceed, reschedule, rescheduleBooking, time_availability, updateBooking, verifyLoginOtp, verifyOTP, viewBookings } from '../controllers/indexController.js';
 
 
 
@@ -18,6 +18,10 @@ router.route('/book').get(globalAuth,book)
 
 
 //----------------- Booking Section -------------
+
+
+
+router.route('/booking').get(globalAuth,booking)
 
 router.route('/booking_availability').get(globalAuth,booking_availability)
 

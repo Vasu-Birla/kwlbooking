@@ -147,6 +147,39 @@ const home = async (req, res, next) => {
 
  
 
+const booking = async (req, res, next) => {
+  let pool;
+  let transaction;
+
+  try {
+    pool = await connection(); // Establish database connection
+    transaction = new sql.Transaction(pool); // Create a new transaction instance
+
+    await transaction.begin(); // Begin the transaction
+
+    const request = transaction.request();
+    const output = req.cookies.kwl_msg || '';
+
+
+
+    await transaction.commit(); // Commit the transaction if successful
+
+    res.render('booking', { output });
+  } catch (error) {
+    // Rollback transaction if an error occurs
+    if (transaction && transaction._aborted !== true) { 
+      await transaction.rollback();
+    }
+    console.error('Error:', error);
+    res.render('kil500', { output: `${error}` });
+  } finally {
+    // Always close the pool to release resources
+    if (pool) {
+      pool.close();
+    }
+  }
+};
+
 
 
 
@@ -2320,7 +2353,13 @@ const fetchAndSyncAcuityBookings = async (req, res, next) => {
     transaction = new sql.Transaction(pool);
     await transaction.begin();
 
+    console.log("acuityBookingsacuityBookings........",acuityBookings)
+   
+
+
     for (const appointment of acuityBookings) {
+
+     
       try {
         const bookingId = appointment.id || 'Not Available';
         const trn = appointment.trn || 'Not Available';
@@ -2336,6 +2375,8 @@ const fetchAndSyncAcuityBookings = async (req, res, next) => {
         const appointment_by = 'Acuity';
         const booking_by = 'Acuity';
         const booking_status ='Confirmed';
+
+        const type_name = appointment.type || 'Not Available'; ;
 
 
         const created_at = moment(appointment.datetimeCreated, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYY-MM-DD HH:mm:ss.SSSSSSSZ');
@@ -2367,13 +2408,13 @@ const fetchAndSyncAcuityBookings = async (req, res, next) => {
             agent_forwarder, appointment_by, appointment_type, bol_number,
             vessel_name, vessel_reported_date, chassis_number, declaration_number,
             container_number, number_of_items, booking_date, booking_times,
-            timezone, location, created_at, booking_by, booking_status
+            timezone, location, created_at, booking_by, booking_status, type_name
           ) VALUES (
             '${escapeSingleQuotes(bookingId)}', '${escapeSingleQuotes(trn)}', '${firstname}', '${lastname}', '${contact}', '${country_code}', '${user_email}',
             '${agent_forwarder}', '${appointment_by}', '${appointment_type}', '${bol_number}',
             '${vessel_name}', '${vessel_reported_date}', '${chassis_number}', '${declaration_number}',
             '${container_number}', '${number_of_items}', '${booking_date}', '${datetime}',
-            '${timezone}', '${location}','${created_at}', '${booking_by}', '${booking_status}'
+            '${timezone}', '${location}','${created_at}', '${booking_by}', '${booking_status}', '${type_name}'
           );`;
 
         try {
@@ -2520,7 +2561,7 @@ const fetchAndSyncAcuityBookings1 = async (req, res, next) => {
 export { home , book , booking_availability , viewBookings , getLoginOtp ,verifyLoginOtp   , login , logout ,
   dates_availability , appointment_types , time_availability , getBookingOtp , verifyOTP , confirmbooking ,
   check_times , cancelBooking , reschedule ,rescheduleBooking ,updateBooking, acuityBookings , fetchAndSyncAcuityBookings ,
-  logoutandProceed
+  logoutandProceed , booking
 
  }
 
