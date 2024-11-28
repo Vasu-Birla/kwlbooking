@@ -94,7 +94,11 @@ div[style*="overflow-x: auto;"] {
                         <thead>
                             <tr>
                                 <th>Appointment ID</th>
-                                <th>Log</th>                                
+                                <th>Log</th>    
+                                <th>Appointment Type</th>  
+                                <th>BL Number</th> 
+                                <th>Chassis Number</th>      
+                                <th>Number of pieces </th>                          
                                 <th>Appointment Date</th>
                                 <th>Appointment Time</th>
                                 <th>TRN</th>
@@ -113,7 +117,15 @@ div[style*="overflow-x: auto;"] {
 
 
                                     <td><a href="#" onclick="showAppointmentDetails('<%= booking.booking_id %>', '<%= JSON.stringify(booking) %>','<%= booking.timezone %>')" ><b><%= booking.booking_id %></b></a></td>
-                                    <td><a href="#" onclick="bookinglogs('<%= JSON.stringify(booking.logs) %>','<%= booking.timezone %>')" ><b>Appointment History</b></a></td>
+                                    <td><a href="#" onclick="bookinglogs('<%= JSON.stringify(booking.logs) %>','<%= booking.timezone %>')" ><b>View Appointment History</b></a></td>
+                                    <td> <%= booking.type_name  %> </td>
+                                    <td> <%= booking.bol_number  %> </td>
+                                    <td> <%= booking.chassis_number  %> </td>
+                                    <td> <%= booking.number_of_items  %> </td>
+
+
+
+
                                     <td> <%= booking.booking_date  %> </td>
                                     <!-- <td> <%= booking.booking_times  %> </td> -->
                                     <td>

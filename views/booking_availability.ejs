@@ -118,8 +118,8 @@ div:where(.swal2-container) .swal2-html-container {
                                     <label>* Appointment Category</label>
                                         <select id="appointmentCategory" class="form-control" required style="appearance: auto;">
                                             <option value="">Select Category</option>
-                                            <option value="warehouse">Warehouse/Personal Effects</option>
-                                            <option value="motor">Motor Units</option>
+                                            <option value="warehouse">Warehouse/Personal Effects Appointment</option>
+                                            <option value="motor">Motor Vehicle Appointment</option>
                                         </select>
                                         <br>
 
@@ -268,7 +268,7 @@ div:where(.swal2-container) .swal2-html-container {
                                         <input type="date" id="vreport" class="form-control" name="vessel_reported_date" placeholder="Vessel Reported Date" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
                                     </div>
                                     <div class="col-md-6" id="chassisContainer" style="display: none;">
-                                        <label>* Chassis No (in the case of Motor Unit Appointments)</label>
+                                        <label>* Chassis No </label>
                                         <input maxlength="20" type="text" id="chassis" class="form-control" name="chassis_number" placeholder="Enter the number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
                                     </div>
                                     <div class="col-md-6">
@@ -787,12 +787,12 @@ appointmentTypeSelect.addEventListener('change', function() {
                 18478069, 31449943, 13808117, 13808100, 18608838, 
                 18608857, 13807845, 13807780, 18608460, 18608635
             ];
-            document.getElementById('apppersonal').value = 'Warehouse/Personal Effects'
+            document.getElementById('apppersonal').value = 'Warehouse/Personal Effects Appointment'
         } else if (category === 'motor') {
             allowedAppointmentIDs = [
                 70702351, 13801622, 16120840, 16581501
             ];
-            document.getElementById('apppersonal').value = 'Motor Units'
+            document.getElementById('apppersonal').value = 'Motor Vehicle Appointment'
         }
 
         // Filter appointment types based on allowed IDs for the selected category

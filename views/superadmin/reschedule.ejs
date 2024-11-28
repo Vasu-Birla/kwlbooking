@@ -240,6 +240,8 @@
                                         <label>* Appointment Category</label>
                                         <input type="text" id="apppersonal" class="form-control" name="appointment_type" value="<%= booking.appointment_type %>" readonly>
                                     </div> -->
+
+                                    <input type="hidden" name="appointment_type" id="apppersonal" value="<%= booking.appointment_type %>" >
                                     <div class="col-md-6">
                                         <label>* Bill of Lading Number</label>
                                         <input type="text" id="blnumber" class="form-control" name="bol_number" value="<%= booking.bol_number %>" readonly>
@@ -284,13 +286,13 @@
                             <h3>Appointment Details</h3>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <strong>Date</strong>
+                                    <strong>Appointment Date</strong>
                                 </div>
                                 <div class="col-md-6">
                                     <span id="confirmDate"></span>
                                 </div>
                                 <div class="col-md-6">
-                                    <strong>Time</strong>
+                                    <strong> Appointment Time</strong>
                                 </div>
                                 <div class="col-md-6">
                                     <span id="confirmTime"></span>
@@ -577,7 +579,7 @@ appointmentTypeSelect.addEventListener('change', function() {
         const typename = document.getElementById("typename").value || "N/A";
 
         // Set the retrieved values in the confirmation fields
-        document.getElementById("confirmDate").textContent = `${selectedDateText} (${appointmentType})`;
+        document.getElementById("confirmDate").textContent = moment(selectedDateText).format('dddd, MMMM DD, YYYY');
         document.getElementById("confirmTime").textContent = selectedTimesText;
         document.getElementById("confirmTRN").textContent = trn;
         document.getElementById("confirmFirstName").textContent = firstName;
