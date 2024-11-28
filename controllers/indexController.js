@@ -389,6 +389,31 @@ const appointment_types = async (req, res, next) => {
 
   try {
 
+    const excludedTypeIDs = [
+      18609278, // CBFFAJ Your Same day Appointment (KWC)
+      18611033, // CBFFAJ Your Next day Appointment (KWC)
+      18611487, // Viking Cargo Your Same day Appointment (KWC)
+      18611506, // Viking Cargo Your Next day Appointment (KWC)
+      26191699, // KINGSLEY Your Next Day Appointment (TLF)
+      26192078, // KINGSLEY Your Same Day Appointment (TLF)
+      26192643, // DYNAMIC Your Next Day Appointment (TLF)
+      27048546, // JAMAICA TRADING Your Next Day Appointment (TLF)
+      29298512, // JAMAICA TRADING Your Same Day Appointment (TLF)
+      27048584, // TRANSWORLD Your Next Day Appointment (TLF)
+      16631573, // DENNIS Your Next Day Appointment
+      16631593, // DENNIS Your Same Day Appointment
+      16631614, // JACKSON Your Next Day Appointment
+      16631631, // JACKSON Your Same Day Appointment
+      16631648, // LAPARKAN Your Next Day Appointment
+      16631662, // LAPARKAN Your Same Day Appointment
+      16910865, // JAMAICA FREIGHT Your Next Day Appointment
+      16910879, // JAMAICA FREIGHT Your Same Day Appointment
+      18609218, // CBFFAJ Your Next Day Appointment (TLF)
+      18611072, // CBFFAJ Your Same Day Appointment (TLF)
+      18611465, // Viking Cargo Your Next Day Appointment (TLF)
+    ];
+    
+
 
     
         //----------------------   audit Logging -------------------------- 
@@ -419,14 +444,15 @@ const appointment_types = async (req, res, next) => {
     const appointmentTypes = response.data;
     const calendars = calendarsresponse.data;
 
-
+   // Filter out excluded appointment types
+   const filteredTypes = appointmentTypes.filter(type => !excludedTypeIDs.includes(type.id));
     
 
     // Create a Map for quick calendar lookup
     const calendarMap = new Map(calendars.map((cal) => [cal.id, cal]));
 
     // Merge data
-    const mergedData = appointmentTypes.map((type) => {
+    const mergedData = filteredTypes.map((type) => {
       const primaryCalendar = calendarMap.get(type.calendarIDs[0]); // Use the first calendar ID
       return {
         ...type,
@@ -838,7 +864,7 @@ const confirmbookingwithoutloop = async (req, res, next) => {
 
 
 const confirmbooking = async (req, res, next) => {
-  console.log("new booking ")
+  console.log("new booking ",req.body)
   const {
     trn, firstname, lastname, contact, country_code, user_email, agent_forwarder,
     appointment_by, appointment_type, bol_number, vessel_name, vessel_reported_date,

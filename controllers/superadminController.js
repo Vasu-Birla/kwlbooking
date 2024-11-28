@@ -502,6 +502,7 @@ const logoutandProceed = async (req, res) => {
 
    const { token, options }  =  await sendTokenAdminlogoutandProceed(admin, 200, res);
 
+   console.log("options for admin token",options)
 
     const activeSessionQuery = `
     SELECT * FROM active_sessions_admin WHERE admin_id = @admin_id

@@ -73,6 +73,12 @@ div:where(.swal2-container) .swal2-html-container {
 }
 
 
+
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    width: 430px !important;
+}
+
 </style>
 
 <main class="main">
@@ -106,6 +112,17 @@ div:where(.swal2-container) .swal2-html-container {
                         <div class="tab-content active">
                             <div class="row">
                                 <div class="col-md-6">
+
+
+
+                                    <label>* Appointment Category</label>
+                                        <select id="appointmentCategory" class="form-control" required style="appearance: auto;">
+                                            <option value="">Select Category</option>
+                                            <option value="warehouse">Warehouse/Personal Effects</option>
+                                            <option value="motor">Motor Units</option>
+                                        </select>
+                                        <br>
+
                                     <label>* Appointment Type</label>
                    
                                     <select name="option1" id="appointmentType" class="form-control select2" required style="appearance: auto;">
@@ -171,7 +188,7 @@ div:where(.swal2-container) .swal2-html-container {
                                         <input maxlength="20" type="text" id="fname" class="form-control" name="firstname" placeholder="Enter the name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
                                     </div>
                                     <div class="col-md-6">
-                                        <label>Last Name</label>
+                                        <label>* Last Name</label>
                                         <input maxlength="20" type="text" id="lname" class="form-control" name="lastname"  placeholder="Last Name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
                                     </div>
                                     <div class="col-md-6">
@@ -196,13 +213,9 @@ div:where(.swal2-container) .swal2-html-container {
                                             <input type="email" id="email" class="form-control" name="user_email" placeholder="Enter the email" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required>
                                         <% } %>
                                     </div>
+                               
+
                                     <!-- <div class="col-md-6">
-                                        <label>* Agent/Freight Forwarder</label>
-                                        <input maxlength="20" type="text" id="agent"  class="form-control" name="agent_forwarder" placeholder="Enter the name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
-                                    </div> -->
-
-
-                                    <div class="col-md-6">
                                         <label>*  Agent/Freight Forwarder </label>
                                       
                                         <select id="agent" class="form-control" name="agent_forwarder"  required style="appearance: auto;">
@@ -210,21 +223,36 @@ div:where(.swal2-container) .swal2-html-container {
                                             <option value="Agent1">Agent1</option>
                                             <option value="Agent2">Agent2</option>
                                         </select>
+                                    </div> -->
+                                    <div class="col-md-6">
+                                        <label>* Agent/Freight Forwarder</label> &nbsp;
+                                        <select id="agent" class="form-control select2" name="agent_forwarder" required style="appearance: auto;">
+                                            <option value="">Select Agent</option>
+                                            <option value="Other">Other</option>
+                                            <!-- Other options will be dynamically added here -->
+                                        </select>
+                                        <br>
+                                        <input type="text" id="otherAgent" name="agent_forwarder" class="form-control" placeholder="Enter your agent's name" style="display:none;" />
                                     </div>
+                                    
+                                    
 
                                     <div class="col-md-6">
                                         <label> Name of Individual Making Appointment (If not consignee)</label>
-                                        <input maxlength="20" type="text" id="appname" class="form-control" name="appointment_by" placeholder="Enter the name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)"  readonly>
+                                        <input maxlength="20" type="text" id="appname" class="form-control" name="appointment_by" placeholder="Enter the name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" >
                                     </div>
-                                    <div class="col-md-6">
+                                    
+                                    <!-- <div class="col-md-6">
                                         <label>* Appointment Type (Personal/Commercial)</label>
-                                        <!-- <input type="text" id="apppersonal" class="form-control" name="appointment_type" placeholder="Enter the appointment type" required=""> -->
+                                       
                                         <select id="apppersonal" class="form-control" name="appointment_type"  required style="appearance: auto;">
                                             <option value="">Select any one</option>
                                             <option value="Personal">Personal</option>
                                             <option value="Commercial">Commercial</option>
                                         </select>
-                                    </div>
+                                    </div> -->
+
+                                    <input type="hidden" name="appointment_type" id="apppersonal" >
 
                                     
                                     <div class="col-md-6">
@@ -321,12 +349,23 @@ div:where(.swal2-container) .swal2-html-container {
                                 <div class="col-md-6">
                                     <span id="confirmAgent"></span>
                                 </div>
-                                <div class="col-md-6">
+                                <!-- <div class="col-md-6">
                                     <strong>Name of Individual Making Appointment (If not consignee)</strong>
                                 </div>
                                 <div class="col-md-6">
                                     <span id="confirmAppName"></span>
+                                </div> -->
+
+                                <div class="row" id="confirmAppNameRow">
+                                    <div class="col-md-6">
+                                        <strong>Name of Individual Making Appointment (If not consignee)</strong>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <span id="confirmAppName"></span>
+                                    </div>
                                 </div>
+
+                                
 
                                 
 
@@ -338,7 +377,7 @@ div:where(.swal2-container) .swal2-html-container {
                                 </div>
 
                                 <div class="col-md-6">
-                                    <strong>Appointment Type</strong>
+                                    <strong>Appointment Category</strong>
                                 </div>
                                 <div class="col-md-6">
                                     <span id="confirmAppointmentType"></span>
@@ -362,24 +401,61 @@ div:where(.swal2-container) .swal2-html-container {
                                 <div class="col-md-6">
                                     <span id="confirmVesselReportedDate"></span>
                                 </div>
-                                <div class="col-md-6">
+
+
+                                <!-- <div class="col-md-6">
                                     <strong>Chassis No</strong>
                                 </div>
                                 <div class="col-md-6">
                                     <span id="confirmChassis"></span>
+                                </div> -->
+
+                                <div class="row" id="confirmChassisRow">
+                                    <div class="col-md-6">
+                                        <strong>Chassis No</strong>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <span id="confirmChassis"></span>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
+
+
+                                <!-- <div class="col-md-6">
                                     <strong>Customs Release/IMS4 Declaration Number</strong>
                                 </div>
                                 <div class="col-md-6">
                                     <span id="confirmIMS"></span>
+                                </div> -->
+
+                                <div class="row" id="confirmIMSRow">
+                                    <div class="col-md-6">
+                                        <strong>Customs Release/IMS4 Declaration Number</strong>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <span id="confirmIMS"></span>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
+
+
+
+                                <!-- <div class="col-md-6">
                                     <strong>Container Number</strong>
                                 </div>
                                 <div class="col-md-6">
                                     <span id="confirmContainerNumber"></span>
+                                </div> -->
+
+
+                                <div class="row" id="confirmContainerNumberRow">
+                                    <div class="col-md-6">
+                                        <strong>Container Number</strong>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <span id="confirmContainerNumber"></span>
+                                    </div>
                                 </div>
+
+
                                 <div class="col-md-6">
                                     <strong>Number of Pieces/Packages/Units</strong>
                                 </div>
@@ -415,6 +491,8 @@ div:where(.swal2-container) .swal2-html-container {
 
 
 <script>
+
+    //=============================== start Globle Vriables ===============================
     let currentTab = 0;
     let tabs = document.querySelectorAll('.tab-content');
     let selectedDate = null;
@@ -430,6 +508,32 @@ div:where(.swal2-container) .swal2-html-container {
     let selectedTimezone = 'America/Jamaica';
 
 
+    const agentList = [
+        "AEROMARINE JAMAICA/GOOD N LOGISTICS LTD", "A.E.PARNELL & CO. LTD", "AJ'S LOGISTICS", 
+        "ARNOLD L.MALABRE & CO.LTD.", "A.N.I. CARGO SERVICES LIMITED", "A C GEE INVESTMENTS LTD",
+        "ARCTIC FREIGHT FORWARDING LTD", "ATC FREIGHT & SHIPPING", "CARIBBEAN FREIGHT HANDLERS", 
+        "CARIB STAR SHIPPING", "CONFIDENTIAL SHIPPING", "CMA CGM JAMAICA LIMITED", 
+        "CFL SHIPPING AGENCY LTD", "CARGO INNOVATORS GROUP LTD", "QUALITY ASSURANCE", 
+        "FUTURE SHIPPING SERVICE", "FIRST CHOICE SHIPPING CO.", "FREIGHTPLUS SERVICES", 
+        "GLOBAL LINK SHIPPING", "GATEWAY SHIPPING INTERNATIONAL", "GOLD STAR SHIPPING SERVICES LTD", 
+        "HI-END LUXURY AUTO SALES", "INTERSHIP", "JACAN FREIGHT FORWARDERS", 
+        "JAMAICA FREIGHT & SHIPPING COMPANY", "J & W CARGO SHIPPING LIMITED", 
+        "KRIS-ALEX FREIGHT FORWARDING & SHIPPING", "KINGSLEY SHIPPING JAMAICA", 
+        "KINGSLEY SHIPPING CNC", "KESTREL LINER AGENCIES  LTD", "KAY-CON CARGO SHIPPING SERVICES LTD", 
+        "LANNAMAN & MORRIS SHPG LIMITED", "LTN LOGISTICS INTERNATIONAL COMPANY", 
+        "LUDFORD TRANSFER JAMAICA CO. LTD", "MARITIME & TRANSPORT SERVICES", 
+        "MARITIME SOLUTION", "MASTERFREIGHT JAMAICA LTD", "MSC MEDITERRANEAN SHIPPING CO. JAM.", 
+        "MEDITERRANEAN SHIPPING CO. JA. LTD.", "NASHWA'S GROUP OF COMPANIES", "PAS CARGO JAMAICA", 
+        "PIER17 JAMAICA LTD", "PEREZ Y CIA (JA)LTD.", "PRIMROSE SHIPPING AND LOGISTICS CENTER", 
+        "R.S. GAMBLE (1998) LIMITED", "SMALL BROTHERS LTD", "SHIPPING CONCEPTS LIMITED", 
+        "SUNSURE JAMAICA FREIGHT FORWARDERS", "STANMAN SHIPPING LTD", 
+        "SEABOARD FREIGHT & SHIPPING", "SHORE TO SHORE VAN LINES LIMITED", 
+        "SHIPCO TRANSPORT JAMAICA LTD", "TRANSWORLD SHIPPING SERVICES", "TRANSOCEAN SHIPPING", 
+        "TRANS-JAM CONSULTING AGENCY", "TKR SHIPPING AND LOGISTICS", "UNITED FREIGHT FORWARDERS", 
+        "UNI-LOG SERVICES", "VIKING CARGO LOGISTICS LIMITED", "ZNOIYAZ FREIGHT AND TRANSPORTATION", "Other"
+    ];
+
+//=============================== END Globle Vriables ===============================
 
 // Fetch the select element by ID
 const appointmentTypeSelect = document.getElementById('appointmentType');
@@ -488,6 +592,46 @@ appointmentTypeSelect.addEventListener('change', function() {
         loadAppointmentTypes();
         setupEventListeners();
     });
+
+
+
+    //========================== Agent List Section Start ===============================================
+    
+    $(document).ready(function() {
+    // Initialize Select2 for the agent dropdown
+    $('#agent').select2();
+  });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const agentSelect = $('#agent');  // Using jQuery to target the select2 element
+    const otherAgentInput = document.getElementById('otherAgent');
+
+    // Dynamically populate the dropdown with agents
+    agentList.forEach(agent => {
+        const option = document.createElement('option');
+        option.value = agent;
+        option.textContent = agent;
+        agentSelect.append(option);
+    });
+
+    // Initialize Select2 for the agent dropdown
+    agentSelect.select2();
+
+    // Event listener for when the agent is selected
+    agentSelect.on('change', function () {
+        if (agentSelect.val() === "Other") {
+            otherAgentInput.style.display = 'block';  // Show the manual input field
+            otherAgentInput.required = true;  // Make it required
+        } else {
+            otherAgentInput.style.display = 'none';  // Hide the manual input field
+            otherAgentInput.required = false;  // No longer required
+        }
+    });
+});
+
+
+  //========================== Agent List Section End ===============================================
+
 
     function showTab(n) {
         const tabs = document.querySelectorAll('.tab-content');
@@ -569,7 +713,7 @@ appointmentTypeSelect.addEventListener('change', function() {
         
 
         // Set the retrieved values in the confirmation fields
-        document.getElementById("confirmDate").textContent = `${selectedDateText}`;
+        document.getElementById("confirmDate").textContent = moment(selectedDateText).format('dddd, MMMM DD, YYYY');
         document.getElementById("confirmTime").textContent = selectedTimesText;
         document.getElementById("confirmTRN").textContent = trn;
         document.getElementById("confirmFirstName").textContent = firstName;
@@ -587,6 +731,27 @@ appointmentTypeSelect.addEventListener('change', function() {
         document.getElementById("confirmIMS").textContent = ims;
         document.getElementById("confirmContainerNumber").textContent = cnumber;
         document.getElementById("confirmPPNumber").textContent = ppnumber;
+
+
+ // Hide the entire row if the value is "N/A" or empty
+ function toggleRowVisibility(fieldId, value) {
+        const row = document.getElementById(fieldId);
+        if (value === "N/A" || value.trim() === "") {
+            row.style.display = "none";
+        } else {
+            row.style.display = "flex";
+        }
+    }
+
+    
+// Toggle visibility for the four rows only based on the value
+                toggleRowVisibility("confirmAppNameRow", appname);
+                toggleRowVisibility("confirmChassisRow", chassis);
+                toggleRowVisibility("confirmIMSRow", ims);
+                toggleRowVisibility("confirmContainerNumberRow", cnumber);
+
+
+        
     }
 
 
@@ -596,6 +761,65 @@ appointmentTypeSelect.addEventListener('change', function() {
     }
 
     async function loadAppointmentTypes() {
+    const category = document.getElementById('appointmentCategory').value;
+
+    // If no category is selected, skip the loading
+    if (!category) {    
+        return;
+    }
+
+    
+
+    
+
+    try {
+        const { data } = await axios.get('/appointment_types');
+        const appointmentTypeSelect = document.getElementById('appointmentType');
+        
+        // Clear the current options
+        appointmentTypeSelect.innerHTML = '<option value="">Select Service</option>';
+        
+        // Define the appointment IDs based on the category selected
+        let allowedAppointmentIDs = [];
+
+        if (category === 'warehouse') {
+            allowedAppointmentIDs = [
+                18478069, 31449943, 13808117, 13808100, 18608838, 
+                18608857, 13807845, 13807780, 18608460, 18608635
+            ];
+            document.getElementById('apppersonal').value = 'Warehouse/Personal Effects'
+        } else if (category === 'motor') {
+            allowedAppointmentIDs = [
+                70702351, 13801622, 16120840, 16581501
+            ];
+            document.getElementById('apppersonal').value = 'Motor Units'
+        }
+
+        // Filter appointment types based on allowed IDs for the selected category
+        const filteredTypes = data.filter(type => allowedAppointmentIDs.includes(type.id));
+
+        // Add filtered options to the select element
+        filteredTypes.forEach(type => {
+            const option = document.createElement('option');
+            option.value = type.id;
+            option.text = type.name;
+            option.setAttribute('data-calendar-id', type.calendarIDs[0]);
+            option.setAttribute('data-type-name', type.name);
+            option.setAttribute('data-timezone', type.timezone);
+            option.setAttribute('data-location', type.location);
+
+            appointmentTypeSelect.add(option);
+        });
+    } catch (error) {
+        console.error('Error loading appointment types:', error);
+    }
+}
+
+// Add an event listener for when the category is selected
+document.getElementById('appointmentCategory').addEventListener('change', loadAppointmentTypes);
+
+
+    async function loadAppointmentTypes_fetchingall() {
         try {
             const { data } = await axios.get('/appointment_types');
             const appointmentTypeSelect = document.getElementById('appointmentType');
@@ -1316,7 +1540,8 @@ async function directConfirmBooking(email) {
                 contact: document.getElementById("kilvishcontact").value,
                 country_code: document.getElementById("country_code").value,
                 user_email: document.getElementById("email").value,
-                agent_forwarder: document.getElementById("agent").value,
+                // agent_forwarder: document.getElementById("agent").value,
+                agent_forwarder: document.getElementById("agent").value === "Other" ? document.getElementById("otherAgent").value : document.getElementById("agent").value,
                 appointment_by: document.getElementById("appname").value,
                 appointment_type: document.getElementById("apppersonal").value,
                 bol_number: document.getElementById("blnumber").value,
@@ -1509,14 +1734,8 @@ async function directConfirmBooking(email) {
           const inputField = event.target;
 
 
-          var firstName = document.getElementById('fname').value;
-    var lastName = document.getElementById('lname').value;
-
-    // Combine first name and last name
-    var fullName = firstName + ' ' + lastName;
-
-    // Set the combined name to the appointment name input
-    document.getElementById('appname').value = fullName;
+      
+ 
       
           // General valid character sets
           // let validCharacters = /^[a-zA-Z0-9@,._\s-]*$/;
@@ -1546,9 +1765,22 @@ async function directConfirmBooking(email) {
                   inputField.value = inputField.value.substring(0, 400); // Truncate the input
                   return;
               }
-          }  else if (inputField.name === 'firstname' ||  inputField.name === 'lastname' ) {
+          }  else if (inputField.name === 'firstname' ||  inputField.name === 'lastname' || inputField.name ==='appointment_by' ) {
    
-                         validCharacters = /^[a-zA-Z\s]*$/; 
+                       //  validCharacters = /^[a-zA-Z\s]*$/;  
+                         validCharacters = /^[a-zA-Z\s-]*$/; // with - hypen
+
+
+                         if(inputField.name === 'lastname'){
+                                            var firstName = document.getElementById('fname').value;
+                        var lastName = document.getElementById('lname').value;
+                // Combine first name and last name with hyphens
+                    var fullName = firstName.replace(/\s+/g, '-') + '-' + lastName.replace(/\s+/g, '-'); 
+                    document.getElementById('appname').value = fullName;
+
+                         }
+                      
+
                    
                        // const allowedChars = /^[a-zA-Z0-9._@-]+$/;  //for kilMiddle Conditon 
                         const allowedChars = /^[a-zA-Z0-9._@-\s]+$/; // For any additional validations

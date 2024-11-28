@@ -33,6 +33,48 @@ div[style*="overflow-x: auto;"] {
     }
 }
 
+
+
+
+
+.action-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.action-links li {
+  margin-bottom: 8px;
+}
+
+.action-links a {
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease-in-out;
+}
+
+.action-links a:hover {
+  text-decoration: underline;
+}
+
+.status-label {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.text-info {
+  color: #17a2b8;
+}
+
+.text-warning {
+  color: #ffc107;
+}
+
+.text-danger {
+  color: #dc3545;
+}
+
+
 </style>
     
     <!-- Content Wrapper. Contains page content -->
@@ -77,8 +119,8 @@ div[style*="overflow-x: auto;"] {
                                         <tr>
                                             <th>Appointment ID</th>
                                             <th>Log</th>    
-                                            <th>Date</th>
-                                            <th>Time</th>
+                                            <th>Appointment Date</th>
+                                            <th>Appointment Time</th>
                                             <th>TRN</th>
                                             <th>Customer Name</th>
                                             <th>Phone Number</th>
@@ -91,7 +133,7 @@ div[style*="overflow-x: auto;"] {
                                             <tr>
                                             
                                                 <td><a href="#" onclick="showAppointmentDetails('<%= booking.booking_id %>', '<%= JSON.stringify(booking) %>','<%= booking.timezone %>')" ><b><%= booking.booking_id %>  <%= booking.booking_by  %> </b></a></td>
-                                                <td><a href="#" onclick="bookinglogs('<%= JSON.stringify(booking.logs) %>','<%= booking.timezone %>')" ><b>Open Log</b></a></td>
+                                                <td><a href="#" onclick="bookinglogs('<%= JSON.stringify(booking.logs) %>','<%= booking.timezone %>')" ><b>Appointment History</b></a></td>
                                         
                                                 <td> <%= booking.booking_date  %> </td>
                                                 <!-- <td> <%= booking.booking_times  %> </td> -->
@@ -156,7 +198,7 @@ div[style*="overflow-x: auto;"] {
             
             
             
-                                                  <td>
+                                                  <!-- <td>
             
                                                 
             
@@ -179,7 +221,7 @@ div[style*="overflow-x: auto;"] {
                                                                 <% if (booking.booking_status == 'Completed' ) { %>                                           
                                                                 <p class="kilstatus" style="color: rgb(12, 185, 238);"> Completed</p> 
                                                                 <% } else { %> 
-                                                                    <!-- <p class="kilstatus" style="color: red;"> Cancelled</p> -->
+                                                                   
                                                                                                        
                                                                 <% } %>
             
@@ -188,7 +230,51 @@ div[style*="overflow-x: auto;"] {
               
                                                 
                                                  
-                                               </td>
+                                               </td> -->
+
+                                               <td>
+                                                <% if (booking.booking_status !== 'Completed' && booking.booking_status !== 'Cancelled') { %>
+                                                  <ul class="action-links">
+                                                    <li>
+                                                      <a 
+                                                        href="#" 
+                                                        onclick="updateBooking('<%= booking.booking_id %>', '<%= JSON.stringify(booking) %>', '<%= booking.timezone %>')" 
+                                                        class="text-info" 
+                                                        data-bs-toggle="tooltip" 
+                                                        title="Update Booking">
+                                                        Update Booking
+                                                      </a>
+                                                    </li>
+                                                    <li>
+                                                      <a 
+                                                        href="#" 
+                                                        onclick="reschedule('<%= booking.booking_id %>')" 
+                                                        class="text-warning" 
+                                                        data-bs-toggle="tooltip" 
+                                                        title="Reschedule Booking">
+                                                        Reschedule Booking
+                                                      </a>
+                                                    </li>
+                                                    <li>
+                                                      <a 
+                                                        href="#" 
+                                                        onclick="cancelBooking('<%= booking.booking_id %>', 'Cancelled', '<%= JSON.stringify(booking) %>', '<%= booking.timezone %>')" 
+                                                        class="text-danger" 
+                                                        data-bs-toggle="tooltip" 
+                                                        title="Cancel Booking">
+                                                        Cancel Booking
+                                                      </a>
+                                                    </li>
+                                                  </ul>
+                                                <% } else { %>
+                                                  <% if (booking.booking_status === 'Completed') { %>
+                                                    <p class="status-label text-primary">Completed</p>
+                                                  <% } else if (booking.booking_status === 'Cancelled') { %>
+                                                    <p class="status-label text-danger">Cancelled</p>
+                                                  <% } %>
+                                                <% } %>
+                                              </td>
+                                              
                                                   
             
                                             </tr>
@@ -256,6 +342,8 @@ document.addEventListener("DOMContentLoaded", function() {
 //----- using dynamic zone 
 const formattedTime = moment.tz(originalTime, timezone).format('hh:mm A');
 
+booking.booking_date = moment(booking.booking_date).format('dddd, MMMM DD, YYYY');
+
 if(booking.booking_status =='Confirmed'){
     booking.booking_status = 'Scheduled'
 }
@@ -271,10 +359,10 @@ if(booking.booking_status =='Confirmed'){
                     <h5 style="background-color: #f7f9fc; padding: 10px 15px; border-radius: 8px; color: #7a6200; font-weight: bold; text-align: center; margin-bottom: 20px; border-bottom: 2px solid #ddd;">Appointment Details</h5>
                     
                     <div style="display: flex; justify-content: space-between; padding: 5px 0;">
-                        <strong>Date:</strong><span>${booking.booking_date || 'N/A'}</span>
+                        <strong>Appointment Date:</strong><span>${booking.booking_date || 'N/A'}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; padding: 5px 0;">
-                        <strong>Time:</strong><span>${formattedTime|| 'N/A'}</span>
+                        <strong>Appointment Time:</strong><span>${formattedTime|| 'N/A'}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; padding: 5px 0;">
                         <strong>Status:</strong><span style="color: #ffffff; background-color: ${statusColor}; padding: 4px 8px; border-radius: 5px;">${booking.booking_status || 'N/A'}</span>
@@ -304,7 +392,7 @@ if(booking.booking_status =='Confirmed'){
                         <strong>Name of Individual Making Appointment:</strong><span>${booking.appointment_by || 'N/A'}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; padding: 5px 0;">
-                        <strong>Appointment Type:</strong><span>${booking.appointment_type || 'N/A'}</span>
+                        <strong>Appointment Category:</strong><span>${booking.appointment_type || 'N/A'}</span>
                     </div>
 
                      <div style="display: flex; justify-content: space-between; padding: 5px 0;">
