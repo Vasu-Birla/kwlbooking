@@ -543,10 +543,29 @@ div:where(.swal2-container) .swal2-html-container {
 //=============================== END Globle Vriables ===============================
 
 // Fetch the select element by ID
+
+const appointmentCategorySelect = document.getElementById('appointmentCategory');
 const appointmentTypeSelect = document.getElementById('appointmentType');
 const chassisContainer = document.getElementById('chassisContainer');
 
 const chassisInput = document.getElementById('chassis');
+
+
+
+
+appointmentCategorySelect.addEventListener('change', function() {
+
+const timeContainer = document.getElementById("timeSlots");                     
+timeContainer.innerHTML = "";
+
+
+ selectedTimes = [];
+ selectedDate=null;   
+ globaltimes=[]
+ selectedDateTimes=[]
+
+})
+
 
 
 // Add an event listener to handle changes in the select element
@@ -577,6 +596,8 @@ appointmentTypeSelect.addEventListener('change', function() {
 
      selectedTimes = [];
      selectedDate=null;   
+     globaltimes=[]
+     selectedDateTimes=[]
 
       // Check if the appointmentTypeID matches the required IDs
       const validIDs = ['70702351', '13801622', '16120840', '16581501'];
@@ -874,7 +895,11 @@ function renderAvailableDates(data,timezone) {
         //============================ Function to render available times on the page
 
         document.getElementById('slotUnit').addEventListener('input', function() {
+            selectedTimes = [];      
+    
+        selectedDateTimes=[]
     // Re-render available times based on the updated slot unit value
+    
     renderAvailableTimes(globaltimes);  // Assuming `times` is your available time slots array
 });
 
@@ -1544,13 +1569,14 @@ async function directConfirmBooking(email) {
                 appointmentTypeID: document.getElementById("appointmentType").value,
                 calendarID: document.getElementById("calendarId").value,
                 selectedDateTimes :selectedDateTimes,
-                timezone:selectedTimezone
+                timezone:selectedTimezone,
+                slotUnit:document.getElementById('slotUnit').value
             };
 
 
 
 
-        const bookingResponse = await fetch('/confirmbooking', {
+        const bookingResponse = await fetch('/multibooking', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'CSRF-Token': csrfToken },
                 body: JSON.stringify(formData)

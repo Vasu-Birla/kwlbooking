@@ -63,6 +63,8 @@
 <script src="https://cdn.datatables.net/responsive/3.0.3/js/dataTables.responsive.js"></script>
 <script src="https://cdn.datatables.net/responsive/3.0.3/js/responsive.bootstrap4.js"></script>
 
+  <!-- Datatables CSS -->
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
@@ -76,7 +78,8 @@
 
     $(document).ready(function() {
       $('#example1').DataTable({
-          responsive: true
+          responsive: true,
+          "order": [[0, "desc"]]
       });
   });
 </script>

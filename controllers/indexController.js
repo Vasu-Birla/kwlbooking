@@ -929,6 +929,8 @@ const confirmbooking = async (req, res, next) => {
     transaction = new sql.Transaction(pool);
     await transaction.begin();
 
+
+    //-------- mother units type ids
        const kiltypeid = ['70702351', '13801622', '16120840', '16581501'];
 
        let fields = [
@@ -1096,6 +1098,261 @@ const booking_datetime = `${booking_date}, ${booking_times}`;
     if (pool) pool.close();
   }
 };
+
+
+
+
+const multibooking = async (req, res, next) => {
+  console.log("new booking ",req.body)
+  const {
+    trn, firstname, lastname, contact, country_code, user_email, agent_forwarder,
+    appointment_by, appointment_type, bol_number, vessel_name, vessel_reported_date,
+    chassis_number, declaration_number, container_number, number_of_items,
+    booking_date, booking_times, appointmentTypeID, calendarID, selectedDateTimes ,timezone ,slotUnit
+  } = req.body;
+
+  var location = ''
+
+  let pool;
+  let transaction;
+
+  try {
+    // Initialize the database connection
+
+    
+        //----------------------   audit Logging -------------------------- 
+
+        const acuityUrl =  `https://acuityscheduling.com/api/v1/appointments`
+        const reason = "Creating New Booking"
+        const userName = req.user ? req.user.user_email : user_email;
+        const userRole = 'User';
+    
+       await logAcuityRequest(acuityUrl, userRole, userName, reason);
+    
+        //----------------------   audit Logging -------------------------- 
+    
+    pool = await connection();
+    transaction = new sql.Transaction(pool);
+    await transaction.begin();
+
+
+    //-------- mother units type ids
+       const kiltypeid = ['70702351', '13801622', '16120840', '16581501'];
+
+       let fields = [
+        { id: 7510463, value: agent_forwarder },
+        { id: 7510465, value: appointment_type },
+        { id: 7510459, value: "Order12345" },
+        { id: 7510464, value: number_of_items }
+      ];
+
+      if (kiltypeid.includes(appointmentTypeID)) {
+        // Remove multiple fields by filtering out their IDs
+        fields = fields.filter(field => ![7510463, 7510465, 7510459,7510464].includes(field.id));
+
+        //add new 
+        fields.push(
+          { id: 7505634, value: agent_forwarder },
+          { id: 8204034, value: vessel_name },
+          { id: 7958526, value: vessel_reported_date },
+          { id: 7505676, value: bol_number },
+          { id: 7505639, value: '0' },
+          { id: 7505640, value: '0' },
+          { id: 7505641, value: '0' },
+          { id: 15729585, value: '0' }
+
+          
+
+          
+        );
+
+        
+
+      }
+     // console.log("fieldsfieldsfieldsfieldsfieldsfieldsfields",fields)
+
+   
+
+      
+    // Book appointments sequentially for each selected date/time
+    for (const datetime of selectedDateTimes) {
+      const formattedDatetime = moment(datetime).format('YYYY-MM-DDTHH:mm:ssZ').replace(':', '').replace('Z', '');
+
+
+
+      for (let i = 0; i < slotUnit; i++) {
+
+       
+        const kiltime = moment.tz(datetime, timezone).format('hh:mm A');
+        const kildate = moment.tz(datetime, timezone).format('YYYY-MM-DD');
+        const kilbookingdatetime = `${kiltime}, ${kildate}`;
+        console.log("bookingdatetime", kilbookingdatetime)
+        
+                
+              }
+
+      // Repeat the booking process slotUnit times
+      for (let i = 0; i < slotUnit; i++) {
+      // Book appointment on Acuity for each datetime
+      const acuityResponse = await axios.post(
+        'https://acuityscheduling.com/api/v1/appointments',
+        {
+          datetime: datetime,
+          appointmentTypeID: appointmentTypeID,
+          firstName: firstname,
+          lastName: lastname,
+          email: user_email,
+          calendarID: calendarID,
+          phone: `${country_code}${contact}`,
+          timezone: 'America/New_York',
+          fields: fields
+        },
+        {
+          auth: {
+            username: '19354905',
+            password: 'b0a1d960446f9efab07df16c4c16b444'
+          }
+        }
+      );
+
+      // Insert booking details into the database if Acuity booking is successful
+      if (acuityResponse.status === 200) {
+
+        console.log("acuityResponse.data--> new booking data -> ",acuityResponse.data)
+        const bookingId = acuityResponse.data.id;
+
+        const type_name = acuityResponse.data.type;
+
+        
+        const created_at = moment(acuityResponse.data.datetimeCreated, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYY-MM-DD HH:mm:ss.SSSSSSSZ');
+
+        console.log("created_att",created_at)
+        console.log("booking_date",booking_date)
+        
+    
+
+//         const query = `
+//   INSERT INTO tbl_bookings (
+//     booking_id, trn, firstname, lastname, contact, country_code, user_email,
+//     agent_forwarder, appointment_by, appointment_type, bol_number,
+//     vessel_name, vessel_reported_date, chassis_number, declaration_number,
+//     container_number, number_of_items, booking_date, booking_times,
+//     timezone, location, created_at, type_name
+//   ) VALUES (
+//     ${bookingId}, '${trn}', '${firstname}', '${lastname}', '${contact}', '${country_code}', '${user_email}',
+//     '${agent_forwarder}', '${appointment_by}', '${appointment_type}', '${bol_number}',
+//     '${vessel_name}', '${vessel_reported_date}', '${chassis_number}', '${declaration_number}',
+//     '${container_number}', '${number_of_items}', '${booking_date}', '${datetime}',
+//     '${timezone}', '${location}', '${created_at}', '${type_name}'
+//   )
+// `;
+
+
+  // Perform the insert query
+  //await transaction.request().query(query);
+
+
+const query = `
+  INSERT INTO tbl_bookings (
+    booking_id, trn, firstname, lastname, contact, country_code, user_email,
+    agent_forwarder, appointment_by, appointment_type, bol_number,
+    vessel_name, vessel_reported_date, chassis_number, declaration_number,
+    container_number, number_of_items, booking_date, booking_times,
+    timezone, location, created_at, type_name
+  ) VALUES (
+    @bookingId, @trn, @firstname, @lastname, @contact, @country_code, @user_email,
+    @agent_forwarder, @appointment_by, @appointment_type, @bol_number,
+    @vessel_name, @vessel_reported_date, @chassis_number, @declaration_number,
+    @container_number, @number_of_items, @booking_date, @booking_times,
+    @timezone, @location, @created_at, @type_name
+  )
+`;
+
+// Use `.input()` for each parameter
+await transaction.request()
+  .input('bookingId', sql.Int, bookingId)
+  .input('trn', sql.NVarChar, trn)
+  .input('firstname', sql.NVarChar, firstname)
+  .input('lastname', sql.NVarChar, lastname)
+  .input('contact', sql.NVarChar, contact)
+  .input('country_code', sql.NVarChar, country_code)
+  .input('user_email', sql.NVarChar, user_email)
+  .input('agent_forwarder', sql.NVarChar, agent_forwarder)
+  .input('appointment_by', sql.NVarChar, appointment_by)
+  .input('appointment_type', sql.NVarChar, appointment_type)
+  .input('bol_number', sql.NVarChar, bol_number)
+  .input('vessel_name', sql.NVarChar, vessel_name)
+  .input('vessel_reported_date', sql.NVarChar, vessel_reported_date)
+  .input('chassis_number', sql.NVarChar, chassis_number)
+  .input('declaration_number', sql.NVarChar, declaration_number)
+  .input('container_number', sql.NVarChar, container_number)
+  .input('number_of_items', sql.NVarChar, number_of_items)
+  .input('booking_date', sql.Date, booking_date)
+  .input('booking_times', sql.NVarChar, datetime)
+  .input('timezone', sql.NVarChar, timezone)
+  .input('location', sql.NVarChar, location)
+  .input('created_at', sql.NVarChar, created_at)
+  .input('type_name', sql.NVarChar, type_name)
+  .query(query);
+
+
+      
+
+        var reason1 = 'Confirmed'
+
+const booking_times = moment.tz(datetime, timezone).format('hh:mm A');
+
+// Combine the formatted date and time
+const booking_datetime = `${booking_date}, ${booking_times}`;
+
+        await transaction.request()
+        .input('user_role', sql.NVarChar, userRole)
+        .input('user_name', sql.NVarChar, userName)
+        .input('reason', sql.NVarChar, reason1)
+        .input('acuity_url', sql.NVarChar, acuityUrl)
+        .input('booking_id', sql.Int, bookingId)
+        .input('booking_datetime', sql.NVarChar, booking_datetime || '') // use empty string if null
+        .input('new_datetime', sql.NVarChar,'') // use empty string if null
+        .query(`
+            INSERT INTO tbl_booking_logs 
+            (user_role, user_name, reason, acuity_url, booking_id, booking_datetime, new_datetime) 
+            VALUES (@user_role, @user_name, @reason, @acuity_url, @booking_id, @booking_datetime, @new_datetime)
+        `);
+
+
+        
+      } else {
+        throw new Error('Failed to book appointment on Acuity for datetime: ' + formattedDatetime);
+      }
+
+    }
+    }
+
+    // Commit the transaction after all bookings are successful
+    await transaction.commit();
+
+    // Respond with success
+    res.status(200).json({
+      success: true,
+      valid: true,
+      message: 'All appointments booked successfully.'
+    });
+
+  } catch (error) {
+    console.log(error)
+    // Rollback transaction in case of error
+    if (transaction) await transaction.rollback();
+    console.error("Error during booking:", error.response?.data || error.message);
+    res.status(400).json({
+      success: false,
+      message: error.response?.data?.message || 'Failed to book appointments with Acuity',
+    });
+  } finally {
+    if (pool) pool.close();
+  }
+};
+
+
 
 
 
@@ -2326,6 +2583,7 @@ const acuityBookings = async (req, res, next) => {
 
 
 const escapeSingleQuotes = (str) => {
+  console.log("called->>>>>>>>>>>>>")
   if (typeof str === 'string') {
     return str.replace(/'/g, "''"); // Escape single quotes
   }
@@ -2341,10 +2599,19 @@ const fetchAndSyncAcuityBookings = async (req, res, next) => {
   let insertedCount = 0;
   let skippedCount = 0;
 
+    // Calculate dates for yesterday and today
+    const minDate = moment().subtract(1, 'day').format('YYYY-MM-DD'); // Yesterday
+    const maxDate = moment().format('YYYY-MM-DD'); // Today
+
+    console.log(`cronjob acurity booking from date ${minDate} to ${maxDate}`)
+
   try {
     // Fetch bookings from Acuity API
     const acuityResponse = await axios.get('https://acuityscheduling.com/api/v1/appointments', {
       auth: { username: '19354905', password: 'b0a1d960446f9efab07df16c4c16b444' },
+      params: {
+        minDate
+      }
     });
     const acuityBookings = acuityResponse.data;
     totalFetched = acuityBookings.length;
@@ -2438,6 +2705,7 @@ const fetchAndSyncAcuityBookings = async (req, res, next) => {
       skippedCount,
     });
   } catch (error) {
+    console.log(error)
     if (transaction) await transaction.rollback();
     console.error('Error syncing Acuity bookings:', error.message);
     res.status(500).json({ success: false, message: 'Failed to sync bookings' });
@@ -2447,89 +2715,97 @@ const fetchAndSyncAcuityBookings = async (req, res, next) => {
 };
 
 
-const fetchAndSyncAcuityBookings1 = async (req, res, next) => {
+const fetchAndSyncAcuityBookingswithlimit = async (req, res, next) => {
   let pool;
   let transaction;
   let totalFetched = 0;
   let alreadyExists = 0;
   let insertedCount = 0;
   let skippedCount = 0;
+  let offset = 0;
+  let limit = 100; // Fetch 100 records at a time
+  let hasMoreData = true;
 
   try {
-    // Fetch bookings from Acuity API
-    const acuityResponse = await axios.get('https://acuityscheduling.com/api/v1/appointments', {
-      auth: { username: '19354905', password: 'b0a1d960446f9efab07df16c4c16b444' },
-    });
-    const acuityBookings = acuityResponse.data;
-    totalFetched = acuityBookings.length;
-
     pool = await connection();
     transaction = new sql.Transaction(pool);
     await transaction.begin();
 
-    for (const appointment of acuityBookings) {
-      try {
-        const bookingId = appointment.id || 'Not Available';
-        const trn = appointment.trn || 'Not Available';
-        const firstname = appointment.firstName || 'Not Available';
-        const lastname = appointment.lastName || 'Not Available';
-        const contact = appointment.phone || 'Not Available';
-        const country_code = appointment.countryCode || '';
-        const user_email = appointment.email || 'Not Available';
-        const timezone = appointment.timezone || 'Not Available';
-        const datetime = appointment.datetime || 'Not Available';
-        const booking_date = appointment.datetime ? moment(appointment.datetime).format('YYYY-MM-DD') : 'Not Available';
-        const location = appointment.location || 'Not Available';
-        const appointment_by = 'Acuity';
-        const booking_by = 'Acuity';
+    while (hasMoreData) {
+      const response = await axios.get('https://acuityscheduling.com/api/v1/appointments', {
+        auth: { username: '19354905', password: 'b0a1d960446f9efab07df16c4c16b444' },
+        params: { limit, offset },
+        timeout: 60000, // 60 seconds timeout
+      });
 
-        // Extract custom form fields
-        const formFields = appointment.forms[0]?.values || [];
-        const agent_forwarder = formFields.find(field => field.name === 'Agent/Freight Forwarder')?.value || 'Not Available';
-        const appointment_type = formFields.find(field => field.name === 'Appointment Type')?.value || 'Not Available';
-        const bol_number = formFields.find(field => field.name === 'BL or Order Number')?.value || 'Not Available';
-        const vessel_name = formFields.find(field => field.name === 'Vessel Name')?.value || 'Not Available';
-        const vessel_reported_date = formFields.find(field => field.name === 'Vessel Reported Date')?.value || 'Not Available';
-        const chassis_number = formFields.find(field => field.name === 'Chassis Number')?.value || 'Not Available';
-        const declaration_number = formFields.find(field => field.name === 'Declaration Number')?.value || 'Not Available';
-        const container_number = formFields.find(field => field.name === 'Container Number')?.value || 'Not Available';
-        const number_of_items = formFields.find(field => field.name === 'Number of Pieces/Packages')?.value || 'Not Available';
+      const acuityBookings = response.data;
+      totalFetched += acuityBookings.length;
 
-        // Check if the booking already exists
-        const checkQuery = `SELECT COUNT(*) AS count FROM tbl_bookings WHERE booking_id = '${bookingId}'`;
-        const checkResult = await transaction.request().query(checkQuery);
-        if (checkResult.recordset[0].count > 0) {
-          alreadyExists++;
-          continue; // Skip if booking already exists
-        }
-
-        // Insert the new booking
-        const insertQuery = 
-          `INSERT INTO tbl_acuity_booking (
-            booking_id, trn, firstname, lastname, contact, country_code, user_email,
-            agent_forwarder, appointment_by, appointment_type, bol_number,
-            vessel_name, vessel_reported_date, chassis_number, declaration_number,
-            container_number, number_of_items, booking_date, booking_times,
-            timezone, location, booking_by
-          ) VALUES (
-            '${bookingId}', '${trn}', '${firstname}', '${lastname}', '${contact}', '${country_code}', '${user_email}',
-            '${agent_forwarder}', '${appointment_by}', '${appointment_type}', '${bol_number}',
-            '${vessel_name}', '${vessel_reported_date}', '${chassis_number}', '${declaration_number}',
-            '${container_number}', '${number_of_items}', '${booking_date}', '${datetime}',
-            '${timezone}', '${location}','${booking_by}'
-          );`;
-
+      for (const appointment of acuityBookings) {
         try {
+          const bookingId = appointment.id || 'Not Available';
+          const trn = appointment.trn || 'Not Available';
+          const firstname = escapeSingleQuotes(appointment.firstName || 'Not Available');
+          const lastname = escapeSingleQuotes(appointment.lastName || 'Not Available');
+          const contact = escapeSingleQuotes(appointment.phone || 'Not Available');
+          const country_code = appointment.countryCode || '';
+          const user_email = escapeSingleQuotes(appointment.email || 'Not Available');
+          const timezone = appointment.timezone || 'Not Available';
+          const datetime = appointment.datetime || 'Not Available';
+          const booking_date = appointment.datetime ? moment(appointment.datetime).format('YYYY-MM-DD') : 'Not Available';
+          const location = escapeSingleQuotes(appointment.location || 'Not Available');
+          const appointment_by = 'Acuity';
+          const booking_by = 'Acuity';
+          const booking_status = 'Confirmed';
+
+          const type_name = appointment.type || 'Not Available';
+          const created_at = moment(appointment.datetimeCreated, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYY-MM-DD HH:mm:ss.SSSSSSSZ');
+
+          const formFields = appointment.forms[0]?.values || [];
+          const agent_forwarder = escapeSingleQuotes(formFields.find(field => field.name === 'Agent/Freight Forwarder')?.value || 'Not Available');
+          const appointment_type = escapeSingleQuotes(formFields.find(field => field.name === 'Appointment Type')?.value || 'Not Available');
+          const bol_number = escapeSingleQuotes(formFields.find(field => field.name === 'BL or Order Number')?.value || 'Not Available');
+          const vessel_name = escapeSingleQuotes(formFields.find(field => field.name === 'Vessel Name')?.value || 'Not Available');
+          const vessel_reported_date = escapeSingleQuotes(formFields.find(field => field.name === 'Vessel Reported Date')?.value || 'Not Available');
+          const chassis_number = escapeSingleQuotes(formFields.find(field => field.name === 'Chassis Number')?.value || 'Not Available');
+          const declaration_number = escapeSingleQuotes(formFields.find(field => field.name === 'Declaration Number')?.value || 'Not Available');
+          const container_number = escapeSingleQuotes(formFields.find(field => field.name === 'Container Number')?.value || 'Not Available');
+          const number_of_items = escapeSingleQuotes(formFields.find(field => field.name === 'Number of Pieces/Packages')?.value || 'Not Available');
+
+          const checkQuery = `SELECT COUNT(*) AS count FROM tbl_bookings WHERE booking_id = '${bookingId}'`;
+          const checkResult = await transaction.request().query(checkQuery);
+
+          if (checkResult.recordset[0].count > 0) {
+            alreadyExists++;
+            continue; // Skip if booking already exists
+          }
+
+          const insertQuery = `
+            INSERT INTO tbl_bookings (
+              booking_id, trn, firstname, lastname, contact, country_code, user_email,
+              agent_forwarder, appointment_by, appointment_type, bol_number,
+              vessel_name, vessel_reported_date, chassis_number, declaration_number,
+              container_number, number_of_items, booking_date, booking_times,
+              timezone, location, created_at, booking_by, booking_status, type_name
+            ) VALUES (
+              '${escapeSingleQuotes(bookingId)}', '${escapeSingleQuotes(trn)}', '${firstname}', '${lastname}', '${contact}', '${country_code}', '${user_email}',
+              '${agent_forwarder}', '${appointment_by}', '${appointment_type}', '${bol_number}',
+              '${vessel_name}', '${vessel_reported_date}', '${chassis_number}', '${declaration_number}',
+              '${container_number}', '${number_of_items}', '${booking_date}', '${datetime}',
+              '${timezone}', '${location}', '${created_at}', '${booking_by}', '${booking_status}', '${type_name}'
+            );
+          `;
+
           await transaction.request().query(insertQuery);
           insertedCount++;
-        } catch (insertError) {
-          console.error(`Error inserting booking ID ${bookingId}:`, insertError.message);
+        } catch (error) {
+          console.error(`Error processing booking ID ${appointment.id}:`, error.message);
           skippedCount++;
         }
-      } catch (error) {
-        console.error(`Error processing booking ID ${appointment.id}:`, error.message);
-        skippedCount++;
       }
+
+      offset += limit;
+      hasMoreData = acuityBookings.length === limit;
     }
 
     await transaction.commit();
@@ -2551,7 +2827,6 @@ const fetchAndSyncAcuityBookings1 = async (req, res, next) => {
 
 
 
-
  //============================== User Login End ==============================================
 
 
@@ -2560,7 +2835,7 @@ const fetchAndSyncAcuityBookings1 = async (req, res, next) => {
 export { home , book , booking_availability , viewBookings , getLoginOtp ,verifyLoginOtp   , login , logout ,
   dates_availability , appointment_types , time_availability , getBookingOtp , verifyOTP , confirmbooking ,
   check_times , cancelBooking , reschedule ,rescheduleBooking ,updateBooking, acuityBookings , fetchAndSyncAcuityBookings ,
-  logoutandProceed , booking
+  logoutandProceed , booking , multibooking
 
  }
 

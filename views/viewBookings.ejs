@@ -116,7 +116,7 @@ div[style*="overflow-x: auto;"] {
 
 
 
-                                    <td><a href="#" onclick="showAppointmentDetails('<%= booking.booking_id %>', '<%= JSON.stringify(booking) %>','<%= booking.timezone %>')" ><b><%= booking.booking_id %></b></a></td>
+                                    <td><a href="#" onclick="showAppointmentDetails('<%= booking.booking_id %>', '<%= JSON.stringify(booking).replace(/'/g, '\\\'') %>','<%= booking.timezone %>')" ><b><%= booking.booking_id %></b></a></td>
                                     <td><a href="#" onclick="bookinglogs('<%= JSON.stringify(booking.logs) %>','<%= booking.timezone %>')" ><b>View Appointment History</b></a></td>
                                     <td> <%= booking.type_name  %> </td>
                                     <td> <%= booking.bol_number  %> </td>

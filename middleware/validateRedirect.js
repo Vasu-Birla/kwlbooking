@@ -28,6 +28,7 @@ const allowedRedirects = [
     '/acuityBookings',
     '/logoutandProceed',
     '/booking',
+    '/multibooking',
 
     // Routes under '/superadmin'
     '/superadmin',

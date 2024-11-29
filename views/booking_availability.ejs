@@ -536,10 +536,25 @@ div:where(.swal2-container) .swal2-html-container {
 //=============================== END Globle Vriables ===============================
 
 // Fetch the select element by ID
+
+
+
+const appointmentCategorySelect = document.getElementById('appointmentCategory');
 const appointmentTypeSelect = document.getElementById('appointmentType');
 const chassisContainer = document.getElementById('chassisContainer');
 
 const chassisInput = document.getElementById('chassis');
+
+appointmentCategorySelect.addEventListener('change', function() {
+
+    const timeContainer = document.getElementById("timeSlots");                     
+    timeContainer.innerHTML = "";
+
+
+     selectedTimes = [];
+     selectedDate=null;   
+
+})
 
 
 // Add an event listener to handle changes in the select element

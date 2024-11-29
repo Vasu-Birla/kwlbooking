@@ -71,6 +71,9 @@
 <script src="../adminassets/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
 <script src="../adminassets/plugins/datatables-buttons/js/buttons.print.min.js"></script>
 <script src="../adminassets/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+<!-- DataTables  & Plugins -->
+
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
@@ -94,7 +97,8 @@
     "lengthMenu": [10, 25, 50, 100], // Customize the dropdown options (optional)
         "responsive": true, "autoWidth": false,
         /*"buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]*/
-        "buttons": ["excel", "pdf", "csv", "colvis"]
+        "buttons": ["excel", "pdf", "csv", "colvis"],
+        "order": [[0, "desc"]]
       }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
       $('#example2').DataTable({
         "paging": true,
