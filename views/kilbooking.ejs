@@ -79,6 +79,23 @@ div:where(.swal2-container) .swal2-html-container {
     width: 430px !important;
 }
 
+
+
+
+.form-divider {
+  background-color: #f1f1f1;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 20px;
+  border-radius: 8px;
+}
+
+.form-divider h1 {
+  font-size: 24px;
+  color: #333;
+}
+
+
 </style>
 
 <main class="main">
@@ -178,102 +195,12 @@ div:where(.swal2-container) .swal2-html-container {
 
                         <!-- Contact Information Tab -->
                         <div class="tab-content">
-                            <form id="kilform">
-                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                <div class="row gy-4">
-                                    <input type="hidden" id="calendarId" name="calendarId" value="" >
-                                    <input type="hidden" id="typename" name="typename" value="" >
-                                    
-                                    <div class="col-md-6">
-                                        <label>* TRN</label>
-                                        <input maxlength="20" type="text" id="trn" name="trn" class="form-control" placeholder="Enter the number" oninput="formatTRN(this)" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
-                                    </div>
-                                    <div class="col-md-6"></div>
-                                    <div class="col-md-6">
-                                        <label>* First Name</label>
-                                        <input maxlength="20" type="text" id="fname" class="form-control" name="firstname" placeholder="Enter the name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>* Last Name</label>
-                                        <input maxlength="20" type="text" id="lname" class="form-control" name="lastname"  placeholder="Last Name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>* Mobile Number</label>
-                                        <div class="input-group">                                          
 
-                                            <input type="tel"  name="contact" id="kilvishcontact" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)"   class="form-control" placeholder="Mobile Number" required>
 
-    
-                                            <input type="hidden" id="fullkilvishcontact" name="fullkilvishcontact"  >
-                                            <input type="hidden" id="country_code" name="country_code" >
-
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>* Email Address</label>
-                                        <!-- <input type="email" id="email" class="form-control" name="email" placeholder="Enter the email" required=""> -->
-
-                                        <% if (typeof loggeduser !== 'undefined' && loggeduser.user_email) { %>
-                                            <input type="email" id="email" class="form-control" name="user_email"  value="<%= loggeduser.user_email %>" readonly>
-                                        <% } else { %>
-                                            <input type="email" id="email" class="form-control" name="user_email" placeholder="Enter the email" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required>
-                                        <% } %>
-                                    </div>
-                               
-
-                              
-                                    <div class="col-md-6">
-                                        <label>* Agent/Freight Forwarder</label> &nbsp;
-                                        <select id="agent" class="form-control select2" name="agent_forwarder" required style="appearance: auto;">
-                                            <option value="">Select Agent</option>
-                                            <option value="Other">Other</option>
-                                            <!-- Other options will be dynamically added here -->
-                                        </select>
-                                        <br>
-                                        <input type="text" id="otherAgent" name="agent_forwarder" class="form-control" placeholder="Enter your agent's name" style="display:none;" />
-                                    </div>
-                                    
-                                    
-
-                                    <div class="col-md-6">
-                                        <label> Name of Individual Making Appointment (If not consignee)</label>
-                                        <input maxlength="20" type="text" id="appname" class="form-control" name="appointment_by" placeholder="Enter the name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" >
-                                    </div>                    
-                             
-
-                                    <input type="hidden" name="appointment_type" id="apppersonal" >
-
-                                    
-                                    <div class="col-md-6">
-                                        <label>* Bill of Lading Number</label>
-                                        <input maxlength="25" type="text" id="blnumber" class="form-control" name="bol_number" placeholder="Enter the number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>* Vessel Name</label>
-                                        <input maxlength="20" type="text" id="vname" class="form-control" name="vessel_name" placeholder="Enter the vessel name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>* Expected Vessel Reported Date</label>
-                                        <input type="date" id="vreport" class="form-control" name="vessel_reported_date" placeholder="Vessel Reported Date" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
-                                    </div>
-                                    <div class="col-md-6" id="chassisContainer" style="display: none;">
-                                        <label>* Chassis No </label>
-                                        <input maxlength="20" type="text" id="chassis" class="form-control" name="chassis_number" placeholder="Enter the number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label> Customs Release/IMS4 Declaration Number</label>
-                                        <input maxlength="20" type="text" id="ims" class="form-control" name="declaration_number" placeholder="Customs Release/IMS4 Declaration Number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" >
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label> Container Number</label>
-                                        <input maxlength="20" type="text" id="cnumber" class="form-control" name="container_number" placeholder="Enter the data" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" >
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>* Number of Pieces/Packages/Units</label>
-                                        <input type="number" min="0" id="ppnumber" class="form-control" name="number_of_items" placeholder="Enter the packages" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
-                                    </div>
-                                </div>
-                            </form>
+                            <div id="formsContainer">
+                                <!-- Multiple forms will be inserted here dynamically -->
+                            </div>
+                       
                             <div class="button-container">
                                 <center>
                                     <button class="btn btn-warning" id="prevBtn" onclick="changeTab(-1)">Previous</button>
@@ -284,174 +211,9 @@ div:where(.swal2-container) .swal2-html-container {
 
                         <!-- Confirmation Tab -->
                         <div class="tab-content">
-                            <h3>Appointment Details</h3>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <strong>Date</strong>
-                                </div>
-                                <div class="col-md-6">
-                                    <span id="confirmDate"></span>
-                                </div>
-                                <div class="col-md-6">
-                                    <strong>Time</strong>
-                                </div>
-                                <div class="col-md-6">
-                                    <span id="confirmTime"></span>
-                                </div>
-                            </div>
-                        
-                            <h3>Contact Information</h3>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <strong>TRN</strong>
-                                </div>
-                                <div class="col-md-6">
-                                    <span id="confirmTRN"></span>
-                                </div>
-                                <div class="col-md-6">
-                                    <strong>First Name</strong>
-                                </div>
-                                <div class="col-md-6">
-                                    <span id="confirmFirstName"></span>
-                                </div>
-                                <div class="col-md-6">
-                                    <strong>Last Name</strong>
-                                </div>
-                                <div class="col-md-6">
-                                    <span id="confirmLastName"></span>
-                                </div>
-                                <div class="col-md-6">
-                                    <strong>Mobile Number</strong>
-                                </div>
-                                <div class="col-md-6">
-                                    <span id="confirmPhone"></span>
-                                </div>
-                                <div class="col-md-6">
-                                    <strong>Email Address</strong>
-                                </div>
-                                <div class="col-md-6">
-                                    <span id="confirmEmail"></span>
-                                </div>
-                                <div class="col-md-6">
-                                    <strong>Agent/Freight Forwarder</strong>
-                                </div>
-                                <div class="col-md-6">
-                                    <span id="confirmAgent"></span>
-                                </div>
-                                <!-- <div class="col-md-6">
-                                    <strong>Name of Individual Making Appointment (If not consignee)</strong>
-                                </div>
-                                <div class="col-md-6">
-                                    <span id="confirmAppName"></span>
-                                </div> -->
+                          
+                            <div id="previewContainer"></div>
 
-                                <div class="row" id="confirmAppNameRow">
-                                    <div class="col-md-6">
-                                        <strong>Name of Individual Making Appointment (If not consignee)</strong>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <span id="confirmAppName"></span>
-                                    </div>
-                                </div>
-
-                                
-
-                                
-
-                                <div class="col-md-6">
-                                    <strong>Appointment Type Name</strong>
-                                </div>
-                                <div class="col-md-6">
-                                    <span id="typenames"></span>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <strong>Appointment Category</strong>
-                                </div>
-                                <div class="col-md-6">
-                                    <span id="confirmAppointmentType"></span>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <strong>Bill of Lading Number</strong>
-                                </div>
-                                <div class="col-md-6">
-                                    <span id="confirmBLNumber"></span>
-                                </div>
-                                <div class="col-md-6">
-                                    <strong>Vessel Name</strong>
-                                </div>
-                                <div class="col-md-6">
-                                    <span id="confirmVesselName"></span>
-                                </div>
-                                <div class="col-md-6">
-                                    <strong>Expected Vessel Reported Date</strong>
-                                </div>
-                                <div class="col-md-6">
-                                    <span id="confirmVesselReportedDate"></span>
-                                </div>
-
-
-                                <!-- <div class="col-md-6">
-                                    <strong>Chassis No</strong>
-                                </div>
-                                <div class="col-md-6">
-                                    <span id="confirmChassis"></span>
-                                </div> -->
-
-                                <div class="row" id="confirmChassisRow">
-                                    <div class="col-md-6">
-                                        <strong>Chassis No</strong>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <span id="confirmChassis"></span>
-                                    </div>
-                                </div>
-
-
-                                <!-- <div class="col-md-6">
-                                    <strong>Customs Release/IMS4 Declaration Number</strong>
-                                </div>
-                                <div class="col-md-6">
-                                    <span id="confirmIMS"></span>
-                                </div> -->
-
-                                <div class="row" id="confirmIMSRow">
-                                    <div class="col-md-6">
-                                        <strong>Customs Release/IMS4 Declaration Number</strong>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <span id="confirmIMS"></span>
-                                    </div>
-                                </div>
-
-
-
-                                <!-- <div class="col-md-6">
-                                    <strong>Container Number</strong>
-                                </div>
-                                <div class="col-md-6">
-                                    <span id="confirmContainerNumber"></span>
-                                </div> -->
-
-
-                                <div class="row" id="confirmContainerNumberRow">
-                                    <div class="col-md-6">
-                                        <strong>Container Number</strong>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <span id="confirmContainerNumber"></span>
-                                    </div>
-                                </div>
-
-
-                                <div class="col-md-6">
-                                    <strong>Number of Pieces/Packages/Units</strong>
-                                </div>
-                                <div class="col-md-6">
-                                    <span id="confirmPPNumber"></span>
-                                </div>
-                            </div>
                         
                             <div class="button-container">
                                 <center>
@@ -496,6 +258,7 @@ div:where(.swal2-container) .swal2-html-container {
     let selectedDateTimes=[]
     let selectedTimezone = 'America/Jamaica';
     let globaltimes = [];
+    let type_cat;
 
 
     const agentList = [
@@ -582,15 +345,38 @@ appointmentTypeSelect.addEventListener('change', function() {
      globaltimes=[]
      selectedDateTimes=[]
 
-      // Check if the appointmentTypeID matches the required IDs
-      const validIDs = ['70702351', '13801622', '16120840', '16581501'];
+    //   // Check if the appointmentTypeID matches the required IDs
+    //   const validIDs = ['70702351', '13801622', '16120840', '16581501'];
+    //     if (validIDs.includes(appointmentTypeID)) {
+    //         chassisContainer.style.display = 'block'; // Show the Chassis No field
+    //         chassisInput.setAttribute('required', '');
+    //     } else {
+    //         chassisContainer.style.display = 'none'; // Hide the Chassis No field
+    //         chassisInput.removeAttribute('required'); // Remove required attribute
+    //     }
+
+
+
+
+// Loop through all dynamically generated forms and update the chassis container visibility
+const forms = document.querySelectorAll('.form-container');
+    forms.forEach((form, index) => {
+        const chassisContainer = document.getElementById(`chassisContainer_${index}`);
+        const chassisInput = document.getElementById(`chassis_${index}`);
+
+        // Check if the appointmentTypeID matches any of the valid IDs
         if (validIDs.includes(appointmentTypeID)) {
-            chassisContainer.style.display = 'block'; // Show the Chassis No field
-            chassisInput.setAttribute('required', '');
+            chassisContainer.style.display = 'block'; // Show chassis container
+            chassisInput.setAttribute('required', ''); // Set required attribute
         } else {
-            chassisContainer.style.display = 'none'; // Hide the Chassis No field
+            chassisContainer.style.display = 'none'; // Hide chassis container
             chassisInput.removeAttribute('required'); // Remove required attribute
         }
+    });
+
+
+
+
 
 });
 
@@ -640,6 +426,42 @@ appointmentTypeSelect.addEventListener('change', function() {
 });
 
 
+ // Function to initialize a dropdown
+ function initializeAgentDropdown(agentSelectId, otherAgentInputId) {
+        const agentSelect = $(`#${agentSelectId}`); // Using jQuery for Select2
+        const otherAgentInput = document.getElementById(otherAgentInputId);
+
+        if (!agentSelect.length || !otherAgentInput) return; // Ensure elements exist
+
+        // Populate the dropdown
+        agentList.forEach(agent => {
+            const option = document.createElement('option');
+            option.value = agent;
+            option.textContent = agent;
+            agentSelect.append(option);
+        });
+
+        // // Add "Other" option
+        // agentSelect.append(new Option("Other", "Other"));
+
+        // Initialize Select2
+        agentSelect.select2();
+
+        // Attach change event
+        agentSelect.on('change', function () {
+            if (agentSelect.val() === "Other") {
+                otherAgentInput.style.display = 'block'; // Show the manual input field
+                otherAgentInput.required = true; // Make it required
+            } else {
+                otherAgentInput.style.display = 'none'; // Hide the manual input field
+                otherAgentInput.required = false; // No longer required
+            }
+        });
+    }
+
+
+
+
   //========================== Agent List Section End ===============================================
 
 
@@ -667,21 +489,26 @@ appointmentTypeSelect.addEventListener('change', function() {
         if (newTabIndex >= 0 && newTabIndex < tabs.length) showTab(newTabIndex);
     }
 
-    function nextStep() {
+    function nextStep() { 
         if (!validateCurrentTab()) return;
 
-      
+     
 
-        if (currentTab === 0 && (!selectedDate || selectedTimes.length == 0)) {
-            alert("Please select a date and at least one time slot.");
-            return;
-        } else if (currentTab === 1 && !validateInfo()) {
-            alert("Please fill out all fields.");
-            return;
-        }
+                    if (currentTab === 0 && (!selectedDate || selectedTimes.length == 0)) {
+                        alert("Please select a date and at least one time slot.");
+                        return;
+                    } else if (currentTab === 1 && !validateInfo()) {
+                        alert("Please fill out all fields.");
+                        return;
+                    }
 
-        if (currentTab === 1) populateConfirmation();
-        changeTab(1);
+                        // Generate the forms dynamically
+                    if (currentTab === 0) {
+                        generateMultipleForms();
+                    }
+
+                        if (currentTab === 1) populateConfirmation();
+                        changeTab(1);
     }
 
     function prevStep() {
@@ -690,9 +517,426 @@ appointmentTypeSelect.addEventListener('change', function() {
 
 
 
+    //============ dynamic forms start ======================//
+
+    function generateMultipleForms() {
+    const formsContainer = document.getElementById('formsContainer');
+    formsContainer.innerHTML = ''; // Clear previous forms if any
+
+    const slotUnit = document.getElementById('slotUnit').value;  // Get the number of slots
+    const selectedTimes = selectedDateTimes;  // Use the selected times array
+
+    // Ensure that there are valid selected times and slotUnit value
+    if (slotUnit > 0 && selectedTimes.length > 0) {
+        selectedTimes.forEach((time, index) => {
+
+            const formattedTime = new Intl.DateTimeFormat('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                timeZone: timezone, // Use the selected timezone
+            }).format(new Date(time));
+
+            for (let i = 0; i < slotUnit; i++) {
+                const formHTML = `
+                    <div class="form-container">
+                        <div class="form-divider">
+                            <h1>${selectedDate} ${formattedTime}</h1>
+                        </div>
+                        <form id="kilform_${index}_${i}">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <input type="hidden" name="calendarId" value="${calendarId}">
+                            <input type="hidden" name="typename" id="typename_${index}_${i}" value="${typename}">
+                            <input type="hidden" name="selectedTime" value="${time}">
+                            <input type="hidden" name="appointment_type" value="${type_cat}" id="apppersonal_${index}_${i}">
+
+                            
+
+                            <div class="row gy-4">
+                                <div class="col-md-6">
+                                    <label>* TRN</label>
+                                    <input maxlength="20" type="text" id="trn_${index}_${i}" name="trn" class="form-control" placeholder="Enter the number" oninput="formatTRN(this)" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
+                                </div>
+                                <div class="col-md-6"></div>
+                                <div class="col-md-6">
+                                    <label>* First Name</label>
+                                    <input maxlength="20" type="text" id="fname_${index}_${i}" class="form-control" name="firstname" placeholder="Enter the name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
+                                </div>
+                                <div class="col-md-6">
+                                    <label>* Last Name</label>
+                                    <input maxlength="20" type="text" id="lname_${index}_${i}" class="form-control" name="lastname" placeholder="Last Name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
+                                </div>
+                                <div class="col-md-6">
+                                    <label>* Mobile Number</label>
+                                    <div class="input-group">
+                                        <input type="tel" name="contact" id="kilvishcontact_${index}_${i}" class="form-control" placeholder="Mobile Number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required>
+                                        <input type="hidden" id="fullkilvishcontact_${index}_${i}" name="fullkilvishcontact">
+                                        <input type="hidden" id="country_code_${index}_${i}" name="country_code">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label>* Email Address</label>
+                                    <% if (typeof loggeduser !== 'undefined' && loggeduser.user_email) { %>
+                                        <input type="email" id="email_${index}_${i}" class="form-control" name="user_email" value="<%= loggeduser.user_email %>" readonly>
+                                    <% } else { %>
+                                        <input type="email" id="email_${index}_${i}" class="form-control" name="user_email" placeholder="Enter the email" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required>
+                                    <% } %>
+                                </div>
+
+                            
+
+                                <div class="col-md-6">
+                                    <label>* Agent/Freight Forwarder</label>
+                                    <select id="agent_${index}_${i}" class="form-control select2" name="agent_forwarder" required>
+                                        <option value="">Select Agent</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <input type="text" id="otherAgent_${index}_${i}" name="agent_forwarder" class="form-control" placeholder="Enter your agent's name" style="display:none;" />
+                                </div>
+
+
+                                <div class="col-md-6">
+                                    <label>Name of Individual Making Appointment (If not consignee)</label>
+                                    <input maxlength="20" type="text" id="appname_${index}_${i}" class="form-control" name="appointment_by" placeholder="Enter the name">
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label>* Bill of Lading Number</label>
+                                    <input maxlength="25" type="text" id="blnumber_${index}_${i}" class="form-control" name="bol_number" placeholder="Enter the number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
+                                </div>
+                                <div class="col-md-6">
+                                    <label>* Vessel Name</label>
+                                    <input maxlength="20" type="text" id="vname_${index}_${i}" class="form-control" name="vessel_name" placeholder="Enter the vessel name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
+                                </div>
+                                <div class="col-md-6">
+                                    <label>* Expected Vessel Reported Date</label>
+                                    <input type="date" id="vreport_${index}_${i}" class="form-control" name="vessel_reported_date" required>
+                                </div>
+                                <div class="col-md-6" id="chassisContainer_${index}_${i}" style="display: none;">
+                                    <label>* Chassis No</label>
+                                    <input maxlength="20" type="text" id="chassis_${index}_${i}" class="form-control" name="chassis_number" placeholder="Enter the number" >
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Customs Release/IMS4 Declaration Number</label>
+                                    <input maxlength="20" type="text" id="ims_${index}_${i}" class="form-control" name="declaration_number" placeholder="Customs Release/IMS4 Declaration Number">
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Container Number</label>
+                                    <input maxlength="20" type="text" id="cnumber_${index}_${i}" class="form-control" name="container_number" placeholder="Enter the data">
+                                </div>
+                                <div class="col-md-6">
+                                    <label>* Number of Pieces/Packages/Units</label>
+                                    <input type="number" min="0" id="ppnumber_${index}_${i}" class="form-control" name="number_of_items" placeholder="Enter the packages" required="">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                `;
+
+                // Append the generated form to the container
+                formsContainer.insertAdjacentHTML('beforeend', formHTML);
+                    // Initialize the newly added dropdown
+        initializeAgentDropdown(`agent_${index}_${i}`, `otherAgent_${index}_${i}`);
+        initializeIntlTelInput(index, i);
+            }
+
+         
+        });
+    } else {
+        alert("Please select valid slots and number of slots.");
+    }
+
+
+       
+}
+
+
+    function generateMultipleForms11() {
+    const formsContainer = document.getElementById('formsContainer');
+    formsContainer.innerHTML = ''; // Clear previous forms if any
+
+    const slotUnit = document.getElementById('slotUnit').value;  // Get the number of slots
+    const selectedTimes = selectedDateTimes;  // Use the selected times array
+
+    // Ensure that there are valid selected times and slotUnit value
+    if (slotUnit > 0 && selectedTimes.length > 0) {
+        selectedTimes.forEach((time, index) => {
+      
+
+            const formattedTime = new Intl.DateTimeFormat('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: timezone, // Use the selected timezone
+            }).format(new Date(time));
+
+            for (let i = 0; i < slotUnit; i++) {
+                const formHTML = `
+
+                 <div class="form-container">
+                        <div class="form-divider">
+                        <h1> ${selectedDate} ${formattedTime}</h1>
+                        </div>
+    
+                    <form id="kilform_${index}_${i}">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <input type="hidden" name="calendarId" value="${calendarId}">
+                        <input type="hidden" name="typename" value="${typename}">
+                        <input type="hidden" name="selectedTime" value="${time}">
+                         <input type="hidden" name="appointment_type" id="apppersonal">
+                        
+                        <div class="row gy-4">
+                            <div class="col-md-6">
+                                <label>* TRN</label>
+                                <input maxlength="20" type="text" name="trn" class="form-control" placeholder="Enter the number" oninput="formatTRN(this)" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
+                            </div>
+                            <div class="col-md-6"></div>
+                            <div class="col-md-6">
+                                <label>* First Name</label>
+                                <input maxlength="20" type="text" name="firstname" class="form-control" placeholder="Enter the name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
+                            </div>
+                            <div class="col-md-6">
+                                <label>* Last Name</label>
+                                <input maxlength="20" type="text" name="lastname" class="form-control" placeholder="Last Name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
+                            </div>
+                            <div class="col-md-6">
+                                <label>* Mobile Number</label>
+                                <div class="input-group">
+                                    <input type="tel" name="contact" class="form-control" placeholder="Mobile Number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required>
+                                    <input type="hidden" name="fullkilvishcontact">
+                                    <input type="hidden" name="country_code">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label>* Email Address</label>
+                                <% if (typeof loggeduser !== 'undefined' && loggeduser.user_email) { %>
+                                    <input type="email" name="user_email" class="form-control" value="<%= loggeduser.user_email %>" readonly>
+                                <% } else { %>
+                                    <input type="email" name="user_email" class="form-control" placeholder="Enter the email" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required>
+                                <% } %>
+                            </div>
+                            <div class="col-md-6">
+                                <label>* Agent/Freight Forwarder</label>
+                                <select name="agent_forwarder" class="form-control select2" required>
+                                    <option value="">Select Agent</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <input type="text" name="agent_forwarder" class="form-control" placeholder="Enter your agent's name" style="display:none;" />
+                            </div>
+                            <div class="col-md-6">
+                                <label>Name of Individual Making Appointment (If not consignee)</label>
+                                <input maxlength="20" type="text" name="appointment_by" class="form-control" placeholder="Enter the name">
+                            </div>
+                           
+                            <div class="col-md-6">
+                                <label>* Bill of Lading Number</label>
+                                <input maxlength="25" type="text" name="bol_number" class="form-control" placeholder="Enter the number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
+                            </div>
+                            <div class="col-md-6">
+                                <label>* Vessel Name</label>
+                                <input maxlength="20" type="text" name="vessel_name" class="form-control" placeholder="Enter the vessel name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
+                            </div>
+                            <div class="col-md-6">
+                                <label>* Expected Vessel Reported Date</label>
+                                <input type="date" name="vessel_reported_date" class="form-control" required>
+                            </div>
+                            <div class="col-md-6" id="chassisContainer" style="display: none;">
+                                <label>* Chassis No</label>
+                                <input maxlength="20" type="text" name="chassis_number" class="form-control" placeholder="Enter the number" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Customs Release/IMS4 Declaration Number</label>
+                                <input maxlength="20" type="text" name="declaration_number" class="form-control" placeholder="Customs Release/IMS4 Declaration Number">
+                            </div>
+                            <div class="col-md-6">
+                                <label>Container Number</label>
+                                <input maxlength="20" type="text" name="container_number" class="form-control" placeholder="Enter the data">
+                            </div>
+                            <div class="col-md-6">
+                                <label>* Number of Pieces/Packages/Units</label>
+                                <input type="number" min="0" name="number_of_items" class="form-control" placeholder="Enter the packages" required="">
+                            </div>
+                        </div>
+                    </form>
+                    <br>`;
+
+                // Append the generated form to the container
+                formsContainer.insertAdjacentHTML('beforeend', formHTML);
+            }
+        });
+    } else {
+        alert("Please select valid slots and number of slots.");
+    }
+}
+
+    //=========== dynamic forms end=============================
 
 
     function populateConfirmation() {
+    console.log("confirm selectedDate ", selectedDate);
+    console.log("confirm selectedTimes ", selectedTimes);
+
+    const formsContainer = document.getElementById('formsContainer');
+    const previewContainer = document.getElementById('previewContainer');
+    previewContainer.innerHTML = ''; // Clear previous previews if any
+
+    // Get all form elements within the container
+    const forms = formsContainer.querySelectorAll('.form-container');
+
+    forms.forEach((form, index) => {
+        const selectedDateText = selectedDate || "Not selected";
+       // const selectedTimesText = selectedTimes.length > 0 ? selectedTimes.join(", ") : "Not selected";
+ // Get the selected time for the current form
+ const selectedTimesText = selectedTimes[index] || "Not selected"; // Display the time corresponding to the current form
+
+         
+        // Collect form values, defaulting to "N/A" if not provided
+        const appointmentType = form.querySelector(`#apppersonal_${index}_0`)?.value || "N/A";
+        const trn = form.querySelector(`#trn_${index}_0`)?.value || "N/A";
+        const firstName = form.querySelector(`#fname_${index}_0`)?.value || "N/A";
+        const lastName = form.querySelector(`#lname_${index}_0`)?.value || "N/A";
+        const country_code = form.querySelector(`#country_code_${index}_0`)?.value || "N/A";
+        const mobileNumber = form.querySelector(`#kilvishcontact_${index}_0`)?.value || "N/A";
+        const email = form.querySelector(`#email_${index}_0`)?.value || "N/A";
+        const agent = form.querySelector(`#agent_${index}_0`)?.value || "N/A";
+        const appname = form.querySelector(`#appname_${index}_0`)?.value || "N/A";
+        const blNumber = form.querySelector(`#blnumber_${index}_0`)?.value || "N/A";
+        const vname = form.querySelector(`#vname_${index}_0`)?.value || "N/A";
+        const vreport = form.querySelector(`#vreport_${index}_0`)?.value || "N/A";
+        const chassis = form.querySelector(`#chassis_${index}_0`)?.value || "N/A";
+        const ims = form.querySelector(`#ims_${index}_0`)?.value || "N/A";
+        const cnumber = form.querySelector(`#cnumber_${index}_0`)?.value || "N/A";
+        const ppnumber = form.querySelector(`#ppnumber_${index}_0`)?.value || "N/A";
+        const typename = form.querySelector(`#typename_${index}_0`)?.value || "N/A";
+
+        // Generate a preview section for this form
+        const previewHTML = `
+            <br>
+            <hr style="border: 1px solid green;">
+            
+             <center>  <h4> ${selectedDateText} ${selectedTimesText}</h4></center>
+             <hr style="border: 1px solid green;">
+            <div class="preview-section">
+                <h5>Appointment ${index + 1} Details </h5>
+                <div class="row" id="confirmDateRow_${index}">
+                    <div class="col-md-6"><strong>Date</strong></div>
+                    <div class="col-md-6">${selectedDateText}</div>
+                    <div class="col-md-6"><strong>Time</strong></div>
+                    <div class="col-md-6">${selectedTimesText}</div>
+                </div>
+                <br>
+                <h5>Contact Information</h5>
+                <div class="row" id="confirmTrnRow_${index}">
+                    <div class="col-md-6"><strong>TRN</strong></div>
+                    <div class="col-md-6">${trn}</div>
+                </div>
+                <div class="row" id="confirmFirstNameRow_${index}">
+                    <div class="col-md-6"><strong>First Name</strong></div>
+                    <div class="col-md-6">${firstName}</div>
+                </div>
+                <div class="row" id="confirmLastNameRow_${index}">
+                    <div class="col-md-6"><strong>Last Name</strong></div>
+                    <div class="col-md-6">${lastName}</div>
+                </div>
+                <div class="row" id="confirmMobileNumberRow_${index}">
+                    <div class="col-md-6"><strong>Mobile Number</strong></div>
+                    <div class="col-md-6">${country_code} ${mobileNumber}</div>
+                </div>
+                <div class="row" id="confirmEmailRow_${index}">
+                    <div class="col-md-6"><strong>Email Address</strong></div>
+                    <div class="col-md-6">${email}</div>
+                </div>
+                <div class="row" id="confirmAgentRow_${index}">
+                    <div class="col-md-6"><strong>Agent/Freight Forwarder</strong></div>
+                    <div class="col-md-6">${agent}</div>
+                </div>
+                <div class="row" id="confirmAppointmentTypeRow_${index}">
+                    <div class="col-md-6"><strong>Appointment Type</strong></div>
+                    <div class="col-md-6">${appointmentType}</div>
+                </div>
+<br>
+                <h5>Additional Information</h5>
+                <div class="row" id="confirmAppNameRow_${index}">
+                    <div class="col-md-6"><strong>Application Name</strong></div>
+                    <div class="col-md-6">${appname}</div>
+                </div>
+                <div class="row" id="confirmBlNumberRow_${index}">
+                    <div class="col-md-6"><strong>BL Number</strong></div>
+                    <div class="col-md-6">${blNumber}</div>
+                </div>
+                <div class="row" id="confirmVesselNameRow_${index}">
+                    <div class="col-md-6"><strong>Vessel Name</strong></div>
+                    <div class="col-md-6">${vname}</div>
+                </div>
+                <div class="row" id="confirmVesselReportRow_${index}">
+                    <div class="col-md-6"><strong>Vessel Report Date</strong></div>
+                    <div class="col-md-6">${vreport}</div>
+                </div>
+                <div class="row" id="confirmChassisRow_${index}">
+                    <div class="col-md-6"><strong>Chassis Number</strong></div>
+                    <div class="col-md-6">${chassis}</div>
+                </div>
+                <div class="row" id="confirmImsRow_${index}">
+                    <div class="col-md-6"><strong>IMS Number</strong></div>
+                    <div class="col-md-6">${ims}</div>
+                </div>
+                <div class="row" id="confirmContainerNumberRow_${index}">
+                    <div class="col-md-6"><strong>Container Number</strong></div>
+                    <div class="col-md-6">${cnumber}</div>
+                </div>
+                <div class="row" id="confirmPpNumberRow_${index}">
+                    <div class="col-md-6"><strong>PP Number</strong></div>
+                    <div class="col-md-6">${ppnumber}</div>
+                </div>
+              
+                <div class="row" id="confirmTypeNameRow_${index}">
+                    <div class="col-md-6"><strong>Type Name</strong></div>
+                    <div class="col-md-6">${typename}</div>
+                </div>
+            </div>
+            <br>
+        `;
+
+        // Append the preview section to the preview container
+        previewContainer.innerHTML += previewHTML;
+
+        // Function to toggle visibility of rows based on the value
+        function toggleRowVisibility(fieldId, value) {
+            const row = document.getElementById(fieldId);
+            if (value === "N/A" || value.trim() === "") {
+                row.style.display = "none";  // Hide the entire row
+            } else {
+                row.style.display = "flex";  // Show the row
+            }
+        }
+
+        // Toggle visibility for rows based on values
+        // toggleRowVisibility(`confirmTrnRow_${index}`, trn);
+        // toggleRowVisibility(`confirmFirstNameRow_${index}`, firstName);
+        // toggleRowVisibility(`confirmLastNameRow_${index}`, lastName);
+        // toggleRowVisibility(`confirmMobileNumberRow_${index}`, mobileNumber);
+        // toggleRowVisibility(`confirmEmailRow_${index}`, email);
+        // toggleRowVisibility(`confirmAgentRow_${index}`, agent);
+        // toggleRowVisibility(`confirmAppointmentTypeRow_${index}`, appointmentType);
+        
+        // toggleRowVisibility(`confirmBlNumberRow_${index}`, blNumber);
+        // toggleRowVisibility(`confirmVesselNameRow_${index}`, vname);
+        // toggleRowVisibility(`confirmVesselReportRow_${index}`, vreport);
+    
+        // toggleRowVisibility(`confirmPpNumberRow_${index}`, ppnumber);
+        // toggleRowVisibility(`confirmTypeNameRow_${index}`, typename);
+
+
+        toggleRowVisibility(`confirmAppNameRow_${index}`, appname);
+        toggleRowVisibility(`confirmChassisRow_${index}`, chassis);
+        toggleRowVisibility(`confirmImsRow_${index}`, ims);
+        toggleRowVisibility(`confirmContainerNumberRow_${index}`, cnumber);
+
+
+
+    });
+}
+
+
+    function populateConfirmation_forsingleform() {
         const selectedDateText = selectedDate || "Not selected";
         const selectedTimesText = selectedTimes.length > 0 ? selectedTimes.join(", ") : "Not selected";
        // const appointmentType = document.getElementById("appointmentType").value || "N/A";
@@ -766,8 +1010,7 @@ appointmentTypeSelect.addEventListener('change', function() {
 
 
 
-    function validateInfo() {
-        return true
+    function validateInfo() { return true;
         // return ["fname", "lname", "email", "kilvishcontact"].every(id => document.getElementById(id).value.trim());
     }
 
@@ -798,12 +1041,14 @@ appointmentTypeSelect.addEventListener('change', function() {
                 18478069, 31449943, 13808117, 13808100, 18608838, 
                 18608857, 13807845, 13807780, 18608460, 18608635
             ];
-            document.getElementById('apppersonal').value = 'Warehouse/Personal Effects Appointment'
+         //   document.getElementById('apppersonal').value = 'Warehouse/Personal Effects Appointment'
+         type_cat = 'Warehouse/Personal Effects Appointment'
         } else if (category === 'motor') {
             allowedAppointmentIDs = [
                 70702351, 13801622, 16120840, 16581501
             ];
-            document.getElementById('apppersonal').value = 'Motor Vehicle Appointment'
+           // document.getElementById('apppersonal').value = 'Motor Vehicle Appointment'
+          type_cat  = 'Motor Vehicle Appointment'
         }
 
         // Filter appointment types based on allowed IDs for the selected category
@@ -946,6 +1191,9 @@ function renderAvailableTimes(times) {
         timeContainer.appendChild(timeSlotDiv);
     });
 }
+
+
+
 
         function renderAvailableTimesworkingold(times) {
     console.log("Available Timeslots -> ", times);
@@ -1117,7 +1365,11 @@ function renderAvailableTimes(times) {
 }
 
 
+
+
 function toggleTimeSelection(slot, datetime) { 
+
+   
     const selectedSlot = [...document.querySelectorAll(".time-slot")].find(
         el => el.dataset.time === slot && el.dataset.datetime === datetime
     );
@@ -1137,7 +1389,11 @@ function toggleTimeSelection(slot, datetime) {
             selectedDateTimes = selectedDateTimes.filter(time => time !== datetime);
         }
     }
+
+
+   
 }
+
 
 
 
@@ -1608,7 +1864,7 @@ async function directConfirmBooking(email) {
    });
    
    
-   function validateKilvishInput(event) {
+   function validateKilvishInput(event) { return true;
   
           const inputField = event.target;
 
@@ -1649,13 +1905,31 @@ async function directConfirmBooking(email) {
                        //  validCharacters = /^[a-zA-Z\s]*$/;  
                          validCharacters = /^[a-zA-Z\s-]*$/; // with - hypen
 
+                         // Extract the dynamic indices from the triggering field's ID
+    const idParts = inputField.id.split('_');
+    const index = idParts[1];
+    const i = idParts[2];
+
 
                          if(inputField.name === 'firstname' || inputField.name === 'lastname'){
-                                            var firstName = document.getElementById('fname').value;
-                        var lastName = document.getElementById('lname').value;
-                // Combine first name and last name with hyphens
-                    var fullName = firstName.replace(/\s+/g, '-') + '-' + lastName.replace(/\s+/g, '-'); 
-                    document.getElementById('appname').value = fullName;
+                //                             var firstName = document.getElementById('fname').value;
+                //         var lastName = document.getElementById('lname').value;
+                // // Combine first name and last name with hyphens
+                //     var fullName = firstName.replace(/\s+/g, '-') + '-' + lastName.replace(/\s+/g, '-'); 
+                //     document.getElementById('appname').value = fullName;
+
+
+                // Get the related First Name and Last Name fields using the same indices
+    const firstNameField = document.getElementById(`fname_${index}_${i}`);
+    const lastNameField = document.getElementById(`lname_${index}_${i}`);
+    const appNameField = document.getElementById(`appname_${index}_${i}`);
+
+    const firstName = firstNameField.value.trim().replace(/\s+/g, '-');
+        const lastName = lastNameField.value.trim().replace(/\s+/g, '-');
+
+        // Combine first and last names with hyphens
+        const fullName = `${firstName}-${lastName}`;
+        appNameField.value = fullName; // Update the app name field
 
                          }
                       
@@ -2059,7 +2333,56 @@ const inputValue = inputField.value;
    
 
 
-    
+
+
+    function initializeIntlTelInput(index, i) {
+    const input = document.querySelector(`#kilvishcontact_${index}_${i}`);
+    const errorMsg = document.createElement("div");
+    errorMsg.id = `error-msg_${index}_${i}`;
+    errorMsg.style.color = "red";
+    errorMsg.style.fontSize = "0.9em";
+    errorMsg.style.marginTop = "5px";
+    input.parentNode.appendChild(errorMsg);
+
+    const iti = window.intlTelInput(input, {
+        preferredCountries: ["jm", "us"], // Customize based on your needs
+        separateDialCode: true,
+        initialCountry: "jm",
+        autoPlaceholder: "off", // Disable auto-placeholder
+        autoHideDialCode: false, // Prevent hiding the dial code
+        nationalMode: false, // Ensure the number is shown without spaces
+        formatOnDisplay: false, // Disable auto-formatting on display
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.min.js",
+    });
+
+    const errorMap = ["Invalid number", "Invalid country code", "Too short", "Too long", "Invalid number"];
+
+    const validateNumber = () => {
+        const errorCode = iti.getValidationError();
+        const valid = iti.isValidNumber();
+
+        if (valid) {
+            errorMsg.textContent = ""; // Clear error message
+            input.style.borderColor = ""; // Reset border color
+        } else {
+            const msg = errorMap[errorCode] || "Invalid number";
+            errorMsg.textContent = msg; // Show error message
+            input.style.borderColor = "red"; // Highlight input box
+        }
+
+        // Update hidden fields even if invalid
+        const fullPhoneNumber = iti.getNumber();
+        const countryCode = "+" + iti.getSelectedCountryData().dialCode;
+        document.querySelector(`#fullkilvishcontact_${index}_${i}`).value = fullPhoneNumber;
+        document.querySelector(`#country_code_${index}_${i}`).value = countryCode;
+    };
+
+    // Validate on input
+    input.addEventListener("input", validateNumber);
+
+    // Validate on country change
+    input.addEventListener("countrychange", validateNumber);
+}
 
 
 

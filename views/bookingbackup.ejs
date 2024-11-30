@@ -767,8 +767,7 @@ appointmentTypeSelect.addEventListener('change', function() {
 
 
     function validateInfo() {
-        return true
-        // return ["fname", "lname", "email", "kilvishcontact"].every(id => document.getElementById(id).value.trim());
+        return ["fname", "lname", "email", "kilvishcontact"].every(id => document.getElementById(id).value.trim());
     }
 
     async function loadAppointmentTypes() {

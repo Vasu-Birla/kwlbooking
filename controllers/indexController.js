@@ -183,6 +183,42 @@ const booking = async (req, res, next) => {
 
 
 
+const kilbooking = async (req, res, next) => {
+  let pool;
+  let transaction;
+
+  try {
+    pool = await connection(); // Establish database connection
+    transaction = new sql.Transaction(pool); // Create a new transaction instance
+
+    await transaction.begin(); // Begin the transaction
+
+    const request = transaction.request();
+    const output = req.cookies.kwl_msg || '';
+
+
+
+    await transaction.commit(); // Commit the transaction if successful
+
+    res.render('kilbooking', { output });
+  } catch (error) {
+    // Rollback transaction if an error occurs
+    if (transaction && transaction._aborted !== true) { 
+      await transaction.rollback();
+    }
+    console.error('Error:', error);
+    res.render('kil500', { output: `${error}` });
+  } finally {
+    // Always close the pool to release resources
+    if (pool) {
+      pool.close();
+    }
+  }
+};
+
+
+
+
 
 const booking_availability = async (req, res, next) => {
   let pool;
@@ -2835,7 +2871,7 @@ const fetchAndSyncAcuityBookingswithlimit = async (req, res, next) => {
 export { home , book , booking_availability , viewBookings , getLoginOtp ,verifyLoginOtp   , login , logout ,
   dates_availability , appointment_types , time_availability , getBookingOtp , verifyOTP , confirmbooking ,
   check_times , cancelBooking , reschedule ,rescheduleBooking ,updateBooking, acuityBookings , fetchAndSyncAcuityBookings ,
-  logoutandProceed , booking , multibooking
+  logoutandProceed , booking , multibooking,kilbooking
 
  }
 

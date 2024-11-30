@@ -29,6 +29,7 @@ const allowedRedirects = [
     '/logoutandProceed',
     '/booking',
     '/multibooking',
+    '/kilbooking',
 
     // Routes under '/superadmin'
     '/superadmin',
