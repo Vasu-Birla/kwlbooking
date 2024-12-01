@@ -605,7 +605,8 @@ const getBookingOtp = async (req, res, next) => {
     await transaction.begin();
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 10 * 60000); // 10 minutes from now
+    //  UTC expiresAt format to avoid Timezone issue
+    const expiresAt = new Date(Date.now() + 10 * 60000).toISOString(); 
 
     console.log(otp)
 
@@ -618,14 +619,14 @@ const getBookingOtp = async (req, res, next) => {
       // Update existing OTP
       await transaction.request().query(`
         UPDATE tbl_login_otp 
-        SET otp = '${otp}', expires_at = '${expiresAt.toISOString()}' 
+        SET otp = '${otp}', expires_at = '${expiresAt}' 
         WHERE email = '${email}'
       `);
     } else {
       // Insert new OTP record
       await transaction.request().query(`
         INSERT INTO tbl_login_otp (email, otp, expires_at) 
-        VALUES ('${email}', '${otp}', '${expiresAt.toISOString()}')
+        VALUES ('${email}', '${otp}', '${expiresAt}')
       `);
     }
 
@@ -655,13 +656,18 @@ const verifyOTP = async (req, res, next) => {
 
   try {
     pool = await connection();
+
+    const currentUtcTime = new Date().toISOString(); // Get current UTC time
+
+
     const request = new sql.Request(pool);
     request.input('email', sql.VarChar, email);
     request.input('otp', sql.VarChar, otp);
+    request.input('currentUtcTime', sql.VarChar, currentUtcTime);
 
     // Check if OTP is valid and not expired
     const result = await request.query(
-      'SELECT * FROM tbl_login_otp WHERE email = @email AND otp = @otp AND expires_at > GETDATE()'
+      'SELECT * FROM tbl_login_otp WHERE email = @email AND otp = @otp AND expires_at > @currentUtcTime'
     );
 
     if (result.recordset.length === 0) {
@@ -2122,7 +2128,8 @@ const book = async(req,res,next)=>{
     await transaction.begin();
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 10 * 60000); // 10 minutes from now
+      //  UTC expiresAt format to avoid Timezone issue
+      const expiresAt = new Date(Date.now() + 10 * 60000).toISOString();
 
     console.log(otp)
 
@@ -2144,14 +2151,14 @@ const book = async(req,res,next)=>{
         // Update existing OTP
         await transaction.request().query(`
           UPDATE tbl_login_otp 
-          SET otp = '${otp}', expires_at = '${expiresAt.toISOString()}' 
+          SET otp = '${otp}', expires_at = '${expiresAt}' 
           WHERE email = '${email}'
         `);
       } else {
         // Insert new OTP record
         await transaction.request().query(`
           INSERT INTO tbl_login_otp (email, otp, expires_at) 
-          VALUES ('${email}', '${otp}', '${expiresAt.toISOString()}')
+          VALUES ('${email}', '${otp}', '${expiresAt}')
         `);
       }
 
@@ -2283,17 +2290,23 @@ const verifyLoginOtp = async (req, res, next) => {
       }
     }
 
-    // Check if OTP is valid and not expired
-    const otpQuery = `
-      SELECT * 
-      FROM tbl_login_otp 
-      WHERE email = @userEmail AND otp = @otp AND expires_at > GETDATE()
-    `;
-    const otpResult = await pool
-      .request()
-      .input('userEmail', sql.VarChar, email)
-      .input('otp', sql.VarChar, otp)
-      .query(otpQuery);
+
+
+    const currentUtcTime = new Date().toISOString(); // Get current UTC time
+
+
+   // Check if OTP is valid and not expired
+   const otpQuery = `
+   SELECT * 
+   FROM tbl_login_otp 
+   WHERE email = @userEmail AND otp = @otp AND expires_at > @currentUtcTime
+ `;
+   const otpResult = await pool
+.request()
+.input('userEmail', sql.VarChar, email)
+.input('otp', sql.VarChar, otp)
+.input('currentUtcTime', sql.VarChar, currentUtcTime) // Pass the current UTC time
+.query(otpQuery);
 
     if (otpResult.recordset.length === 0) {
       // Increment login attempts
