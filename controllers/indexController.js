@@ -1023,7 +1023,7 @@ const confirmbooking = async (req, res, next) => {
           email: user_email,
           calendarID: calendarID,
           phone: `${country_code}${contact}`,
-          timezone: 'America/New_York',
+          timezone: timezone,
           fields: fields
         },
         {
@@ -1142,45 +1142,52 @@ const booking_datetime = `${booking_date}, ${booking_times}`;
 };
 
 
-
-
 const multibooking = async (req, res, next) => {
-  console.log("new booking ",req.body)
+  
+  console.log("================================================================= ");
+
+  console.log("New booking request received: ", req.body);
+
+  console.log("================================================================= ");
+  // return res.status(200).json({ success: true, message: "Booking successfully created!" });
+
   const {
-    trn, firstname, lastname, contact, country_code, user_email, agent_forwarder,
-    appointment_by, appointment_type, bol_number, vessel_name, vessel_reported_date,
-    chassis_number, declaration_number, container_number, number_of_items,
-    booking_date, booking_times, appointmentTypeID, calendarID, selectedDateTimes ,timezone ,slotUnit
+      trn, firstname, lastname, contact, country_code, user_email, agent_forwarder,
+      appointment_by, appointment_type, bol_number, vessel_name, vessel_reported_date,
+      chassis_number, declaration_number, container_number, number_of_items,
+      booking_date, selectedDateTimes, selectedTime,appointmentTypeID, calendarID, timezone
   } = req.body;
 
   var location = ''
-
+  
   let pool;
   let transaction;
 
   try {
-    // Initialize the database connection
-
-    
-        //----------------------   audit Logging -------------------------- 
-
-        const acuityUrl =  `https://acuityscheduling.com/api/v1/appointments`
-        const reason = "Creating New Booking"
-        const userName = req.user ? req.user.user_email : user_email;
-        const userRole = 'User';
-    
-       await logAcuityRequest(acuityUrl, userRole, userName, reason);
-    
-        //----------------------   audit Logging -------------------------- 
-    
-    pool = await connection();
-    transaction = new sql.Transaction(pool);
-    await transaction.begin();
+         //----------------------   audit Logging -------------------------- 
+  
+         const acuityUrl =  `https://acuityscheduling.com/api/v1/appointments`
+         const reason = "Creating New Booking"
+         const userName = req.user ? req.user.user_email : user_email;
+         const userRole = 'User';
+     
+        await logAcuityRequest(acuityUrl, userRole, userName, reason);
+     
+         //----------------------   audit Logging -------------------------- 
 
 
-    //-------- mother units type ids
+
+      // Start transaction
+      pool = await connection();
+      transaction = new sql.Transaction(pool);
+      await transaction.begin();
+
+      const datetime = selectedTime; // Process one datetime at a time
+      const formattedDatetime = moment(datetime).format('YYYY-MM-DDTHH:mm:ssZ').replace(':', '').replace('Z', '');
+
+       //-------- mother units type ids
        const kiltypeid = ['70702351', '13801622', '16120840', '16581501'];
-
+  
        let fields = [
         { id: 7510463, value: agent_forwarder },
         { id: 7510465, value: appointment_type },
@@ -1201,41 +1208,11 @@ const multibooking = async (req, res, next) => {
           { id: 7505639, value: '0' },
           { id: 7505640, value: '0' },
           { id: 7505641, value: '0' },
-          { id: 15729585, value: '0' }
-
-          
-
-          
-        );
-
-        
+          { id: 15729585, value: '0' }          
+        );        
 
       }
-     // console.log("fieldsfieldsfieldsfieldsfieldsfieldsfields",fields)
 
-   
-
-      
-    // Book appointments sequentially for each selected date/time
-    for (const datetime of selectedDateTimes) {
-      const formattedDatetime = moment(datetime).format('YYYY-MM-DDTHH:mm:ssZ').replace(':', '').replace('Z', '');
-
-
-
-      for (let i = 0; i < slotUnit; i++) {
-
-       
-        const kiltime = moment.tz(datetime, timezone).format('hh:mm A');
-        const kildate = moment.tz(datetime, timezone).format('YYYY-MM-DD');
-        const kilbookingdatetime = `${kiltime}, ${kildate}`;
-        console.log("bookingdatetime", kilbookingdatetime)
-        
-                
-              }
-
-      // Repeat the booking process slotUnit times
-      for (let i = 0; i < slotUnit; i++) {
-      // Book appointment on Acuity for each datetime
       const acuityResponse = await axios.post(
         'https://acuityscheduling.com/api/v1/appointments',
         {
@@ -1246,7 +1223,7 @@ const multibooking = async (req, res, next) => {
           email: user_email,
           calendarID: calendarID,
           phone: `${country_code}${contact}`,
-          timezone: 'America/New_York',
+          timezone: timezone,
           fields: fields
         },
         {
@@ -1257,143 +1234,98 @@ const multibooking = async (req, res, next) => {
         }
       );
 
-      // Insert booking details into the database if Acuity booking is successful
       if (acuityResponse.status === 200) {
 
         console.log("acuityResponse.data--> new booking data -> ",acuityResponse.data)
-        const bookingId = acuityResponse.data.id;
 
-        const type_name = acuityResponse.data.type;
+          const bookingId = acuityResponse.data.id;
 
-        
-        const created_at = moment(acuityResponse.data.datetimeCreated, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYY-MM-DD HH:mm:ss.SSSSSSSZ');
+          var type_name = acuityResponse.data.type;
 
-        console.log("created_att",created_at)
-        console.log("booking_date",booking_date)
-        
-    
+          console.log("typename===================>>>>>>>>>>>>>>>>>>>>>>> ",type_name)
 
-//         const query = `
-//   INSERT INTO tbl_bookings (
-//     booking_id, trn, firstname, lastname, contact, country_code, user_email,
-//     agent_forwarder, appointment_by, appointment_type, bol_number,
-//     vessel_name, vessel_reported_date, chassis_number, declaration_number,
-//     container_number, number_of_items, booking_date, booking_times,
-//     timezone, location, created_at, type_name
-//   ) VALUES (
-//     ${bookingId}, '${trn}', '${firstname}', '${lastname}', '${contact}', '${country_code}', '${user_email}',
-//     '${agent_forwarder}', '${appointment_by}', '${appointment_type}', '${bol_number}',
-//     '${vessel_name}', '${vessel_reported_date}', '${chassis_number}', '${declaration_number}',
-//     '${container_number}', '${number_of_items}', '${booking_date}', '${datetime}',
-//     '${timezone}', '${location}', '${created_at}', '${type_name}'
-//   )
-// `;
+          const created_at = moment(acuityResponse.data.datetimeCreated, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYY-MM-DD HH:mm:ss.SSSSSSSZ');
 
-
-  // Perform the insert query
-  //await transaction.request().query(query);
-
-
-const query = `
-  INSERT INTO tbl_bookings (
-    booking_id, trn, firstname, lastname, contact, country_code, user_email,
-    agent_forwarder, appointment_by, appointment_type, bol_number,
-    vessel_name, vessel_reported_date, chassis_number, declaration_number,
-    container_number, number_of_items, booking_date, booking_times,
-    timezone, location, created_at, type_name
-  ) VALUES (
-    @bookingId, @trn, @firstname, @lastname, @contact, @country_code, @user_email,
-    @agent_forwarder, @appointment_by, @appointment_type, @bol_number,
-    @vessel_name, @vessel_reported_date, @chassis_number, @declaration_number,
-    @container_number, @number_of_items, @booking_date, @booking_times,
-    @timezone, @location, @created_at, @type_name
-  )
-`;
-
-// Use `.input()` for each parameter
-await transaction.request()
-  .input('bookingId', sql.Int, bookingId)
-  .input('trn', sql.NVarChar, trn)
-  .input('firstname', sql.NVarChar, firstname)
-  .input('lastname', sql.NVarChar, lastname)
-  .input('contact', sql.NVarChar, contact)
-  .input('country_code', sql.NVarChar, country_code)
-  .input('user_email', sql.NVarChar, user_email)
-  .input('agent_forwarder', sql.NVarChar, agent_forwarder)
-  .input('appointment_by', sql.NVarChar, appointment_by)
-  .input('appointment_type', sql.NVarChar, appointment_type)
-  .input('bol_number', sql.NVarChar, bol_number)
-  .input('vessel_name', sql.NVarChar, vessel_name)
-  .input('vessel_reported_date', sql.NVarChar, vessel_reported_date)
-  .input('chassis_number', sql.NVarChar, chassis_number)
-  .input('declaration_number', sql.NVarChar, declaration_number)
-  .input('container_number', sql.NVarChar, container_number)
-  .input('number_of_items', sql.NVarChar, number_of_items)
-  .input('booking_date', sql.Date, booking_date)
-  .input('booking_times', sql.NVarChar, datetime)
-  .input('timezone', sql.NVarChar, timezone)
-  .input('location', sql.NVarChar, location)
-  .input('created_at', sql.NVarChar, created_at)
-  .input('type_name', sql.NVarChar, type_name)
-  .query(query);
-
-
+          // Insert into database
+          const query = `
+          INSERT INTO tbl_bookings (booking_id, trn, firstname, lastname, contact, country_code, user_email, agent_forwarder, appointment_by,
+              appointment_type, bol_number, vessel_name, vessel_reported_date, chassis_number, declaration_number, container_number, 
+              number_of_items, booking_date, booking_times, timezone, location, created_at, type_name)
+          VALUES (@bookingId, @trn, @firstname, @lastname, @contact, @country_code, @user_email, @agent_forwarder, @appointment_by,
+              @appointment_type, @bol_number, @vessel_name, @vessel_reported_date, @chassis_number, @declaration_number, @container_number, 
+              @number_of_items, @booking_date, @booking_times, @timezone, @location, @created_at, @type_name)
+      `;
       
 
-        var reason1 = 'Confirmed'
+              
+                // Use `.input()` for each parameter
+                await transaction.request()
+                .input('bookingId', sql.Int, bookingId)
+                .input('trn', sql.NVarChar, trn)
+                .input('firstname', sql.NVarChar, firstname)
+                .input('lastname', sql.NVarChar, lastname)
+                .input('contact', sql.NVarChar, contact)
+                .input('country_code', sql.NVarChar, country_code)
+                .input('user_email', sql.NVarChar, user_email)
+                .input('agent_forwarder', sql.NVarChar, agent_forwarder)
+                .input('appointment_by', sql.NVarChar, appointment_by)
+                .input('appointment_type', sql.NVarChar, appointment_type)
+                .input('bol_number', sql.NVarChar, bol_number)
+                .input('vessel_name', sql.NVarChar, vessel_name)
+                .input('vessel_reported_date', sql.NVarChar, vessel_reported_date)
+                .input('chassis_number', sql.NVarChar, chassis_number)
+                .input('declaration_number', sql.NVarChar, declaration_number)
+                .input('container_number', sql.NVarChar, container_number)
+                .input('number_of_items', sql.NVarChar, number_of_items)
+                .input('booking_date', sql.Date, booking_date)
+                .input('booking_times', sql.NVarChar, datetime)
+                .input('timezone', sql.NVarChar, timezone)
+                .input('location', sql.NVarChar, location)
+                .input('created_at', sql.NVarChar, created_at)
+                .input('type_name', sql.NVarChar, type_name)
+                .query(query);
 
-const booking_times = moment.tz(datetime, timezone).format('hh:mm A');
-
-// Combine the formatted date and time
-const booking_datetime = `${booking_date}, ${booking_times}`;
-
-        await transaction.request()
-        .input('user_role', sql.NVarChar, userRole)
-        .input('user_name', sql.NVarChar, userName)
-        .input('reason', sql.NVarChar, reason1)
-        .input('acuity_url', sql.NVarChar, acuityUrl)
-        .input('booking_id', sql.Int, bookingId)
-        .input('booking_datetime', sql.NVarChar, booking_datetime || '') // use empty string if null
-        .input('new_datetime', sql.NVarChar,'') // use empty string if null
-        .query(`
-            INSERT INTO tbl_booking_logs 
-            (user_role, user_name, reason, acuity_url, booking_id, booking_datetime, new_datetime) 
-            VALUES (@user_role, @user_name, @reason, @acuity_url, @booking_id, @booking_datetime, @new_datetime)
-        `);
 
 
-        
+                var reason1 = 'Confirmed'
+
+                const booking_times = moment.tz(datetime, timezone).format('hh:mm A');
+                
+                // Combine the formatted date and time
+                const booking_datetime = `${booking_date}, ${booking_times}`;
+                
+                        await transaction.request()
+                        .input('user_role', sql.NVarChar, userRole)
+                        .input('user_name', sql.NVarChar, userName)
+                        .input('reason', sql.NVarChar, reason1)
+                        .input('acuity_url', sql.NVarChar, acuityUrl)
+                        .input('booking_id', sql.Int, bookingId)
+                        .input('booking_datetime', sql.NVarChar, booking_datetime || '') // use empty string if null
+                        .input('new_datetime', sql.NVarChar,'') // use empty string if null
+                        .query(`
+                            INSERT INTO tbl_booking_logs 
+                            (user_role, user_name, reason, acuity_url, booking_id, booking_datetime, new_datetime) 
+                            VALUES (@user_role, @user_name, @reason, @acuity_url, @booking_id, @booking_datetime, @new_datetime)
+                        `);
+                
+
+
+          await transaction.commit();
+
+          return res.status(200).json({ success: true, message: "Booking successfully created!" });
       } else {
-        throw new Error('Failed to book appointment on Acuity for datetime: ' + formattedDatetime);
+          throw new Error('Failed to book appointment on Acuity');
       }
 
-    }
-    }
-
-    // Commit the transaction after all bookings are successful
-    await transaction.commit();
-
-    // Respond with success
-    res.status(200).json({
-      success: true,
-      valid: true,
-      message: 'All appointments booked successfully.'
-    });
-
   } catch (error) {
-    console.log(error)
-    // Rollback transaction in case of error
-    if (transaction) await transaction.rollback();
-    console.error("Error during booking:", error.response?.data || error.message);
-    res.status(400).json({
-      success: false,
-      message: error.response?.data?.message || 'Failed to book appointments with Acuity',
-    });
+    console.log("errorrrrrrrrrrrrrrr -> ",error)
+      if (transaction) await transaction.rollback();
+      console.error("Error during booking:", error.response?.data || error.message);
+      return res.status(500).json({ success: false, message: error.response?.data?.message || 'Failed to book appointments with Acuity', });
   } finally {
-    if (pool) pool.close();
+      if (pool) pool.close();
   }
 };
-
 
 
 

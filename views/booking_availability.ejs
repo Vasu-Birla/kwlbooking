@@ -711,7 +711,9 @@ appointmentTypeSelect.addEventListener('change', function() {
         const country_code = document.getElementById("country_code").value || "N/A";
         const mobileNumber = document.getElementById("kilvishcontact").value || "N/A";
         const email = document.getElementById("email").value || "N/A";
-        const agent = document.getElementById("agent").value || "N/A";
+        const agent =  document.getElementById("agent").value === "Other" ? document.getElementById("otherAgent").value : document.getElementById("agent").value;
+
+       
         const appname = document.getElementById("appname").value || "N/A";
         const blNumber = document.getElementById("blnumber").value || "N/A";
         const vname = document.getElementById("vname").value || "N/A";

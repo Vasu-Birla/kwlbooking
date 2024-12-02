@@ -477,7 +477,7 @@ const forms = document.querySelectorAll('.form-container');
             tabHeaders[index].classList.toggle('active', index === currentTab);
         });
 
-        if (n === 2) populateConfirmation();
+        //if (n === 2) populateConfirmation();
     }
 
     function changeTab(step) {
@@ -538,13 +538,15 @@ const forms = document.querySelectorAll('.form-container');
 
             for (let i = 0; i < slotUnit; i++) {
                 const formHTML = `
+                <br>
+                <hr>
                     <div class="form-container">
                         <div class="form-divider">
                             <h1>${selectedDate} ${formattedTime}</h1>
                         </div>
                         <form id="kilform_${index}_${i}">
                             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                            <input type="hidden" name="calendarId" value="${calendarId}">
+                            <input type="hidden" id="calendarId_${index}_${i}" name="calendarId" value="${calendarId}">
                             <input type="hidden" name="typename" id="typename_${index}_${i}" value="${typename}">
                             <input type="hidden" name="selectedTime" value="${time}">
                             <input type="hidden" name="appointment_type" value="${type_cat}" id="apppersonal_${index}_${i}">
@@ -630,6 +632,7 @@ const forms = document.querySelectorAll('.form-container');
                             </div>
                         </form>
                     </div>
+                      <br>
                 `;
 
                 // Append the generated form to the container
@@ -771,6 +774,181 @@ const forms = document.querySelectorAll('.form-container');
 
 
     function populateConfirmation() {
+    const formsContainer = document.getElementById('formsContainer');
+  
+
+    const previewContainer = document.getElementById('previewContainer');
+    previewContainer.innerHTML = ''; // Clear previous previews if any
+
+    const slotUnit = document.getElementById('slotUnit').value;  // Get the number of slots
+    const selectedTimes = selectedDateTimes;  // Use the selected times array
+
+    // Ensure that there are valid selected times and slotUnit value
+    if (slotUnit > 0 && selectedTimes.length > 0) {
+        selectedTimes.forEach((time, index) => {
+
+            
+
+           
+         
+            for (let i = 0; i < slotUnit; i++) {
+
+                const form = document.getElementById(`kilform_${index}_${i}`); 
+        const selectedDateText = selectedDate || "Not selected";
+
+ const selectedTimesText = new Intl.DateTimeFormat('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                timeZone: timezone, // Use the selected timezone
+            }).format(new Date(time));
+
+
+
+  
+        // Collect form values, defaulting to "N/A" if not provided
+        const appointmentType = form.querySelector(`#apppersonal_${index}_${i}`)?.value || "N/A";
+        const trn = form.querySelector(`#trn_${index}_${i}`)?.value || "N/A";
+        const firstName = form.querySelector(`#fname_${index}_${i}`)?.value || "N/A";
+        const lastName = form.querySelector(`#lname_${index}_${i}`)?.value || "N/A";
+        const country_code = form.querySelector(`#country_code_${index}_${i}`)?.value || "N/A";
+        const mobileNumber = form.querySelector(`#kilvishcontact_${index}_${i}`)?.value || "N/A";
+        const email = form.querySelector(`#email_${index}_${i}`)?.value || "N/A";
+     
+        
+        const agent =  form.querySelector(`#agent_${index}_${i}`)?.value === "Other" ? form.querySelector(`#otherAgent_${index}_${i}`)?.value : form.querySelector(`#agent_${index}_${i}`)?.value
+        const appname = form.querySelector(`#appname_${index}_${i}`)?.value || "N/A";
+        const blNumber = form.querySelector(`#blnumber_${index}_${i}`)?.value || "N/A";
+        const vname = form.querySelector(`#vname_${index}_${i}`)?.value || "N/A";
+        const vreport = form.querySelector(`#vreport_${index}_${i}`)?.value || "N/A";
+        const chassis = form.querySelector(`#chassis_${index}_${i}`)?.value || "N/A";
+        const ims = form.querySelector(`#ims_${index}_${i}`)?.value || "N/A";
+        const cnumber = form.querySelector(`#cnumber_${index}_${i}`)?.value || "N/A";
+        const ppnumber = form.querySelector(`#ppnumber_${index}_${i}`)?.value || "N/A";
+        const typename = form.querySelector(`#typename_${index}_${i}`)?.value || "N/A";
+
+
+        const previewHTML = `
+            <br>
+            <hr style="border: 1px solid green;">
+            
+             <center>  <h4> ${selectedDateText} ${selectedTimesText}</h4></center>
+             <hr style="border: 1px solid green;">
+            <div class="preview-section">
+                <h5>Appointment ${index + 1} Details </h5>
+                <div class="row" id="confirmDateRow_${index}_${i}">
+                    <div class="col-md-6"><strong>Date</strong></div>
+                    <div class="col-md-6">${selectedDateText}</div>
+                    <div class="col-md-6"><strong>Time</strong></div>
+                    <div class="col-md-6">${selectedTimesText}</div>
+                </div>
+                <br>
+                <h5>Contact Information</h5>
+                <div class="row" id="confirmTrnRow_${index}_${i}">
+                    <div class="col-md-6"><strong>TRN</strong></div>
+                    <div class="col-md-6">${trn}</div>
+                </div>
+                <div class="row" id="confirmFirstNameRow_${index}_${i}">
+                    <div class="col-md-6"><strong>First Name</strong></div>
+                    <div class="col-md-6">${firstName}</div>
+                </div>
+                <div class="row" id="confirmLastNameRow_${index}_${i}">
+                    <div class="col-md-6"><strong>Last Name</strong></div>
+                    <div class="col-md-6">${lastName}</div>
+                </div>
+                <div class="row" id="confirmMobileNumberRow_${index}_${i}">
+                    <div class="col-md-6"><strong>Mobile Number</strong></div>
+                    <div class="col-md-6">${country_code} ${mobileNumber}</div>
+                </div>
+                <div class="row" id="confirmEmailRow_${index}_${i}">
+                    <div class="col-md-6"><strong>Email Address</strong></div>
+                    <div class="col-md-6">${email}</div>
+                </div>
+                <div class="row" id="confirmAgentRow_${index}_${i}">
+                    <div class="col-md-6"><strong>Agent/Freight Forwarder</strong></div>
+                    <div class="col-md-6">${agent}</div>
+                </div>
+                <div class="row" id="confirmAppointmentTypeRow_${index}_${i}">
+                    <div class="col-md-6"><strong>Appointment Type</strong></div>
+                    <div class="col-md-6">${appointmentType}</div>
+                </div>
+<br>
+                <h5>Additional Information</h5>
+                <div class="row" id="confirmAppNameRow_${index}_${i}">
+                    <div class="col-md-6"><strong>Application Name</strong></div>
+                    <div class="col-md-6">${appname}</div>
+                </div>
+                <div class="row" id="confirmBlNumberRow_${index}_${i}">
+                    <div class="col-md-6"><strong>BL Number</strong></div>
+                    <div class="col-md-6">${blNumber}</div>
+                </div>
+                <div class="row" id="confirmVesselNameRow_${index}_${i}">
+                    <div class="col-md-6"><strong>Vessel Name</strong></div>
+                    <div class="col-md-6">${vname}</div>
+                </div>
+                <div class="row" id="confirmVesselReportRow_${index}_${i}">
+                    <div class="col-md-6"><strong>Vessel Report Date</strong></div>
+                    <div class="col-md-6">${vreport}</div>
+                </div>
+                <div class="row" id="confirmChassisRow_${index}_${i}">
+                    <div class="col-md-6"><strong>Chassis Number</strong></div>
+                    <div class="col-md-6">${chassis}</div>
+                </div>
+                <div class="row" id="confirmImsRow_${index}_${i}">
+                    <div class="col-md-6"><strong>IMS Number</strong></div>
+                    <div class="col-md-6">${ims}</div>
+                </div>
+                <div class="row" id="confirmContainerNumberRow_${index}_${i}">
+                    <div class="col-md-6"><strong>Container Number</strong></div>
+                    <div class="col-md-6">${cnumber}</div>
+                </div>
+                <div class="row" id="confirmPpNumberRow_${index}_${i}">
+                    <div class="col-md-6"><strong>PP Number</strong></div>
+                    <div class="col-md-6">${ppnumber}</div>
+                </div>
+              
+                <div class="row" id="confirmTypeNameRow_${index}_${i}">
+                    <div class="col-md-6"><strong>Type Name</strong></div>
+                    <div class="col-md-6">${typename}</div>
+                </div>
+            </div>
+            <br>
+        `;
+   
+                    // Append the preview section to the preview container
+                    previewContainer.innerHTML += previewHTML;
+
+                    function toggleRowVisibility(fieldId, value) {
+                            const row = document.getElementById(fieldId);
+                            if (value === "N/A" || value.trim() === "") {
+                                row.style.display = "none";  // Hide the entire row
+                            } else {
+                                row.style.display = "flex";  // Show the row
+                            }
+                        }
+
+                        toggleRowVisibility(`confirmAppNameRow_${index}_${i}`, appname);
+                    toggleRowVisibility(`confirmChassisRow_${index}_${i}`, chassis);
+                    toggleRowVisibility(`confirmImsRow_${index}_${i}`, ims);
+                    toggleRowVisibility(`confirmContainerNumberRow_${index}_${i}`, cnumber);
+
+
+
+             
+            }
+
+         
+        });
+    } else {
+        alert("Please select valid slots and number of slots.");
+    }
+
+
+       
+}
+
+
+
+    function populateConfirmation45455() { 
     console.log("confirm selectedDate ", selectedDate);
     console.log("confirm selectedTimes ", selectedTimes);
 
@@ -782,6 +960,11 @@ const forms = document.querySelectorAll('.form-container');
     const forms = formsContainer.querySelectorAll('.form-container');
 
     forms.forEach((form, index) => {
+
+        console.log("=============== form ===========", form)
+        console.log("=============== index ===========", index)
+        console.log("=============== ================== ======================== ======================== ===========")
+       
         const selectedDateText = selectedDate || "Not selected";
        // const selectedTimesText = selectedTimes.length > 0 ? selectedTimes.join(", ") : "Not selected";
  // Get the selected time for the current form
@@ -796,7 +979,9 @@ const forms = document.querySelectorAll('.form-container');
         const country_code = form.querySelector(`#country_code_${index}_0`)?.value || "N/A";
         const mobileNumber = form.querySelector(`#kilvishcontact_${index}_0`)?.value || "N/A";
         const email = form.querySelector(`#email_${index}_0`)?.value || "N/A";
-        const agent = form.querySelector(`#agent_${index}_0`)?.value || "N/A";
+     
+        
+        const agent =  form.querySelector(`#agent_${index}_0`)?.value === "Other" ? form.querySelector(`#otherAgent_${index}_0`)?.value : form.querySelector(`#agent_${index}_0`)?.value
         const appname = form.querySelector(`#appname_${index}_0`)?.value || "N/A";
         const blNumber = form.querySelector(`#blnumber_${index}_0`)?.value || "N/A";
         const vname = form.querySelector(`#vname_${index}_0`)?.value || "N/A";
@@ -936,119 +1121,111 @@ const forms = document.querySelectorAll('.form-container');
 }
 
 
-    function populateConfirmation_forsingleform() {
-        const selectedDateText = selectedDate || "Not selected";
-        const selectedTimesText = selectedTimes.length > 0 ? selectedTimes.join(", ") : "Not selected";
-       // const appointmentType = document.getElementById("appointmentType").value || "N/A";
-
-        const appointmentType = document.getElementById("apppersonal").value || "N/A";
-
-        // Retrieve values from all the required input fields
-        const trn = document.getElementById("trn").value || "N/A";
-        const firstName = document.getElementById("fname").value || "N/A";
-        const lastName = document.getElementById("lname").value || "N/A";
-        const country_code = document.getElementById("country_code").value || "N/A";
-        const mobileNumber = document.getElementById("kilvishcontact").value || "N/A";
-        const email = document.getElementById("email").value || "N/A";
-        const agent = document.getElementById("agent").value || "N/A";
-        const appname = document.getElementById("appname").value || "N/A";
-        const blNumber = document.getElementById("blnumber").value || "N/A";
-        const vname = document.getElementById("vname").value || "N/A";
-        const vreport = document.getElementById("vreport").value || "N/A";
-        const chassis = document.getElementById("chassis").value || "N/A";
-        const ims = document.getElementById("ims").value || "N/A";
-        const cnumber = document.getElementById("cnumber").value || "N/A";
-        const ppnumber = document.getElementById("ppnumber").value || "N/A";
-        const typename = document.getElementById("typename").value || "N/A";
-
-
-
-
-        
-
-        // Set the retrieved values in the confirmation fields
-        document.getElementById("confirmDate").textContent = moment(selectedDateText).format('dddd, MMMM DD, YYYY');
-        document.getElementById("confirmTime").textContent = selectedTimesText;
-        document.getElementById("confirmTRN").textContent = trn;
-        document.getElementById("confirmFirstName").textContent = firstName;
-        document.getElementById("confirmLastName").textContent = lastName;
-        document.getElementById("confirmEmail").textContent = email;
-        document.getElementById("confirmPhone").textContent = `${country_code} ${mobileNumber}`;
-        document.getElementById("confirmAgent").textContent = agent;
-        document.getElementById("confirmAppName").textContent = appname;
-        document.getElementById("confirmAppointmentType").textContent = appointmentType;
-        document.getElementById("typenames").textContent = typename;
-        document.getElementById("confirmBLNumber").textContent = blNumber;
-        document.getElementById("confirmVesselName").textContent = vname;
-        document.getElementById("confirmVesselReportedDate").textContent = vreport;
-        document.getElementById("confirmChassis").textContent = chassis;
-        document.getElementById("confirmIMS").textContent = ims;
-        document.getElementById("confirmContainerNumber").textContent = cnumber;
-        document.getElementById("confirmPPNumber").textContent = ppnumber;
-
-
- // Hide the entire row if the value is "N/A" or empty
- function toggleRowVisibility(fieldId, value) {
-        const row = document.getElementById(fieldId);
-        if (value === "N/A" || value.trim() === "") {
-            row.style.display = "none";
-        } else {
-            row.style.display = "flex";
-        }
-    }
-
-    
-// Toggle visibility for the four rows only based on the value
-                toggleRowVisibility("confirmAppNameRow", appname);
-                toggleRowVisibility("confirmChassisRow", chassis);
-                toggleRowVisibility("confirmIMSRow", ims);
-                toggleRowVisibility("confirmContainerNumberRow", cnumber);
-
-
-        
-    }
-
-
 
     function validateInfo() { return true;
         // return ["fname", "lname", "email", "kilvishcontact"].every(id => document.getElementById(id).value.trim());
     }
 
-    async function loadAppointmentTypes() {
-    const category = document.getElementById('appointmentCategory').value;
+//     async function loadAppointmentTypes() {
+//     const category = document.getElementById('appointmentCategory').value;
 
-    // If no category is selected, skip the loading
-    if (!category) {    
+//     // If no category is selected, skip the loading
+//     if (!category) {    
+//         return;
+//     }
+
+    
+
+    
+
+//     try {
+//         const { data } = await axios.get('/appointment_types');
+//         const appointmentTypeSelect = document.getElementById('appointmentType');
+        
+//         // Clear the current options
+//         appointmentTypeSelect.innerHTML = '<option value="">Select Service</option>';
+        
+//         // Define the appointment IDs based on the category selected
+//         let allowedAppointmentIDs = [];
+
+//         if (category === 'warehouse') {
+//             allowedAppointmentIDs = [
+//                 18478069, 31449943, 13808117, 13808100, 18608838, 
+//                 18608857, 13807845, 13807780, 18608460, 18608635
+//             ];
+//          //   document.getElementById('apppersonal').value = 'Warehouse/Personal Effects Appointment'
+//          type_cat = 'Warehouse/Personal Effects Appointment'
+//         } else if (category === 'motor') {
+//             allowedAppointmentIDs = [
+//                 70702351, 13801622, 16120840, 16581501
+//             ];
+//            // document.getElementById('apppersonal').value = 'Motor Vehicle Appointment'
+//           type_cat  = 'Motor Vehicle Appointment'
+//         }
+
+//         // Filter appointment types based on allowed IDs for the selected category
+//         const filteredTypes = data.filter(type => allowedAppointmentIDs.includes(type.id));
+
+//         // Add filtered options to the select element
+//         filteredTypes.forEach(type => {
+//             const option = document.createElement('option');
+//             option.value = type.id;
+//             option.text = type.name;
+//             option.setAttribute('data-calendar-id', type.calendarIDs[0]);
+//             option.setAttribute('data-type-name', type.name);
+//             option.setAttribute('data-timezone', type.timezone);
+//             option.setAttribute('data-location', type.location);
+
+//             appointmentTypeSelect.add(option);
+//         });
+//     } catch (error) {
+//         console.error('Error loading appointment types:', error);
+//     }
+// }
+
+// // Add an event listener for when the category is selected
+// document.getElementById('appointmentCategory').addEventListener('change', loadAppointmentTypes);
+
+
+async function loadAppointmentTypes() {
+    const category = document.getElementById('appointmentCategory').value;
+    const appointmentTypeSelect = document.getElementById('appointmentType');
+
+    // Disable the second dropdown and show the loader
+    appointmentTypeSelect.disabled = true;
+    appointmentTypeSelect.innerHTML = `<option value="">Loading...</option>`;
+    appointmentTypeSelect.style.background = `url('/images/icons/schedule.gif') no-repeat center center`;
+    appointmentTypeSelect.style.backgroundSize = "20px 20px";
+
+    // If no category is selected, reset and skip the loading
+    if (!category) {
+        appointmentTypeSelect.innerHTML = '<option value="">Select Service</option>';
+        appointmentTypeSelect.disabled = false;
+        appointmentTypeSelect.style.background = '';
         return;
     }
 
-    
-
-    
-
     try {
+        // Fetch appointment types
         const { data } = await axios.get('/appointment_types');
-        const appointmentTypeSelect = document.getElementById('appointmentType');
-        
+
         // Clear the current options
         appointmentTypeSelect.innerHTML = '<option value="">Select Service</option>';
-        
+
         // Define the appointment IDs based on the category selected
         let allowedAppointmentIDs = [];
 
         if (category === 'warehouse') {
             allowedAppointmentIDs = [
-                18478069, 31449943, 13808117, 13808100, 18608838, 
+                18478069, 31449943, 13808117, 13808100, 18608838,
                 18608857, 13807845, 13807780, 18608460, 18608635
             ];
-         //   document.getElementById('apppersonal').value = 'Warehouse/Personal Effects Appointment'
-         type_cat = 'Warehouse/Personal Effects Appointment'
+            type_cat = 'Warehouse/Personal Effects Appointment';
         } else if (category === 'motor') {
             allowedAppointmentIDs = [
                 70702351, 13801622, 16120840, 16581501
             ];
-           // document.getElementById('apppersonal').value = 'Motor Vehicle Appointment'
-          type_cat  = 'Motor Vehicle Appointment'
+            type_cat = 'Motor Vehicle Appointment';
         }
 
         // Filter appointment types based on allowed IDs for the selected category
@@ -1068,11 +1245,27 @@ const forms = document.querySelectorAll('.form-container');
         });
     } catch (error) {
         console.error('Error loading appointment types:', error);
+        alert('Failed to load appointment types. Please try again.');
+    } finally {
+        // Re-enable the second dropdown and remove the loader
+        appointmentTypeSelect.disabled = false;
+        appointmentTypeSelect.style.background = '';
     }
 }
 
 // Add an event listener for when the category is selected
-document.getElementById('appointmentCategory').addEventListener('change', loadAppointmentTypes);
+document.getElementById('appointmentCategory').addEventListener('change', () => {
+    // Disable the second dropdown while loading
+    const appointmentTypeSelect = document.getElementById('appointmentType');
+    appointmentTypeSelect.disabled = true;
+    appointmentTypeSelect.innerHTML = '<option value="">Loading...</option>';
+    appointmentTypeSelect.style.background = `url('/images/icons/schedule.gif') no-repeat center center`;
+    appointmentTypeSelect.style.backgroundSize = "20px 20px";
+
+    // Load appointment types
+    loadAppointmentTypes();
+});
+
 
 
     // Add this function to define renderAvailableDates
@@ -1550,17 +1743,20 @@ function addErrorMessage(container, message) {
 
 // Function to handle the booking confirmation with OTP verification and final confirmation
 async function confirmBooking() {
-    const email = document.getElementById("email").value;
-    const csrfToken = document.querySelector('input[name="_csrf"]').value;
+  
 
     const loggeduserData = document.getElementById('loggeduserData').value;
 const loggeduser = loggeduserData ? JSON.parse(loggeduserData) : null;
 
         if (typeof loggeduser !== 'undefined' && loggeduser) {
         // If logged in, directly confirm booking without OTP
-        await directConfirmBooking(email);
+        await directConfirmBooking(loggeduser.user_email);
         return;
     }
+
+
+    const email = document.getElementById("email").value;
+    const csrfToken = document.querySelector('input[name="_csrf"]').value;
 
     // Initial SweetAlert OTP input screen with loader
     Swal.fire({
@@ -1660,8 +1856,340 @@ async function verifyOTP() {
     }
 }
 
+
+const directConfirmBooking = async () => {
+  const forms = getBookingForms(); // Assume this retrieves all form data as an array
+  const totalForms = forms.length;
+
+  // Initialize SweetAlert modal with booking details and placeholders for booking status icons
+  Swal.fire({
+    title: 'Booking Progress',
+    html: forms
+      .map((form, index) => {
+        const formattedDateTime = moment
+          .tz(form.selectedTime, form.timezone)
+          .format('dddd, MMMM DD, YYYY, h:mm A'); // Format the selectedTime with timezone
+
+        return `
+          <hr style="border: 1px solid green;">
+          <div id="form-${index}" class="form-progress" style="text-align: center;">
+            <p><strong>Booking ${index + 1}: ${formattedDateTime}</strong></p>
+            <div id="status-icon-${index}" class="status-icon">
+              <img src="/images/icons/booking.gif" alt="Booking in Progress" style="width: 50px; height: 50px;" />
+            </div>
+            <p id="status-text-${index}" style="margin-top: 10px; font-weight: bold; color: #000;">Starting Booking</p>
+          </div>
+          <br>
+        `;
+      })
+      .join(''),
+    showConfirmButton: false,
+    allowOutsideClick: false,
+  });
+
+  // Function to update status icons and result text
+  const updateStatus = (index, success, message) => {
+    const statusIcon = document.getElementById(`status-icon-${index}`);
+    const statusText = document.getElementById(`status-text-${index}`);
+
+    // Update icon
+    statusIcon.innerHTML = `
+      <img src="/images/icons/${success ? 'calendar_success.png' : 'calendar_failed.png'}" 
+           alt="${success ? 'Booking Successful' : 'Booking Failed'}" 
+           style="width: 50px; height: 50px;" />
+    `;
+
+    // Update message
+    statusText.style.color = success ? 'green' : 'red';
+    statusText.textContent = message;
+  };
+
+  // Function to process a single booking
+  const processBooking = async (form, index) => {
+    try {
+      const response = await axios.post('/multibooking', form, {
+        headers: {
+          'Content-Type': 'application/json',
+          'CSRF-Token': form._csrf, // Sending the CSRF token
+        },
+      });
+
+      if (response.data.success) {
+        updateStatus(index, true, 'Booking Successfully');
+      } else {
+        updateStatus(index, false, response.data.message || 'Booking Failed');
+      }
+    } catch (error) {
+      updateStatus(index, false, error.response?.data?.message || error.message || 'Error occurred while booking');
+    }
+  };
+
+  // Sequentially process bookings
+  for (let i = 0; i < totalForms; i++) {
+    await processBooking(forms[i], i); // Process each form one by one
+  }
+
+  // After processing all bookings, allow closing the modal
+  Swal.fire({
+    title: 'All Bookings Processed',
+    html: document.querySelector('.swal2-html-container').innerHTML, // Retain all icons and messages
+    showConfirmButton: true,
+    confirmButtonText: 'Close',
+    allowOutsideClick: true,
+  });
+};
+
+
+
+
+const directConfirmBooking_withgifs = async () => {
+  const forms = getBookingForms(); // Assume this retrieves all form data as an array
+  const totalForms = forms.length;
+
+  // Initialize SweetAlert modal with booking details and placeholders for booking status icons
+  Swal.fire({
+    title: 'Booking Progress',
+    html: forms
+      .map((form, index) => {
+        const formattedDateTime = moment
+          .tz(form.selectedTime, form.timezone)
+          .format('dddd, MMMM DD, YYYY, h:mm A'); // Format the selectedTime with timezone
+
+        return `
+          <hr style="border: 1px solid green;">
+          <div id="form-${index}" class="form-progress" style="text-align: center;">
+            <p><strong>Booking ${index + 1}: ${formattedDateTime}</strong></p>
+            <div id="status-icon-${index}" class="status-icon">
+              <img src="/images/icons/booking.gif" alt="Booking in Progress" style="width: 50px; height: 50px;" />
+              <p id="status-text-${index}" style="margin-top: 10px; font-weight: bold; color: #000;">Starting Booking</p>
+            </div>
+          </div>
+          <br>
+        `;
+      })
+      .join(''),
+    showConfirmButton: false,
+    allowOutsideClick: false,
+  });
+
+  // Function to update status icons and result text
+  const updateStatus = (index, success, message) => {
+    const statusIcon = document.getElementById(`status-icon-${index}`);
+    const statusText = document.getElementById(`status-text-${index}`);
+
+    // Update icon and message
+    statusIcon.innerHTML = `
+      <img src="/images/icons/${success ? 'calendar_success.png' : 'calendar_failed.png'}" 
+           alt="${success ? 'Booking Successful' : 'Booking Failed'}" 
+           style="width: 50px; height: 50px;" />
+    `;
+    statusText.style.color = success ? 'green' : 'red';
+    statusText.textContent = message;
+  };
+
+  // Function to process a single booking
+  const processBooking = async (form, index) => {
+    try {
+      const response = await axios.post('/multibooking', form, {
+        headers: {
+          'Content-Type': 'application/json',
+          'CSRF-Token': form._csrf, // Sending the CSRF token
+        },
+      });
+
+      if (response.data.success) {
+        updateStatus(index, true, 'Booking Successfully');
+      } else {
+        updateStatus(index, false, response.data.message || 'Booking Failed');
+      }
+    } catch (error) {
+      updateStatus(index, false, error.response?.data?.message || error.message || 'Error occurred while booking');
+    }
+  };
+
+  // Sequentially process bookings
+  for (let i = 0; i < totalForms; i++) {
+    await processBooking(forms[i], i); // Process each form one by one
+  }
+
+  // After processing all bookings, allow closing the modal
+  Swal.fire({
+    title: 'All Bookings Processed',
+    html: document.querySelector('.swal2-html-container').innerHTML, // Retain all icons and messages
+    showConfirmButton: true,
+    confirmButtonText: 'Close',
+    allowOutsideClick: true,
+  });
+};
+
+
+
+
+const directConfirmBooking_progressbar = async () => {
+  const forms = getBookingForms(); // Assume this retrieves all form data as an array
+  const totalForms = forms.length;
+
+  // Initialize SweetAlert modal with booking details and placeholders for progress bars
+  Swal.fire({
+    title: 'Booking Progress',
+    html: forms
+      .map((form, index) => {
+        const formattedDateTime = moment
+          .tz(form.selectedTime, form.timezone)
+          .format('dddd, MMMM DD, YYYY, h:mm A'); // Format the selectedTime with timezone
+
+        return `
+          <hr style="border: 1px solid green;">
+          <div id="form-${index}" class="form-progress">
+            <p><strong>Booking ${index + 1}: ${formattedDateTime}</strong></p>
+            <div class="progress-bar-container" style="position: relative; width: 100%; height: 25px; background: #f0f0f0; border-radius: 5px; overflow: hidden; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+              <div id="progress-bar-fill-${index}" 
+                   style="position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: yellow; color: black; font-weight: bold; display: flex; align-items: center; justify-content: center;">
+              </div>
+            </div>
+            <p id="form-result-${index}" class="form-result" style="margin-top: 10px; font-size: 14px; text-align: center;"></p>
+          </div>
+          <br>
+        `;
+      })
+      .join(''),
+    showConfirmButton: false,
+    allowOutsideClick: false,
+  });
+
+  // Add CSS animation for yellow progress bar
+  const styleSheet = document.createElement('style');
+  styleSheet.type = 'text/css';
+  styleSheet.innerHTML = `
+    @keyframes loadingAnimation {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+    .yellow-animation {
+      animation: loadingAnimation 3s linear forwards;
+    }
+    .success-animation {
+      background-color: green !important;
+    }
+    .failure-animation {
+      background-color: red !important;
+    }
+  `;
+  document.head.appendChild(styleSheet);
+
+  // Function to update progress bar and result text
+  const updateProgress = (index, success, message) => {
+    const progressFill = document.getElementById(`progress-bar-fill-${index}`);
+    const resultText = document.getElementById(`form-result-${index}`);
+
+    // Stop yellow animation and update to green or red
+    progressFill.classList.remove('yellow-animation');
+    progressFill.style.width = '100%';
+    progressFill.classList.add(success ? 'success-animation' : 'failure-animation');
+    progressFill.textContent = success ? '✔ Booking Successfully' : '✖ Booking Failed';
+
+    // Update result text below the progress bar
+    resultText.innerHTML = `
+      <span style="color: ${success ? 'green' : 'red'}; font-weight: bold;">
+        ${message}
+      </span>
+    `;
+  };
+
+  // Function to process a single booking
+  const processBooking = async (form, index) => {
+    const progressFill = document.getElementById(`progress-bar-fill-${index}`);
+    progressFill.textContent = 'Starting Booking';
+    progressFill.classList.add('yellow-animation'); // Start yellow animation
+
+    try {
+      const response = await axios.post('/multibooking', form, {
+        headers: {
+          'Content-Type': 'application/json',
+          'CSRF-Token': form._csrf, // Sending the CSRF token
+        },
+      });
+
+      if (response.data.success) {
+        updateProgress(index, true, 'Booking Successfully');
+      } else {
+        updateProgress(index, false, response.data.message || 'Booking Failed');
+      }
+    } catch (error) {
+      updateProgress(index, false, error.response?.data?.message || error.message || 'Error occurred while booking');
+    }
+  };
+
+  // Sequentially process bookings
+  for (let i = 0; i < totalForms; i++) {
+    await processBooking(forms[i], i); // Process each form one by one
+  }
+
+  // After processing all bookings, allow closing the modal
+  Swal.fire({
+    title: 'All Bookings Processed',
+    html: document.querySelector('.swal2-html-container').innerHTML, // Retain all progress bars and messages
+    showConfirmButton: true,
+    confirmButtonText: 'Close',
+    allowOutsideClick: true,
+  });
+};
+
+
+
+
+
+const getBookingForms = () => {
+  const forms = [];
+  const formsContainer = document.getElementById('formsContainer');
+  const formElements = formsContainer.querySelectorAll('.form-container form'); // Select all forms
+
+  formElements.forEach((form, index) => {
+console.log("form before formdata -> ",form)
+
+    const agentForwarder = form.querySelector(`#agent_${index}_0`)?.value === "Other"
+      ? form.querySelector(`#otherAgent_${index}_0`)?.value
+      : form.querySelector(`#agent_${index}_0`)?.value;
+
+    const formData = {
+        _csrf: form.querySelector('[name="_csrf"]').value, // Include the CSRF token
+      trn: form.querySelector('[name="trn"]').value,
+      firstname: form.querySelector('[name="firstname"]').value,
+      lastname: form.querySelector('[name="lastname"]').value,
+      contact: form.querySelector('[name="contact"]').value,
+      country_code: form.querySelector('[name="country_code"]').value,
+      user_email: form.querySelector('[name="user_email"]').value,
+      agent_forwarder: agentForwarder, // Use the corrected agent forwarding logic
+      appointment_by: form.querySelector('[name="appointment_by"]').value,
+      bol_number: form.querySelector('[name="bol_number"]').value,
+      vessel_name: form.querySelector('[name="vessel_name"]').value,
+      vessel_reported_date: form.querySelector('[name="vessel_reported_date"]').value,
+      chassis_number: form.querySelector('[name="chassis_number"]').value,
+      declaration_number: form.querySelector('[name="declaration_number"]').value,
+      container_number: form.querySelector('[name="container_number"]').value,
+      number_of_items: form.querySelector('[name="number_of_items"]').value,
+      calendarID: form.querySelector('[name="calendarId"]').value,
+      typename: form.querySelector('[name="typename"]').value,
+      appointment_type: form.querySelector('[name="appointment_type"]').value,
+      selectedTime: form.querySelector('[name="selectedTime"]').value,
+      timezone: selectedTimezone, // Add the timezone dynamically
+      appointmentTypeID: document.getElementById("appointmentType").value,
+      selectedDateTimes :selectedDateTimes,
+      booking_date: selectedDate,  // Add the selected date
+        booking_times: selectedTimes, // Add the selected times
+    };
+
+
+    console.log("form after formdata -> ",formData)
+    forms.push(formData); // Add the extracted data to the forms array
+  });
+
+  return forms; // Return the array of form data
+};
+
+
 // Function to handle direct booking confirmation
-async function directConfirmBooking(email) {
+async function directConfirmBookingworking(email) {
   
     const csrfToken = document.querySelector('input[name="_csrf"]').value;
     try {
@@ -1732,6 +2260,7 @@ async function directConfirmBooking(email) {
         Swal.fire('Error', 'Internal Server Error, Please try again later.', 'error');
     }
 }
+
 
 
 
@@ -1864,7 +2393,7 @@ async function directConfirmBooking(email) {
    });
    
    
-   function validateKilvishInput(event) { return true;
+   function validateKilvishInput(event) { 
   
           const inputField = event.target;
 
