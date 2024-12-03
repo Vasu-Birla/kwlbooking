@@ -36,7 +36,7 @@ const sendTokenAdminlogoutandProceed = async (admin, statusCode, res)=>{
       const options = {
         expires: new Date(Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000),
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // Use Secure flag only in production
+        //secure: process.env.NODE_ENV === 'production', // Use Secure flag only in production
         sameSite: 'Strict', // Optional: Prevents CSRF attacks by limiting cross-site cookie usage
       };
   // // Send token in JSON response
@@ -76,7 +76,7 @@ const sendTokenAdmin = async (admin, statusCode, res,pool) => {
       const options = {
         expires: new Date(Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000),
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // Use Secure flag only in production
+       // secure: process.env.NODE_ENV === 'production', // Use Secure flag only in production
         sameSite: 'Strict', // Optional: Prevents CSRF attacks by limiting cross-site cookie usage
       };
   
