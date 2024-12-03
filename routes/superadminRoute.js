@@ -16,7 +16,15 @@ import { login , home, error404, error500, loginAdmin,profile,profilePost,logout
   updateBooking,
   reports,
   auditLogs,
-  logoutandProceed
+  logoutandProceed,
+  addAgent,
+  checkagentemail,
+  checkagentphonenumber,
+  checkagentusername,
+  viewAgents,
+  updateAgent,
+  changeAgentStatus,
+  deleteAgent
 } from "../controllers/superadminController.js";
 import { isAuthenticatedAdmin } from "../middleware/Adminauth.js";
 
@@ -111,7 +119,38 @@ router.route('/reports').post(isAuthenticatedAdmin,reports)
 router.route('/auditLogs').get(isAuthenticatedAdmin,auditLogs)
 //-----------------
 
-//--------------- Admin section End -------------------------------
+
+
+//----------- add Agent -------------
+
+router.route('/addAgent').get(isAuthenticatedAdmin,addAgent)
+
+router.route('/addAgent').post(isAuthenticatedAdmin,addAgent)
+
+
+
+
+router.route('/checkagentemail').post(isAuthenticatedAdmin,checkagentemail)
+
+router.route('/checkagentphonenumber').post(isAuthenticatedAdmin,checkagentphonenumber)
+
+
+router.route('/checkagentusername').post(isAuthenticatedAdmin,checkagentusername)
+
+
+router.route('/viewAgents').get(isAuthenticatedAdmin,viewAgents)
+
+router.route('/updateAgent').post(isAuthenticatedAdmin,updateAgent)
+
+router.route('/changeAgentStatus').post(isAuthenticatedAdmin,changeAgentStatus)
+
+router.route('/deleteAgent').post(isAuthenticatedAdmin,deleteAgent)
+
+
+
+
+
+//============================================ Admin section End -------------------------------
 
 
 router.route('/error404').get(error404);

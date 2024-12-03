@@ -1,0 +1,877 @@
+
+    
+    
+ <%- include ("header.ejs") %>
+
+<%- include ("sidebar.ejs") %>
+
+<style>
+
+
+div:where(.swal2-container) .swal2-html-container {
+    overflow: visible !important;
+}
+
+    
+/* Adjust table layout on smaller screens */
+div[style*="overflow-x: auto;"] {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+/* Make table responsive for mobile screens */
+@media (max-width: 768px) {
+    table {
+        font-size: 12px;
+    }
+
+    th, td {
+        padding: 6px;
+    }
+}
+
+
+
+
+
+.action-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.action-links li {
+  margin-bottom: 8px;
+}
+
+.action-links a {
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease-in-out;
+}
+
+.action-links a:hover {
+  text-decoration: underline;
+}
+
+.status-label {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.text-info {
+  color: #17a2b8;
+}
+
+.text-warning {
+  color: #ffc107;
+}
+
+.text-danger {
+  color: #dc3545;
+}
+
+
+</style>
+    
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>View Appointment</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="/superadmin">Dashboard</a></li>
+                            <li class="breadcrumb-item active">View Appointment</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+
+                         
+       <!-- alert msgs -->
+       <% if ( output.includes('successfully') ) { %>
+        <p id="kilmessage" class="success-text"><%= output %></p>
+     <% } else { %>
+        <p id="kilmessage" class="error-text"><%= output %></p>
+     <% } %>
+       <!-- /alert msgs -->
+
+       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+                              
+
+                                <table id="example1" class="table table-striped table-bordered dataTable no-footer" style="width:100%" role="grid" aria-describedby="example_info">
+                                    <thead>
+                                         <tr role="row">
+                                            <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-label="Day: activate to sort column ascending" style="width: auto">S.No</th>
+                                          <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-label="Day: activate to sort column ascending" style="width: 70px">Name</th>
+                                          <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-label="Gross: activate to sort column ascending" style="width: 60px">Email</th>
+                                          <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-label="Net: activate to sort column ascending" style="width: 50px">Customer Image</th>
+                                          <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-label="Net: activate to sort column ascending" style="width: auto">Status</th>
+                                          <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-label="Action: activate to sort column ascending" style="width: 190px">Action</th>
+                                        </tr>
+                                    </thead>
+                                       <div class="table-responsive">
+                                          </div>
+                                     
+            
+                                          <tbody>
+                                            <% agents.forEach((agent, index) => { %>
+                                            <tr>
+                                                <td><%= index + 1 %></td>
+                                                <td><%= agent.first_name %> <%= agent.last_name %></td>
+                                                <td> <%= agent.email	 %> </td>
+                                               
+                                         
+                                           
+                                                <td>
+                                                    <% if (agent.image) { 
+                                                        let images = agent.image.split(','); // Split the comma-separated images
+                                                    %>
+                                                        <!-- Show only the first image in the table -->
+                                                        <a href="javascript:void(0);" onclick="openImageSlideshow('<%= images.join(',') %>')">
+                                                            <img class="img-circle" src="../images/profiles/<%= images[0] %>" alt="Image" style="width:50px; height:50px;">
+                                                        </a>
+                                                    <% } else { %>
+                                                        No image
+                                                    <% } %>
+                                                </td>
+            
+                                                                               
+            
+            
+                                                <td class="status-container" data-user-id="<%=  agent.admin_id %>" data-user-status="<%= agent.status %>">
+                                                    <div >
+                                                
+                                                      <% if (agent.status == 'Active') { %>
+                                                        <img src="../images/icons/active.png" class="status-image" style="width:30px;height:30px;">
+                                                    <% } else if (agent.status == 'Pending') { %>
+                                                        <!-- Add an image for Pending status here -->
+                                                        <img src="../images/icons/pending.png" class="status-image" style="width:30px;height:30px;">
+                                                    <% } else { %>
+                                                        <img src="../images/icons/inactive.png" class="status-image" style="width:30px;height:30px;">
+                                                    <% } %>
+            
+                                                      <div class="status-overlay"></div>
+                                                    </div>
+                                                                       
+                                                  
+                                                    <% if (agent.status == 'Active') { %>
+                                                      <p id="msg<%=  agent.admin_id %>" style="color: orange;"></p>
+                                                      <p class="kilstatus" style="color: green;"> Activated</p>
+                                                    <% } else if (agent.status == 'Pending') { %>
+                                                      <p id="msg<%=  agent.admin_id %>" style="color: green !important;"></p>
+                                                      <p class="kilstatus" style="color: #a6ad96;"> Pending</p>
+                                                    <% } else { %>
+                                                      <p id="msg<%=  agent.admin_id %>" style="color: green !important;"></p>
+                                                      <p class="kilstatus" style="color: red;"> Inactivated</p>
+                                                    <% } %>                   
+                                                
+                            
+                                                  </td> 
+                                                  
+                                                  
+                                                  <td>
+                                                    <div class="dropdown">
+                                                      <button class="dropdown-toggle" type="button" data-toggle="dropdown" style="border: none;background: #fff0;">
+                                                        <img src="../Images/icons/setting.png" style="width:30px;height:30px;">
+                                                      </button>
+                                                      <ul class="dropdown-menu">
+                                                        <li><a href="#" onclick="updateAgent('<%= agent.admin_id %>', '<%= JSON.stringify(agent) %>')" data-toggle="tooltip" title="Update"><img src="../Images/icons/edit-doc.png" style="width:30px;height:30px;"></a></li>
+                                                        <% if (agent.status === 'Active') { %>
+                                                          <li><a href="#" onclick="changeAgentStatus('<%= agent.admin_id  %>', 'Inactive', '<%= agent.first_name %>')" data-toggle="tooltip" title="Inactive"><img src="../Images/icons/inactive.png" style="width:30px;height:30px;"></a></li>
+                                                        <% } else { %>
+                                                          <li><a href="#" onclick="changeAgentStatus('<%= agent.admin_id  %>', 'Active', '<%= agent.first_name %>')" data-toggle="tooltip" title="Active"><img src="../Images/icons/active.png" style="width:30px;height:30px;"></a></li>
+                                                        <% } %>
+                                                        <li><a href="#"  onclick="deleteAgent('<%= agent.admin_id  %>', '<%= agent.first_name  %>')" data-toggle="tooltip" title="Delete"><img src="../Images/icons/delete.png" style="width:30px;height:30px;"></a></li>
+                                                      </ul>
+                                                    </div>
+                                                  </td>
+                            
+
+
+            
+                                            
+                                             
+                                            </tr>
+                                            <% }) %>
+                                        </tbody>
+            
+            
+            
+                                        </table>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+<%- include ("footer.ejs") %>
+
+
+
+
+
+    <script>
+
+document.addEventListener("DOMContentLoaded", function() {
+            document.cookie = 'kwl_msg'+'=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/';
+            document.cookie = 'kwl_msg'+'=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+            document.cookie = 'kwl_booking_id'+'=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+       
+    });
+
+
+  //-------------- Comman Kilvish Function for input validation start ---------------------
+
+     
+   
+  function validateRequiredFields(kil) {
+
+const form = document.querySelector(`${kil}`); 
+const inputs = form.querySelectorAll('input[required], select[required], textarea[required]'); // Get only required inputs
+let isValid = true;
+
+
+
+// Remove previous error messages and borders
+form.querySelectorAll('.error-message').forEach(errorMsg => errorMsg.remove());
+inputs.forEach(input => {
+    input.style.border = ''; // Reset borders
+});
+
+inputs.forEach(input => {
+    if (!input.value.trim()) {  // If the required field is empty
+        isValid = false;
+        input.style.border = '1px solid red'; // Set border to red for empty required fields
+        addErrorMessage(input.parentNode, "This Field is Required."); // Add error message
+    }
+});
+
+return isValid;
+}
+
+// Add real-time validation for each required field
+function addRealTimeValidation(kil) {
+const form = document.querySelector(`${kil}`); 
+const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+
+inputs.forEach(input => {
+ // Listen for 'input' and 'change' events on required fields
+ input.addEventListener('input', function () {
+     if (input.value.trim()) {
+         // If the input is filled, remove red border and error message
+         input.style.border = '';
+         const errorMessage = input.parentNode.querySelector('.error-message');
+         if (errorMessage) {
+             errorMessage.remove();
+         }
+     }
+ });
+ input.addEventListener('change', function () {
+     if (input.value.trim()) {
+         // For select fields, check if an option is selected
+         input.style.border = '';
+         const errorMessage = input.parentNode.querySelector('.error-message');
+         if (errorMessage) {
+             errorMessage.remove();
+         }
+     }
+ });
+});
+}
+
+
+
+
+// Combined validation function
+function validateForm(kil) {
+
+if(!validateRequiredFields(kil)){
+  event.preventDefault();
+}
+}
+
+// Add real-time validation once the document is loaded
+document.addEventListener('DOMContentLoaded', () => {
+addRealTimeValidation('#kilfrom');  // Activate real-time validation
+});
+
+
+
+
+function validateKilvishInput(event) {
+    const inputField = event.target;
+
+    // General valid character sets
+    // let validCharacters = /^[a-zA-Z0-9@,._\s-]*$/;
+
+    let validCharacters = /^[a-zA-Z\s]*$/; // only char, no special char no numbers 
+
+    // Define allowed image file types
+    const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/tiff', 'image/webp', 'image/svg+xml'];
+
+    // Use parentNode for regular inputs, container for checkboxes
+    const container = inputField.closest('.col-lg-12') || inputField.closest('.form-group') || inputField.closest('div');
+    const inputParent = inputField.parentNode;
+
+    // Remove previous error message and border
+    let errorMessage = inputParent.querySelector('.error-message');
+    if (errorMessage) errorMessage.remove();
+    inputField.style.border = ''; // Reset border
+
+    // Custom validations based on input name
+    if (inputField.name === 'description') {
+        validCharacters = /^[a-zA-Z0-9@,._\s-'"*]*$/;
+
+        // Check length limit
+        if (inputField.value.length > 400) {
+            addErrorMessage(inputParent, 'Input exceeds the maximum length of 400 characters!');
+            inputField.style.border = '1px solid red';
+            inputField.value = inputField.value.substring(0, 400); // Truncate the input
+            return;
+        }
+    } else if (inputField.name === 'contact' || inputField.name === 'contact') {
+        // Only numbers allowed, between 7 and 10 digits
+        validCharacters = /^\d{7,10}$/;
+    }else if (inputField.name === 'age') {
+        // Only numbers allowed, between 7 and 10 digits
+        validCharacters = /^\d{2,2}$/;
+          // Custom validation: Ensure age is 18 or above
+              if (inputField.value && parseInt(inputField.value) < 18 && event.type === 'change') {
+                  addErrorMessage(inputParent, 'Age must be 18 or above!');
+                  inputField.style.border = '1px solid red';
+                  inputField.value = ''; // Clear the input field if age is below 18
+                  return;
+              }else if(inputField.value && parseInt(inputField.value) < 18 ){
+                addErrorMessage(inputParent, 'Age must be 18 or above!');
+                  inputField.style.border = '1px solid red';                 
+
+              }
+            }else if (inputField.name === 'job_exp') {
+               // Only numbers allowed, between 7 and 10 digits
+               validCharacters = /^\d{1,2}$/;
+            }else if(inputField.type ==='email'){
+               validCharacters = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/; // Basic email pattern
+            }else if(inputField.type ==='password'){
+
+                            const hasSequentialChars = (password) => {
+                                 console.log("passworddddddd -", password)
+                                 const length = password.length;
+                                 
+                                 // Check for ascending sequences (e.g., "123", "abc")
+                                 for (let i = 0; i < length - 3; i++) {
+                                    if (password.charCodeAt(i + 1) === password.charCodeAt(i) + 1 &&
+                                          password.charCodeAt(i + 2) === password.charCodeAt(i) + 2 &&
+                                          password.charCodeAt(i + 3) === password.charCodeAt(i) + 3) {
+                                          return true; // Ascending sequence found
+                                    }
+                                 }
+
+                                 // Check for descending sequences (e.g., "321", "cba")
+                                 for (let i = 0; i < length - 3; i++) {
+                                    if (password.charCodeAt(i + 1) === password.charCodeAt(i) - 1 &&
+                                          password.charCodeAt(i + 2) === password.charCodeAt(i) - 2 &&
+                                          password.charCodeAt(i + 3) === password.charCodeAt(i) - 3) {
+                                          return true; // Descending sequence found
+                                    }
+                                 }
+                                 
+                                 return false; // No sequential characters
+                              };
+
+               
+
+               validCharacters = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{12,}$/;
+
+
+                                          // Check if password meets the required pattern
+                           if (!validCharacters.test(inputField.value)) {
+                              addErrorMessage(inputParent, 'Password must be at least 12 characters long and contain at least one uppercase letter, one lowercase letter, one special character, and one number.');
+                              inputField.style.border = '1px solid red';
+                              if (event.type === 'change') {   inputField.value = '';  }
+                              return; // Stop further validation
+                           }
+
+                           // Check for sequential characters
+                           if (hasSequentialChars(inputField.value)) {
+                              addErrorMessage(inputParent, 'Password should not contain sequential characters.');
+                              inputField.style.border = '1px solid red';
+                                 if (event.type === 'change') {   inputField.value = '';  }
+                              return; // Stop further validation
+                           }
+
+
+                           // Function to check for sequential characters in the password
+                 
+                                                   
+
+
+
+            }
+              
+
+            
+
+
+
+    // Handle file input validation
+    if (inputField.type === 'file') {
+        const file = inputField.files[0];
+        if (file && !validImageTypes.includes(file.type)) {
+            addErrorMessage(inputParent, 'Please select a valid image file (JPEG, PNG, etc.)');
+            inputField.value = ''; // Clear the file input field
+            inputField.style.border = '1px solid red';
+            return;
+        }
+    } else {
+        // For normal text/number input validation
+        if (event.type === 'keyup') {
+            if (!validCharacters.test(inputField.value)) {
+                addErrorMessage(inputParent, 'Invalid character entered!');
+                inputField.style.border = '1px solid red';
+                
+            }
+        }
+
+        if (event.type === 'change') {
+            if (!validCharacters.test(inputField.value)) {
+                // On invalid input during change event, clear the field and show an error
+                inputField.value = ''; // Clear invalid input
+                addErrorMessage(inputParent, 'Invalid character or format!');
+                inputField.style.border = '1px solid red';
+            } else {
+                // Clear error when value is corrected
+                inputField.style.border = '';
+                if (errorMessage) errorMessage.remove();
+            }
+        }
+    }
+}
+
+// Function to display error messages under the input field or container for checkboxes
+function addErrorMessage(parent, message) {
+    if (!parent.querySelector('.error-message')) {
+        const errorMessage = document.createElement('div');
+        errorMessage.className = 'error-message';
+        errorMessage.style.color = 'red';
+        errorMessage.style.fontSize = '12px';
+        errorMessage.innerText = message;
+        parent.appendChild(errorMessage);
+    }
+}
+
+
+
+
+
+//-------------- Comman Kilvish Function for input validation End ---------------------
+
+
+
+</script>
+
+<script>
+
+
+document.addEventListener("DOMContentLoaded", function() {
+            document.cookie = 'kwl_msg'+'=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/';
+            document.cookie = 'kwl_msg'+'=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+            document.cookie = 'kwl_user'+'=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/';
+            document.cookie = 'kwl_user'+'=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+            
+            document.cookie = 'kwl_admin_id'+'=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+       
+    });
+
+
+    let csrfToken = document.querySelector('input[name="_csrf"]').value;
+
+//================== start Update =========================
+
+function updateAgent(admin_id, agent) {
+    agent = JSON.parse(agent);
+
+    // Create the form structure for editing inside SweetAlert
+    const htmlForm = `
+        <div style="position: relative;">
+            <!-- Close (X) Button -->
+            <button type="button" class="swal2-close" onclick="Swal.close()" aria-label="Close" style="position: absolute; top: -10px; right: -10px; background: transparent; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+        </div>
+        <form id="kileditfrom" action="/superadmin/updateAgent" method="POST" >
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="hidden" name="admin_id" value="${admin_id}">   
+            <div class="form-group" style="text-align: left;">
+                 <label>First Name</label>
+                 <input onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" type="text" name="first_name" class="form-control" value="${agent.first_name}"  placeholder="Enter First Name" required>
+            </div>
+
+            <div class="form-group" style="text-align: left;">
+                <label>Last Name</label>
+                 <input onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" type="text" name="last_name"  class="form-control" value="${agent.last_name}"  placeholder="Enter Last Name" required>
+            </div>
+
+            <div class="form-group" style="text-align: left;">
+                <label>Email ID</label>
+                <input type="email" name="email" class="form-control" id="emailInput" placeholder="Enter email" value="${agent.email}" readonly required>
+                <div id="kilErrorupdate" style="color: red;"></div>
+            </div>
+
+            <div class="form-group" style="text-align: left;">
+                <label for="exampleInputPassword" class="form-control-label">Mobile Number</label>
+                <input type="tel" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" name="contact" id="kilvishcontact" value="${agent.contact}" class="form-control cc text-left prof-boxes" placeholder="Contact Number" required>
+                <input type="hidden" id="fullkilvishcontact" name="fullkilvishcontact">
+                <input type="hidden" id="country_code" name="country_code">
+                <div id="errorText1" style="color: red;"></div>
+            </div>
+
+        
+
+            <div style="display: flex; justify-content: space-between;">
+                <button type="button" class="btn btn-secondary" onclick="Swal.close()">Cancel</button>
+                <button type="submit" onclick="validateForm('#kileditfrom')" class="btn btn-success">Update</button>
+            </div>
+        </form>
+    `;
+
+    // Open SweetAlert with the form
+    Swal.fire({
+        title: `<span style="font-size: 16px;">Update User : ${agent.first_name}</span>`,
+        html: htmlForm,
+        showConfirmButton: false, // Disable default SweetAlert buttons, use form's submit buttons instead
+        focusCancel: true,
+        customClass: {
+            popup: 'my-popup-class' // Add a custom class for the popup
+        },
+        allowOutsideClick: false, // Disable closing by clicking outside
+        didOpen: () => {
+            // Now initialize intlTelInput when the modal has fully opened
+            var input = document.querySelector("#kilvishcontact");
+            var savedCountryCode = agent.country_code || '';  // Use saved country code from user data
+            var savedPhoneNumber = agent.contact || '';  // Use saved phone number from user data
+
+            var iti = window.intlTelInput(input, {
+                preferredCountries: ["jm", "us"], // Customize based on your needs
+                separateDialCode: true,
+                initialCountry: "auto",
+                nationalMode: false, // Ensure the number is shown without spaces
+        formatOnDisplay: false, // Disable auto-formatting on display
+                geoIpLookup: function(success, failure) {
+                    fetch('https://ipinfo.io/json', {cache: 'reload'}).then(resp => resp.json()).then(resp => {
+                        var countryCode = (resp && resp.country) ? resp.country : "hk";
+                        success(countryCode);
+                    }).catch(() => success("hk"));
+                },
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.min.js", // Utility script
+            });
+
+            if (savedCountryCode && savedPhoneNumber) {
+                // Combine country code and phone number if available
+                iti.setNumber(savedCountryCode + savedPhoneNumber);
+            }
+
+            // Update hidden input field with full phone number
+            input.addEventListener("input", function() {
+                var fullPhoneNumber = iti.getNumber();
+                var countryCode = '+' + iti.getSelectedCountryData().dialCode;
+                document.querySelector("#fullkilvishcontact").value = fullPhoneNumber;
+                document.querySelector("#country_code").value = countryCode;
+            });
+
+            input.addEventListener("countrychange", function() {
+                var fullPhoneNumber = iti.getNumber();
+                var countryCode = '+' + iti.getSelectedCountryData().dialCode;
+                document.querySelector("#fullkilvishcontact").value = fullPhoneNumber;
+                document.querySelector("#country_code").value = countryCode;
+            });
+
+            // Initialize hidden field with the current value on page load
+            var fullPhoneNumber = iti.getNumber();
+            var countryCode = '+' + iti.getSelectedCountryData().dialCode;
+            document.querySelector("#fullkilvishcontact").value = fullPhoneNumber;
+            document.querySelector("#country_code").value = countryCode;
+        }
+    });
+
+    // Add real-time validation for inputs (reuse the existing validation)
+    addRealTimeValidation('#kileditfrom'); // Ensure real-time validation works with the new modal form
+}
+
+
+
+// document.addEventListener("DOMContentLoaded", function() {
+//         var input = document.querySelector("#kilvishcontact");
+//         var savedCountryCode = document.getElementById("country_code").value;
+//         var savedPhoneNumber = document.getElementById("kilvishcontact").value;
+        
+//         var iti = window.intlTelInput(input, {
+//           preferredCountries: ["hk", "cn"], // Customize based on your needs
+//           separateDialCode: true,
+//           initialCountry: "hk",
+//           utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.min.js", // Utility script
+//         });
+
+
+//               // Set only country based on the saved country code from database
+//       // if (savedCountryCode) {
+//       //   iti.setNumber(savedCountryCode);  // This sets the phone number with the country code
+//       // }
+
+
+//   var fullPhoneNumber = savedCountryCode + savedPhoneNumber;
+
+//   if (savedCountryCode && savedPhoneNumber) {
+//     iti.setNumber(fullPhoneNumber);  // This sets both the country code and the phone number
+//   }
+
+
+//     // Update hidden input field with full phone number
+//     input.addEventListener("input", function() {
+//       var fullPhoneNumber = iti.getNumber();
+//       var countryCode =   '+'+iti.getSelectedCountryData().dialCode;
+    
+//       document.querySelector("#fullkilvishcontact").value = fullPhoneNumber;
+//       document.querySelector("#country_code").value = countryCode;
+
+//     });
+
+
+
+//     input.addEventListener("countrychange", function() {
+//     var fullPhoneNumber = iti.getNumber();  // Get the full number
+//     var countryCode = '+' + iti.getSelectedCountryData().dialCode;  // Get the new country code
+//     // Update hidden fields
+//     document.querySelector("#fullkilvishcontact").value = fullPhoneNumber;
+//     document.querySelector("#country_code").value = countryCode;
+//   });
+
+
+
+//     // Initialize hidden field with the current value on page load
+//     var fullPhoneNumber = iti.getNumber();
+//     var countryCode =   '+'+iti.getSelectedCountryData().dialCode;
+//     document.querySelector("#fullkilvishcontact").value = fullPhoneNumber;
+//     document.querySelector("#country_code").value = countryCode;
+
+//   });
+
+
+
+
+
+// Function to open the SweetAlert slideshow
+function openImageSlideshow(imagesString) {
+    const images = imagesString.split(','); // Split the images by comma
+    let currentIndex = 0;
+
+    // Function to update the content inside SweetAlert
+    function updateImage(index) {
+        const totalImages = images.length;
+        const imgSrc = `/images/profiles/${images[index].trim()}`;
+        const imageTag = `<img src="${imgSrc}" style="width:100%; height:auto;" />`;
+        const navigationText = `${index + 1} of ${totalImages} Images`;
+
+        // Display SweetAlert
+        Swal.fire({
+            title: navigationText, // Display image count
+            html: imageTag,
+            showCancelButton: true,
+            showConfirmButton: true,
+            confirmButtonText: 'Next',
+            cancelButtonText: 'Previous',
+            allowOutsideClick: false,
+            showCloseButton: true,
+            preConfirm: () => {
+                if (currentIndex < totalImages - 1) {
+                    currentIndex++;
+                    updateImage(currentIndex); // Go to next image
+                }
+            },
+            preCancel: () => {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    updateImage(currentIndex); // Go to previous image
+                }
+            }
+        });
+    }
+
+    // Start slideshow with the first image
+    updateImage(currentIndex);
+}
+
+
+
+//============ delete User ================
+
+function deleteAgent(admin_id,username) {
+
+   
+
+// Use SweetAlert2 for a stylish confirmation
+Swal.fire({
+          title: 'Are you sure?',
+          html: `<span style="color: red;">Data related to  User : <span style="font-weight: bold; color: red; background-color: yellow;">${username}</span> Will be Permanently Deleted from all Records.</span>`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete User'
+      }).then((result) => {
+          if (result.isConfirmed) {
+              // Make an AJAX request to delete the user
+                                  $.ajax({
+                          url: '/superadmin/deleteAgent',
+                          headers: { 'CSRF-Token': csrfToken },
+                          type: 'POST',
+                          data: { id: admin_id },
+                          success: function(response) {
+                            if (response.success == true) {
+                              document.cookie = `kwl_msg=${response.msg}`;
+                              window.location.href = '/superadmin/viewAgents'
+                            }else{
+                             // alert(response.msg)
+                               document.cookie = `kwl_msg=${response.msg}`;
+                            window.location.href = '/superadmin/viewAgents'
+                            }
+                          },
+                          error: function(error) {
+                              console.error('Error:', error);
+                          }
+                      });
+          }
+      });
+
+
+
+}
+
+
+
+//=================== Change User Status ====================== 
+
+
+function changeAgentStatus(admin_id, newStatus,username ) {
+
+  event.preventDefault(); 
+  var action;
+if(newStatus== 'Inactive'){
+  action = 'Inactived'
+}else{
+  action = 'activated '
+}
+ 
+
+  const userStatusElement = document.getElementById(`userStatus${admin_id}`);
+  const pmsgElement  = document.getElementById(`msg${admin_id}`);
+
+    $.ajax({
+        url: '/superadmin/changeAgentStatus',
+        headers: { 'CSRF-Token': csrfToken },
+        type: 'POST',
+        data: { id: admin_id, status: newStatus },
+        beforeSend: function() {
+            // Hide the kilstatus paragraph before the request
+            $('.kilstatus').hide();
+        },
+        success: function(response) {  
+           console.log(response)       
+           
+                    if (response.success == true) {
+               
+                                                      $('[data-user-id="' + admin_id + '"]').attr('data-user-status', newStatus);
+
+                                // Update image source and tooltip based on new status
+                                var imgSrc = (newStatus === 'Active') ? '../images/icons/active.png' : '../images/icons/inactive.png';
+                                $('[data-user-id="' + admin_id + '"] .status-image').attr('src', imgSrc);
+                                $('[data-user-id="' + admin_id + '"] .status-tooltip').attr('title', (newStatus === 'Active') ? 'deactive' : 'active');
+
+                                // Add fade in overlay and change background color based on new status
+                                var bgColor = (newStatus === 'Active') ? 'rgba(163,209,121,0.5)' : 'rgba(227 99 99 / 50%)';
+
+                                var textColor = (newStatus === 'Active') ? '#3c763d' : '#ffffff'; // White font for non-Approve status
+                                // var textColor = (newStatus === 'Active') ? 'rgba(163,209,121,0.5)' : 'rgba(227 99 99 / 50%)';
+                                // $('[data-user-id="' + admin_id + '"] .status-overlay').css('background-color', bgColor).fadeIn();
+
+
+
+                                $('[data-user-id="' + admin_id + '"] .status-overlay').css({
+                                    'background-color': bgColor,
+                                    'color': textColor + ' !important', // Force the font color change
+                                  
+                                }).fadeIn();
+
+
+                                pmsgElement.innerHTML = response.msg;
+                                var msg = 'Subadmin ('+username+') '+action+' successfully'
+                                document.cookie = `kwl_msg=${msg}`;
+
+                                // Fade out the overlay after a delay
+                                setTimeout(function() {
+                                 
+                                    $('[data-user-id="' + admin_id + '"] .status-overlay').fadeOut();
+                                    window.location.href = '/superadmin/viewAgents'
+                                }, 1500);
+
+                                // $('.kilstatus').show();
+
+
+              } else {
+                  console.error('Error:', response.msg);
+                  $("#errorMessage").removeClass("d-none");
+                  $("#successMessage").addClass("d-none");
+              }
+
+
+        },
+        error: function(error) { alert("ajax error")
+          console.error('Error:', error);
+          $("#errorMessage").text('Ajax Error');
+    $("#errorMessage").removeClass("d-none");
+    $("#successMessage").addClass("d-none");
+        }
+    });
+}
+
+
+
+
+
+
+function viewUserWallet(admin_id) {
+
+                  document.cookie = `kwl_admin_id=${admin_id}`;
+
+                  const userTimezone = moment.tz.guess();
+                  document.cookie = `rental_time_zone=${userTimezone}`;
+               window.location.href = '/superadmin/adduserAmount';
+    }
+
+
+</script>
+
+
+
+

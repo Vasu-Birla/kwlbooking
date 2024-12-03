@@ -69,12 +69,12 @@
         <li class="nav-item dropdown user-menu">
             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
                 <span class="d-none d-md-inline">Administrator</span>&nbsp;&nbsp;&nbsp;
-                <img src="../adminassets/images/user-160x160.jpg" class="user-image img-circle elevation-2" alt="User Image">
+                <img src="../images/profiles/<%= loggeduser.image %>" class="user-image img-circle elevation-2" alt="User Image">
             </a>
             <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                 <!-- User image -->
                 <li class="user-header bg-warning">
-                    <img src="../adminassets/images/user-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                    <img src="../images/profiles/<%= loggeduser.image %>" class="img-circle elevation-2" alt="User Image">
                     <p><%- loggeduser.first_name %> <%- loggeduser.last_name %></p>
                 </li>
                 <!-- Menu Footer-->

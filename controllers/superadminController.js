@@ -333,6 +333,7 @@ const loginAdmin = async (req, res, next) => {
       return res.render('superadmin/login', { output: 'Please Enter Username and Password' });
     }
 
+    console.log(req.body)
     // Fetch admin user
     const adminQuery = `
       SELECT * 
@@ -341,6 +342,7 @@ const loginAdmin = async (req, res, next) => {
     `;
     const adminResult = await pool.request().input('username', username).query(adminQuery);
     const admin = adminResult.recordset[0];
+    console.log("adminadminadminadminadminadminadmin",admin)
 
     if (!admin) {
       return res.render('superadmin/login', { output: 'Invalid Username' });
@@ -1413,10 +1415,12 @@ const cancelBooking = async (req, res, next) => {
       await request.query(updateSql);
 
 
-      
-      const bookingtime = moment.tz(booking_datetime, timezone).format('hh:mm A');
-      const bookingdate = moment.tz(booking_datetime, timezone).format('YYYY-MM-DD');
+      const [, datetime] = booking_datetime.split(',');
+      const bookingtime = moment.tz(datetime, timezone).format('hh:mm A');
+      const bookingdate = moment.tz(datetime, timezone).format('YYYY-MM-DD');
       const bookingdatetime = `${bookingdate}, ${bookingtime}`;
+
+      console.log("cancelling for date time -> ",bookingdatetime)
 
       await transaction.request()
       .input('user_role', sql.NVarChar, userRole)
@@ -2025,6 +2029,271 @@ const auditLogswithtraction = async (req, res, next) => {
 
 
 
+   //======================== Start Subadmin Section =================================
+
+
+
+const addAgent = async (req, res, next) => {
+
+  const output = req.cookies.kwl_msg || '';
+
+  if (req.method === 'POST') {
+
+    console.log("req.body ", req.body)
+
+  const { first_name, last_name, email, username, password, contact, country_code, permissions } = req.body;
+  const permissionsString = permissions ? permissions.split(',').join(',') : ''; // Comma-separated permissions
+  const hashedPass = hashPassword(password);
+
+  let pool;
+  let transaction;
+
+  try {
+    console.log('staring creation pool ...');
+      pool = await connection();
+
+      console.log('Pool created  ...');
+      transaction = new sql.Transaction(pool);
+
+      console.log('Starting transaction...');
+      await transaction.begin();
+      console.log('Inserting agent into database...');
+      await transaction.request()
+          .input('first_name', sql.NVarChar, first_name)
+          .input('last_name', sql.NVarChar, last_name)
+          .input('email', sql.NVarChar, email)
+          .input('username', sql.NVarChar, username)
+          .input('password', sql.NVarChar, hashedPass)
+          .input('contact', sql.NVarChar, contact)
+          .input('country_code', sql.NVarChar, country_code)
+          .input('admin_type', sql.NVarChar, 'agent')
+          .input('permissions', sql.NVarChar, permissionsString)
+          .query(`
+              INSERT INTO tbl_admin (first_name, last_name, email, username, password, contact, country_code, admin_type, permissions)
+              VALUES (@first_name, @last_name, @email, @username, @password, @contact, @country_code, @admin_type, @permissions)
+          `);
+
+      await transaction.commit();
+      res.render('superadmin/addAgent', { output: 'Subadmin created successfully!' });
+  } catch (error) {
+      if (transaction) await transaction.rollback();
+      console.error('Error:', error);
+      res.render('superadmin/kil500', { output: `${error}` });
+  } finally {
+      if (pool) pool.close();
+  }
+
+
+} else {
+  res.render('superadmin/addAgent', { output });
+}
+
+};
+
+
+
+const checkagentemail = async (req, res, next) => {
+  const { email } = req.body;
+  let pool;
+
+  try {
+      pool = await connection();
+      const result = await pool.request()
+          .input('email', sql.NVarChar, email)
+          .query('SELECT COUNT(*) AS count FROM tbl_admin WHERE email = @email');
+
+      const userExists = result.recordset[0].count > 0;
+      res.json({ exists: userExists });
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).send('Internal Server Error');
+  } finally {
+      if (pool) pool.close();
+  }
+};
+
+
+
+
+const checkagentusername = async (req, res, next) => {
+  const { username } = req.body;
+  let pool;
+
+  try {
+      pool = await connection();
+      const result = await pool.request()
+          .input('username', sql.NVarChar, username)
+          .query('SELECT COUNT(*) AS count FROM tbl_admin WHERE username = @username');
+
+      const userExists = result.recordset[0].count > 0;
+      res.json({ exists: userExists });
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).send('Internal Server Error');
+  } finally {
+      if (pool) pool.close();
+  }
+};
+
+
+
+const checkagentphonenumber = async (req, res, next) => {
+  const { phoneNumber } = req.body;
+  let pool;
+
+  try {
+      pool = await connection();
+      const result = await pool.request()
+          .input('contact', sql.NVarChar, phoneNumber)
+          .query('SELECT COUNT(*) AS count FROM tbl_admin WHERE contact = @contact');
+
+      const userExists = result.recordset[0].count > 0;
+      res.json({ exists: userExists });
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).send('Internal Server Error');
+  } finally {
+      if (pool) pool.close();
+  }
+};
+
+
+
+
+const viewAgents = async (req, res, next) => {
+  let pool;
+  const output = req.cookies.kwl_msg || '';
+
+  try {
+      pool = await connection();
+      const result = await pool.request()
+          .query("SELECT * FROM tbl_admin WHERE admin_type = 'agent' AND deleted = 'No' ORDER BY admin_id DESC");
+
+      res.render('superadmin/viewAgents', { output, agents: result.recordset });
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).send('Internal Server Error');
+  } finally {
+      if (pool) pool.close();
+  }
+};
+
+
+
+
+const updateAgent = async (req, res, next) => {
+  const { admin_id, first_name, last_name, email, country_code, contact } = req.body;
+  const image = req.file ? req.file.filename : null;
+
+  let pool;
+  let transaction;
+
+  try {
+      pool = await connection();
+      transaction = new sql.Transaction(pool);
+      await transaction.begin();
+
+      let query = `
+          UPDATE tbl_admin
+          SET first_name = @first_name,
+              last_name = @last_name,
+              email = @email,
+              country_code = @country_code,
+              contact = @contact
+      `;
+      const inputs = [
+          { name: 'first_name', type: sql.NVarChar, value: first_name },
+          { name: 'last_name', type: sql.NVarChar, value: last_name },
+          { name: 'email', type: sql.NVarChar, value: email },
+          { name: 'country_code', type: sql.NVarChar, value: country_code },
+          { name: 'contact', type: sql.NVarChar, value: contact },
+      ];
+
+      if (image) {
+          query += ', image = @image';
+          inputs.push({ name: 'image', type: sql.NVarChar, value: image });
+      }
+      query += ' WHERE admin_id = @admin_id';
+      inputs.push({ name: 'admin_id', type: sql.Int, value: admin_id });
+
+      const request = transaction.request();
+      inputs.forEach(input => request.input(input.name, input.type, input.value));
+      await request.query(query);
+
+      await transaction.commit();
+      res.cookie('kwl_msg', 'Subadmin updated successfully!');
+      res.redirect('/superadmin/viewAgents');
+  } catch (error) {
+      if (transaction) await transaction.rollback();
+      console.error('Error:', error);
+      res.render('superadmin/kil500', { output: `${error}` });
+  } finally {
+      if (pool) pool.close();
+  }
+};
+
+
+
+
+const changeAgentStatus = async (req, res, next) => {
+  const { id, status } = req.body;
+  let pool;
+
+  try {
+      pool = await connection();
+      await pool.request()
+          .input('status', sql.NVarChar, status)
+          .input('id', sql.Int, id)
+          .query('UPDATE tbl_admin SET status = @status WHERE admin_id = @id');
+
+      res.json({ success: true, msg: `${status === 'Active' ? 'Activating' : 'Deactivating'} Subadmin` });
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ success: false, msg: 'Internal Server Error' });
+  } finally {
+      if (pool) pool.close();
+  }
+};
+
+
+
+
+const deleteAgent = async (req, res, next) => {
+  const { id } = req.body;
+  let pool;
+  let transaction;
+
+  try {
+      pool = await connection();
+      transaction = new sql.Transaction(pool);
+      await transaction.begin();
+
+      const userDetails = await transaction.request()
+          .input('id', sql.Int, id)
+          .query('SELECT * FROM tbl_admin WHERE admin_id = @id');
+
+      const email = userDetails.recordset[0]?.email;
+      if (email === 'subadmin@gmail.com' || email === 'andhera@gmail.com') {
+          return res.status(200).json({ success: false, msg: "Can't Delete: This Subadmin (Under Testing Purpose)" });
+      }
+
+      await transaction.request()
+          .input('id', sql.Int, id)
+          .query("UPDATE tbl_admin SET deleted = 'Yes' WHERE admin_id = @id");
+
+      await transaction.commit();
+      res.json({ success: true, msg: 'Subadmin deleted successfully !!' });
+  } catch (error) {
+      if (transaction) await transaction.rollback();
+      console.error('Error:', error);
+      res.status(500).json({ success: false, msg: 'Internal Server Error' });
+  } finally {
+      if (pool) pool.close();
+  }
+};
+
+
+
 
 
 //================================== END CONTROLLER +++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -2033,7 +2302,8 @@ export {home, loginAdmin ,login , logout ,error404 , error500,  index,profile,pr
    updateUserPic,updateAdmin ,changepass ,  ForgotPassword,sendOTP,verifyOTP,resetpassword , 
    
    appointments , reschedule,cancelBooking,updateBooking , rescheduleBooking , reports, auditLogs,
-   logoutandProceed
+   logoutandProceed ,addAgent , checkagentemail,checkagentusername,checkagentphonenumber,viewAgents,
+   updateAgent,changeAgentStatus,deleteAgent
    
   
 

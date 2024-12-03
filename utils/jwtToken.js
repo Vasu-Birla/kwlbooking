@@ -131,7 +131,7 @@ const sendTokenAdmin = async (admin, statusCode, res,pool) => {
 
 // const sendTokenUser = (user, statusCode, res)=>{
     
-//     const token =  getJWTTokenUSER(user.user_email); 
+//     const token =  getJWTTokenUSER(user.primary_email); 
     
 
 //     //options for tokens  
@@ -142,7 +142,7 @@ const sendTokenAdmin = async (admin, statusCode, res,pool) => {
 //             httpOnly:true
 //         }                 
 //         //res.redirect('/user/home/')
-//         console.log("login success", user.user_email)
+//         console.log("login success", user.primary_email)
 //         res.status(statusCode).cookie('User_kwl_token',token,options).redirect('/viewBookings')      
     
        
@@ -152,7 +152,7 @@ const sendTokenAdmin = async (admin, statusCode, res,pool) => {
 
 const sendTokenUserogoutandProceed = async (user, statusCode, res)=>{
     
-  const token =  getJWTTokenUSER(user.user_email); 
+  const token =  getJWTTokenUSER(user.primary_email); 
   
 
   //options for tokens  
@@ -186,7 +186,7 @@ const sendTokenUser = async (user, statusCode, res,pool) => {
   console.log('Connected:', pool.connected);
     try {
      
-      const token =  getJWTTokenUSER(user.user_email); 
+      const token =  getJWTTokenUSER(user.primary_email); 
       const options = {
         expires: new Date(
             Date.now() + process.env.COOKIE_EXPIRE*24*60*60*1000
@@ -199,7 +199,7 @@ const sendTokenUser = async (user, statusCode, res,pool) => {
       `;
       const activeSessionResult = await pool
         .request()
-        .input('user_email', sql.NVarChar, user.user_email)
+        .input('user_email', sql.NVarChar, user.primary_email)
         .query(activeSessionQuery);
   
       const activeSession = activeSessionResult.recordset[0];
@@ -211,7 +211,7 @@ const sendTokenUser = async (user, statusCode, res,pool) => {
         `;
         await pool
           .request()
-          .input('user_email', sql.NVarChar, user.user_email)
+          .input('user_email', sql.NVarChar, user.primary_email)
           .query(deleteSessionQuery);
       }
   
@@ -222,7 +222,7 @@ const sendTokenUser = async (user, statusCode, res,pool) => {
       `;
       await pool
         .request()
-        .input('user_email', sql.NVarChar, user.user_email)
+        .input('user_email', sql.NVarChar, user.primary_email)
         .input('token', sql.NVarChar, token)
         .query(insertSessionQuery);
   

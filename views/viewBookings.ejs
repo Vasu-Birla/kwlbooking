@@ -90,6 +90,7 @@ div[style*="overflow-x: auto;"] {
                          <% } %>
                            <!-- /alert msgs -->
                 <div class="col-md-12">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <table id="example1" class="table table-striped table-bordered" style="width:100%">
                         <thead>
                             <tr>
@@ -231,7 +232,7 @@ div[style*="overflow-x: auto;"] {
                                         <li>
                                           <a 
                                             href="#" 
-                                            onclick="updateBooking('<%= booking.booking_id %>', '<%= JSON.stringify(booking) %>', '<%= booking.timezone %>')" 
+                                            onclick="updateBooking('<%= booking.booking_id %>', '<%= JSON.stringify(booking).replace(/'/g, '\\\'') %>', '<%= booking.timezone %>')" 
                                             class="text-info" 
                                             data-bs-toggle="tooltip" 
                                             title="Update Booking">
@@ -251,7 +252,7 @@ div[style*="overflow-x: auto;"] {
                                         <li>
                                           <a 
                                             href="#" 
-                                            onclick="cancelBooking('<%= booking.booking_id %>', 'Cancelled', '<%= JSON.stringify(booking) %>', '<%= booking.timezone %>')" 
+                                            onclick="cancelBooking('<%= booking.booking_id %>', 'Cancelled', '<%= JSON.stringify(booking).replace(/'/g, '\\\'') %>', '<%= booking.timezone %>')" 
                                             class="text-danger" 
                                             data-bs-toggle="tooltip" 
                                             title="Cancel Booking">
@@ -847,6 +848,8 @@ window.location.href = '/reschedule';
 
 function cancelBooking(booking_id, newStatus,booking, timezone) {
 
+    const csrfToken = document.querySelector('input[name="_csrf"]').value;
+
     booking = JSON.parse(booking);
 
         var booking_datetime = `${booking.booking_date},${booking.booking_times}`
@@ -874,6 +877,7 @@ function cancelBooking(booking_id, newStatus,booking, timezone) {
             if (cancelNote) {
                 return $.ajax({
                     url: '/cancelBooking',
+                    headers: {'CSRF-Token': csrfToken },
                     type: 'POST',
                     data: {
                         id: booking_id,

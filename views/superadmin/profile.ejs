@@ -206,7 +206,7 @@
 
     <script>
 
-        
+let csrfToken = document.querySelector('input[name="_csrf"]').value;
 document.addEventListener("DOMContentLoaded", function() {
             document.cookie = 'kwl_msg'+'=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/';
             document.cookie = 'kwl_msg'+'=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
@@ -248,6 +248,7 @@ if (!validImageTypes.includes(file1.type)) {
     $.ajax({
       url: "/superadmin/updateUserPic", // Replace with your actual API endpoint URL
       type: "POST",
+      headers: { 'CSRF-Token': csrfToken },
       data: formData,
       processData: false,
       contentType: false,
@@ -292,7 +293,9 @@ if (!validImageTypes.includes(file1.type)) {
   var iti = window.intlTelInput(input, {
     preferredCountries: ["hk", "cn"], // Customize based on your needs
     separateDialCode: true,
-    initialCountry: "hk",
+    initialCountry: "jm",
+    nationalMode: false, // Ensure the number is shown without spaces
+        formatOnDisplay: false, // Disable auto-formatting on display
     utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.min.js", // Utility script
   });
 

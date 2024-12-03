@@ -1,4 +1,3 @@
-<% let userPermissions = permissions.includes('full') ? 'full' : permissions.split(','); %>
 <style>
 a {color: #ff335e;text-decoration: none;background-color: transparent;}
 a:hover {color: #fb9f07;text-decoration: none;}
@@ -33,100 +32,80 @@ a:hover {color: #fb9f07;text-decoration: none;}
     </a>
 
         
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+        <!-- Sidebar Menu -->
+       <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <li class="nav-item">
+                    <a href="/superadmin" class="nav-link active">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>Dashboard</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/superadmin/appointments" class="nav-link">
+                        <i class="nav-icon fas fa-calendar"></i>
+                        <p>View Appointments</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="/superadmin/reports" class="nav-link">
+                        <i class="nav-icon nav-icon fas fa-copy"></i>
+                        <p>Reports</p>
+                    </a>
+                </li>
 
 
-<!-- Sidebar -->
-<div class="sidebar">
+                <li class="nav-item">
+                    <a href="/superadmin/auditlogs" class="nav-link">
+                        <i class="nav-icon nav-icon fa fa-history"></i>
+                        <p>Audit Logs</p>
+                    </a>
+                </li>
 
-    <!-- Sidebar Menu -->
-    <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-            <!-- Dashboard -->
-            <% if (userPermissions === 'full' || userPermissions.includes('/superadmin')) { %>
-            <li class="nav-item">
-                <a href="/superadmin" class="nav-link">
-                    <i class="nav-icon fas fa-tachometer-alt"></i>
-                    <p>Dashboard</p>
-                </a>
-            </li>
-            <% } %>
+                
+                
+         <!-- Agent Management Section -->
+         <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-users"></i>
+                <p>
+                    Agent Management
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="/superadmin/addAgent" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Add Agent</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/superadmin/viewAgents" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>View Agents</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
 
-            <!-- Appointments -->
-            <% if (userPermissions === 'full' || userPermissions.includes('/superadmin/appointments')) { %>
-            <li class="nav-item">
-                <a href="/superadmin/appointments" class="nav-link">
-                    <i class="nav-icon fas fa-calendar"></i>
-                    <p>View Appointments</p>
-                </a>
-            </li>
-            <% } %>
+                <li class="nav-item">
+                    <a href="/superadmin/logout" class="nav-link">
+                        <i class="nav-icon fas fa-sign-out-alt"></i>
+                        <p>Logout</p>
+                    </a>
+                </li>
 
-            <!-- Reports -->
-            <% if (userPermissions === 'full' || userPermissions.includes('/superadmin/reports')) { %>
-            <li class="nav-item">
-                <a href="/superadmin/reports" class="nav-link">
-                    <i class="nav-icon fas fa-copy"></i>
-                    <p>Reports</p>
-                </a>
-            </li>
-            <% } %>
+            </ul>
+        </nav>
+        <!-- // sidebar-menu -->
 
-            <!-- Audit Logs -->
-            <% if (userPermissions === 'full' || userPermissions.includes('/superadmin/auditlogs')) { %>
-            <li class="nav-item">
-                <a href="/superadmin/auditlogs" class="nav-link">
-                    <i class="nav-icon fa fa-history"></i>
-                    <p>Audit Logs</p>
-                </a>
-            </li>
-            <% } %>
-
-            <!-- Agent Management -->
-            <% if (userPermissions === 'full' || userPermissions.includes('/superadmin/addAgent') || userPermissions.includes('/superadmin/viewAgents')) { %>
-            <li class="nav-item has-treeview">
-                <a href="#" class="nav-link">
-                    <i class="nav-icon fas fa-users"></i>
-                    <p>
-                        Agent Management
-                        <i class="right fas fa-angle-left"></i>
-                    </p>
-                </a>
-                <ul class="nav nav-treeview">
-                    <% if (userPermissions === 'full' || userPermissions.includes('/addAgent')) { %>
-                    <li class="nav-item">
-                        <a href="/superadmin/addAgent" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>Add Agent</p>
-                        </a>
-                    </li>
-                    <% } %>
-                    <% if (userPermissions === 'full' || userPermissions.includes('/viewAgents')) { %>
-                    <li class="nav-item">
-                        <a href="/superadmin/viewAgents" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>View Agents</p>
-                        </a>
-                    </li>
-                    <% } %>
-                </ul>
-            </li>
-            <% } %>
-
-            <!-- Logout -->
-            <li class="nav-item">
-                <a href="/superadmin/logout" class="nav-link">
-                    <i class="nav-icon fas fa-sign-out-alt"></i>
-                    <p>Logout</p>
-                </a>
-            </li>
-        </ul>
-    </nav>
-    <!-- // sidebar-menu -->
-
-</div>
-<!-- // sidebar -->
-
-    
+    </div>
+    <!-- // sidebar -->
     
 </aside>
 

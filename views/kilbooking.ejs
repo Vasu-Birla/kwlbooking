@@ -578,7 +578,7 @@ const forms = document.querySelectorAll('.form-container');
                                 <div class="col-md-6">
                                     <label>* Email Address</label>
                                     <% if (typeof loggeduser !== 'undefined' && loggeduser.user_email) { %>
-                                        <input type="email" id="email_${index}_${i}" class="form-control" name="user_email" value="<%= loggeduser.user_email %>" readonly>
+                                        <input type="email" id="email_${index}_${i}" class="form-control" name="user_email" placeholder="Enter the email" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" >
                                     <% } else { %>
                                         <input type="email" id="email_${index}_${i}" class="form-control" name="user_email" placeholder="Enter the email" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required>
                                     <% } %>
@@ -868,17 +868,21 @@ const forms = document.querySelectorAll('.form-container');
                     <div class="col-md-6">${agent}</div>
                 </div>
                 <div class="row" id="confirmAppointmentTypeRow_${index}_${i}">
-                    <div class="col-md-6"><strong>Appointment Type</strong></div>
+                    <div class="col-md-6"><strong>Appointment Category</strong></div>
                     <div class="col-md-6">${appointmentType}</div>
+                </div>
+                 <div class="row" id="confirmTypeNameRow_${index}_${i}">
+                    <div class="col-md-6"><strong>Appointment Type Name</strong></div>
+                    <div class="col-md-6">${typename}</div>
                 </div>
 <br>
                 <h5>Additional Information</h5>
                 <div class="row" id="confirmAppNameRow_${index}_${i}">
-                    <div class="col-md-6"><strong>Application Name</strong></div>
+                    <div class="col-md-6"><strong>Name of Individual Making Appointment (If not consignee)</strong></div>
                     <div class="col-md-6">${appname}</div>
                 </div>
                 <div class="row" id="confirmBlNumberRow_${index}_${i}">
-                    <div class="col-md-6"><strong>BL Number</strong></div>
+                    <div class="col-md-6"><strong>Bill of Lading Number</strong></div>
                     <div class="col-md-6">${blNumber}</div>
                 </div>
                 <div class="row" id="confirmVesselNameRow_${index}_${i}">
@@ -886,7 +890,7 @@ const forms = document.querySelectorAll('.form-container');
                     <div class="col-md-6">${vname}</div>
                 </div>
                 <div class="row" id="confirmVesselReportRow_${index}_${i}">
-                    <div class="col-md-6"><strong>Vessel Report Date</strong></div>
+                    <div class="col-md-6"><strong>Expected Vessel Reported Date</strong></div>
                     <div class="col-md-6">${vreport}</div>
                 </div>
                 <div class="row" id="confirmChassisRow_${index}_${i}">
@@ -894,7 +898,7 @@ const forms = document.querySelectorAll('.form-container');
                     <div class="col-md-6">${chassis}</div>
                 </div>
                 <div class="row" id="confirmImsRow_${index}_${i}">
-                    <div class="col-md-6"><strong>IMS Number</strong></div>
+                    <div class="col-md-6"><strong>Customs Release/IMS4 Declaration Number</strong></div>
                     <div class="col-md-6">${ims}</div>
                 </div>
                 <div class="row" id="confirmContainerNumberRow_${index}_${i}">
@@ -902,14 +906,11 @@ const forms = document.querySelectorAll('.form-container');
                     <div class="col-md-6">${cnumber}</div>
                 </div>
                 <div class="row" id="confirmPpNumberRow_${index}_${i}">
-                    <div class="col-md-6"><strong>PP Number</strong></div>
+                    <div class="col-md-6"><strong>Number of Pieces/Packages/Units</strong></div>
                     <div class="col-md-6">${ppnumber}</div>
                 </div>
               
-                <div class="row" id="confirmTypeNameRow_${index}_${i}">
-                    <div class="col-md-6"><strong>Type Name</strong></div>
-                    <div class="col-md-6">${typename}</div>
-                </div>
+               
             </div>
             <br>
         `;
@@ -1739,10 +1740,110 @@ function addErrorMessage(container, message) {
 
 
 
+    async function confirmBooking() {
+    const loggeduserData = document.getElementById('loggeduserData').value;
+    const loggeduser = loggeduserData ? JSON.parse(loggeduserData) : null;
+
+    // If logged in, directly confirm booking without OTP
+    if (typeof loggeduser !== 'undefined' && loggeduser) {
+        await directConfirmBooking(loggeduser.primary_email);
+        return;
+    }
+
+    // Ask for the user's email if not logged in
+    let email = null;
+
+    await Swal.fire({
+        title: "Enter Your Email",
+        input: "email",
+        inputLabel: "We need your email to send an OTP for booking confirmation.",
+        inputPlaceholder: "Enter your email address",
+        inputAttributes: {
+            autocapitalize: "off",
+            autocomplete: "email",
+        },
+        confirmButtonText: "Submit",
+        showCancelButton: true,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        inputValidator: (value) => {
+            if (!value || !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value)) {
+                return "Please enter a valid email address.";
+            }
+        },
+    }).then((result) => {
+        if (result.isConfirmed) {
+            email = result.value;
+        }
+    });
+
+    if (!email) {
+        // User canceled the email input
+        Swal.fire("Canceled", "Email is required to send an OTP.", "error");
+        return;
+    }
+
+    const csrfToken = document.querySelector('input[name="_csrf"]').value;
+
+    // Initial SweetAlert OTP input screen with loader
+    Swal.fire({
+        title: "Sending OTP",
+        html: `
+            <p style="color: green;">Sending OTP to ${email}...</p>
+            <div class="spinner-border text-success" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        `,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showCloseButton: true,
+    });
+
+    try {
+        // Send OTP request to the server
+        const response = await fetch('/getBookingOtp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'CSRF-Token': csrfToken },
+            body: JSON.stringify({ email }),
+        });
+        const result = await response.json();
+
+        if (!result.exists) {
+            Swal.update({
+                html: `<p style="color: red;">Failed to send OTP. <button id="resendBtn" class="btn btn-link">Resend OTP</button></p>`
+            });
+            document.getElementById('resendBtn').onclick = confirmBooking; // Resend OTP
+            return;
+        }
+
+        // Show OTP input form with message
+        Swal.update({
+            html: `
+                <p style="color: green;">OTP sent to ${email}</p>
+                <input type="text" id="otpInput" class="swal2-input" placeholder="Enter OTP">
+                <div id="otpErrorMsg" style="color: red; display: none;">Invalid OTP! Enter correct OTP or try resending.</div>
+                <button id="verifyBtn" class="swal2-confirm swal2-styled" style="margin-right:10px;">Verify OTP</button>
+                <button id="resendOtpBtn" class="swal2-cancel swal2-styled">Resend OTP</button>
+            `,
+            showConfirmButton: false,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+        });
+
+        document.getElementById('otpInput').value = result.otp; // For testing purposes only
+        document.getElementById('verifyBtn').onclick = () => verifyOTP(email);
+        document.getElementById('resendOtpBtn').onclick = confirmBooking;
+
+    } catch (error) {
+        Swal.fire('Error', 'Failed to send OTP. Please try again later.', 'error');
+    }
+}
+
 
 
 // Function to handle the booking confirmation with OTP verification and final confirmation
-async function confirmBooking() {
+async function confirmBooking_working() {
   
 
     const loggeduserData = document.getElementById('loggeduserData').value;
@@ -1817,8 +1918,8 @@ const loggeduser = loggeduserData ? JSON.parse(loggeduserData) : null;
 
 
 // Function to verify the OTP
-async function verifyOTP() {
-    const email = document.getElementById("email").value;
+async function verifyOTP(email) {
+  
     const otp = document.getElementById("otpInput").value;
     const csrfToken = document.querySelector('input[name="_csrf"]').value;
 
@@ -1857,8 +1958,8 @@ async function verifyOTP() {
 }
 
 
-const directConfirmBooking = async () => {
-  const forms = getBookingForms(); // Assume this retrieves all form data as an array
+const directConfirmBooking = async (email) => {
+  const forms = getBookingForms(email); // Assume this retrieves all form data as an array
   const totalForms = forms.length;
 
   // Initialize SweetAlert modal with booking details and placeholders for booking status icons
@@ -1930,96 +2031,29 @@ const directConfirmBooking = async () => {
   }
 
   // After processing all bookings, allow closing the modal
+//   Swal.fire({
+//     title: 'All Bookings Processed',
+//     html: document.querySelector('.swal2-html-container').innerHTML, // Retain all icons and messages
+//     showConfirmButton: true,
+//     confirmButtonText: 'Close',
+//     allowOutsideClick: true,
+//   });
+
+  // After processing all bookings, redirect or show the "View Bookings" button
   Swal.fire({
     title: 'All Bookings Processed',
     html: document.querySelector('.swal2-html-container').innerHTML, // Retain all icons and messages
     showConfirmButton: true,
-    confirmButtonText: 'Close',
-    allowOutsideClick: true,
-  });
-};
-
-
-
-
-const directConfirmBooking_withgifs = async () => {
-  const forms = getBookingForms(); // Assume this retrieves all form data as an array
-  const totalForms = forms.length;
-
-  // Initialize SweetAlert modal with booking details and placeholders for booking status icons
-  Swal.fire({
-    title: 'Booking Progress',
-    html: forms
-      .map((form, index) => {
-        const formattedDateTime = moment
-          .tz(form.selectedTime, form.timezone)
-          .format('dddd, MMMM DD, YYYY, h:mm A'); // Format the selectedTime with timezone
-
-        return `
-          <hr style="border: 1px solid green;">
-          <div id="form-${index}" class="form-progress" style="text-align: center;">
-            <p><strong>Booking ${index + 1}: ${formattedDateTime}</strong></p>
-            <div id="status-icon-${index}" class="status-icon">
-              <img src="/images/icons/booking.gif" alt="Booking in Progress" style="width: 50px; height: 50px;" />
-              <p id="status-text-${index}" style="margin-top: 10px; font-weight: bold; color: #000;">Starting Booking</p>
-            </div>
-          </div>
-          <br>
-        `;
-      })
-      .join(''),
-    showConfirmButton: false,
-    allowOutsideClick: false,
+    confirmButtonText: 'View Bookings',
+    allowOutsideClick: false, // Ensure no outside click can close the modal
+  }).then(() => {
+    // Redirect to /viewBookings after confirmation
+    window.location.href = '/viewBookings';
   });
 
-  // Function to update status icons and result text
-  const updateStatus = (index, success, message) => {
-    const statusIcon = document.getElementById(`status-icon-${index}`);
-    const statusText = document.getElementById(`status-text-${index}`);
 
-    // Update icon and message
-    statusIcon.innerHTML = `
-      <img src="/images/icons/${success ? 'calendar_success.png' : 'calendar_failed.png'}" 
-           alt="${success ? 'Booking Successful' : 'Booking Failed'}" 
-           style="width: 50px; height: 50px;" />
-    `;
-    statusText.style.color = success ? 'green' : 'red';
-    statusText.textContent = message;
-  };
 
-  // Function to process a single booking
-  const processBooking = async (form, index) => {
-    try {
-      const response = await axios.post('/multibooking', form, {
-        headers: {
-          'Content-Type': 'application/json',
-          'CSRF-Token': form._csrf, // Sending the CSRF token
-        },
-      });
 
-      if (response.data.success) {
-        updateStatus(index, true, 'Booking Successfully');
-      } else {
-        updateStatus(index, false, response.data.message || 'Booking Failed');
-      }
-    } catch (error) {
-      updateStatus(index, false, error.response?.data?.message || error.message || 'Error occurred while booking');
-    }
-  };
-
-  // Sequentially process bookings
-  for (let i = 0; i < totalForms; i++) {
-    await processBooking(forms[i], i); // Process each form one by one
-  }
-
-  // After processing all bookings, allow closing the modal
-  Swal.fire({
-    title: 'All Bookings Processed',
-    html: document.querySelector('.swal2-html-container').innerHTML, // Retain all icons and messages
-    showConfirmButton: true,
-    confirmButtonText: 'Close',
-    allowOutsideClick: true,
-  });
 };
 
 
@@ -2139,7 +2173,7 @@ const directConfirmBooking_progressbar = async () => {
 
 
 
-const getBookingForms = () => {
+const getBookingForms = (email) => {
   const forms = [];
   const formsContainer = document.getElementById('formsContainer');
   const formElements = formsContainer.querySelectorAll('.form-container form'); // Select all forms
@@ -2147,9 +2181,19 @@ const getBookingForms = () => {
   formElements.forEach((form, index) => {
 console.log("form before formdata -> ",form)
 
-    const agentForwarder = form.querySelector(`#agent_${index}_0`)?.value === "Other"
-      ? form.querySelector(`#otherAgent_${index}_0`)?.value
-      : form.querySelector(`#agent_${index}_0`)?.value;
+    // const agentForwarder = form.querySelector(`#agent_${index}_0`)?.value === "Other"
+    //   ? form.querySelector(`#otherAgent_${index}_0`)?.value
+    //   : form.querySelector(`#agent_${index}_0`)?.value;
+
+      // Find the agent forwarder select and input using their `name` attribute
+      const agentSelect = form.querySelector('[name="agent_forwarder"]:not([type="text"])');
+    const otherAgentInput = form.querySelector('[name="agent_forwarder"][type="text"]');
+
+    const agentForwarder = agentSelect?.value === "Other"
+      ? otherAgentInput?.value
+      : agentSelect?.value;
+
+    
 
     const formData = {
         _csrf: form.querySelector('[name="_csrf"]').value, // Include the CSRF token
@@ -2177,6 +2221,7 @@ console.log("form before formdata -> ",form)
       selectedDateTimes :selectedDateTimes,
       booking_date: selectedDate,  // Add the selected date
         booking_times: selectedTimes, // Add the selected times
+        primary_email :email
     };
 
 

@@ -31,7 +31,7 @@ const isAuthenticatedUser = async (req, res, next) => {
             // Adjusting to match the expected data type
     const result = await pool.request()
     .input('user_email', sql.NVarChar, decodedData.user_email) // using sql.NVarChar instead of sql.Int
-    .query('SELECT * FROM tbl_bookings WHERE user_email = @user_email');
+    .query('SELECT * FROM tbl_bookings WHERE primary_email  = @user_email');
   
       const user = result.recordset[0];
   
@@ -47,12 +47,23 @@ const isAuthenticatedUser = async (req, res, next) => {
         });
         return res.redirect('/#popup1');
     } 
+
+
+
+    const agentResult = await pool.request()
+    .input('email', sql.VarChar, user.primary_email ) // Adjust the type according to your database schema
+    .query(`
+        SELECT COUNT(*) AS count FROM tbl_admin 
+        WHERE email = @email AND admin_type = 'agent'
+    `);
+
+    const agentExists = agentResult.recordset[0].count > 0;
+    user.dashboard_type = agentExists ? 'Agent' : 'User';
   
       req.user = user;
       res.app.locals.loggeduser = user;
-    res.app.locals.dashboard_type = 'User'
-  
-   
+    res.app.locals.dashboard_type = user.dashboard_type
+
   
       next();
     } catch (error) {

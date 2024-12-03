@@ -285,8 +285,8 @@ const reschedule = async (req, res, next) => {
 
     const acuityUrl =  `https://acuityscheduling.com/api/v1/appointments/${booking_id}?pastFormAnswers=false`
     const reason = "Fetching Single Appointment Details"
-    const userName = req.user.user_email; 
-    const userRole = 'User';
+    const userName = req.user.primary_email; 
+    const userRole =  req.user ? req.user.dashboard_type : 'Guest';
 
    await logAcuityRequest(acuityUrl, userRole, userName, reason);
 
@@ -423,8 +423,8 @@ const dates_availability = async (req, res, next) => { console.log("............
 
         const acuityUrl =  `https://acuityscheduling.com/api/v1/availability/dates?month=${month}&appointmentTypeID=${appointmentTypeID}&timezone=`
         const reason = "Fetching Date Aailabilities"
-        const userName = req.user ? req.user.user_email : 'Guest Mode';
-        const userRole = 'User';
+        const userName = req.user ? req.user.primary_email : 'Guest Mode';
+        const userRole =  req.user ? req.user.dashboard_type : 'Guest';
     
        await logAcuityRequest(acuityUrl, userRole, userName, reason);
     
@@ -489,8 +489,8 @@ const appointment_types = async (req, res, next) => {
 
         const acuityUrl =  `https://acuityscheduling.com/api/v1/appointment-types`
         const reason = "Fetching Date Appointment Types"
-        const userName = req.user ? req.user.user_email : 'Guest Mode';
-        const userRole = 'User';
+        const userName = req.user ? req.user.primary_email : 'Guest Mode';
+        const userRole =  req.user ? req.user.dashboard_type : 'Guest';
     
        await logAcuityRequest(acuityUrl, userRole, userName, reason);
     
@@ -960,8 +960,8 @@ const confirmbooking = async (req, res, next) => {
 
         const acuityUrl =  `https://acuityscheduling.com/api/v1/appointments`
         const reason = "Creating New Booking"
-        const userName = req.user ? req.user.user_email : user_email;
-        const userRole = 'User';
+        const userName = req.user ? req.user.primary_email : user_email;
+        const userRole =  req.user ? req.user.dashboard_type : 'Guest';
     
        await logAcuityRequest(acuityUrl, userRole, userName, reason);
     
@@ -1049,21 +1049,6 @@ const confirmbooking = async (req, res, next) => {
         console.log("booking_date",booking_date)
         
         
-        // Inline query string to insert data into the table
-        const querywithouttimezone = `
-          INSERT INTO tbl_bookings (
-            booking_id, trn, firstname, lastname, contact, country_code, user_email,
-            agent_forwarder, appointment_by, appointment_type, bol_number,
-            vessel_name, vessel_reported_date, chassis_number, declaration_number,
-            container_number, number_of_items, booking_date, booking_times
-          ) VALUES (
-            ${bookingId}, '${trn}', '${firstname}', '${lastname}', '${contact}', '${country_code}', '${user_email}',
-            '${agent_forwarder}', '${appointment_by}', '${appointment_type}', '${bol_number}',
-            '${vessel_name}', '${vessel_reported_date}', '${chassis_number}', '${declaration_number}',
-            '${container_number}', '${number_of_items}', '${booking_date}', '${datetime}'
-          )
-        `;
-
 
         const query = `
   INSERT INTO tbl_bookings (
@@ -1071,15 +1056,17 @@ const confirmbooking = async (req, res, next) => {
     agent_forwarder, appointment_by, appointment_type, bol_number,
     vessel_name, vessel_reported_date, chassis_number, declaration_number,
     container_number, number_of_items, booking_date, booking_times,
-    timezone, location, created_at, type_name
+    timezone, location, created_at, type_name,primary_email
   ) VALUES (
     ${bookingId}, '${trn}', '${firstname}', '${lastname}', '${contact}', '${country_code}', '${user_email}',
     '${agent_forwarder}', '${appointment_by}', '${appointment_type}', '${bol_number}',
     '${vessel_name}', '${vessel_reported_date}', '${chassis_number}', '${declaration_number}',
     '${container_number}', '${number_of_items}', '${booking_date}', '${datetime}',
-    '${timezone}', '${location}', '${created_at}', '${type_name}'
+    '${timezone}', '${location}', '${created_at}', '${type_name}', '${user_email}'
   )
 `;
+
+
 
         // Perform the insert query
         await transaction.request().query(query);
@@ -1149,13 +1136,13 @@ const multibooking = async (req, res, next) => {
   console.log("New booking request received: ", req.body);
 
   console.log("================================================================= ");
-  // return res.status(200).json({ success: true, message: "Booking successfully created!" });
+   //return res.status(200).json({ success: true, message: "Booking successfully created!" });
 
   const {
       trn, firstname, lastname, contact, country_code, user_email, agent_forwarder,
       appointment_by, appointment_type, bol_number, vessel_name, vessel_reported_date,
       chassis_number, declaration_number, container_number, number_of_items,
-      booking_date, selectedDateTimes, selectedTime,appointmentTypeID, calendarID, timezone
+      booking_date, selectedDateTimes, selectedTime,appointmentTypeID, calendarID, timezone ,primary_email 
   } = req.body;
 
   var location = ''
@@ -1168,8 +1155,8 @@ const multibooking = async (req, res, next) => {
   
          const acuityUrl =  `https://acuityscheduling.com/api/v1/appointments`
          const reason = "Creating New Booking"
-         const userName = req.user ? req.user.user_email : user_email;
-         const userRole = 'User';
+         const userName = req.user ? req.user.primary_email : primary_email;
+         const userRole =  req.user ? req.user.dashboard_type : 'Guest';
      
         await logAcuityRequest(acuityUrl, userRole, userName, reason);
      
@@ -1213,6 +1200,9 @@ const multibooking = async (req, res, next) => {
 
       }
 
+
+      console.log("fields===> fields  ",fields )
+
       const acuityResponse = await axios.post(
         'https://acuityscheduling.com/api/v1/appointments',
         {
@@ -1250,10 +1240,10 @@ const multibooking = async (req, res, next) => {
           const query = `
           INSERT INTO tbl_bookings (booking_id, trn, firstname, lastname, contact, country_code, user_email, agent_forwarder, appointment_by,
               appointment_type, bol_number, vessel_name, vessel_reported_date, chassis_number, declaration_number, container_number, 
-              number_of_items, booking_date, booking_times, timezone, location, created_at, type_name)
+              number_of_items, booking_date, booking_times, timezone, location, created_at, type_name ,primary_email)
           VALUES (@bookingId, @trn, @firstname, @lastname, @contact, @country_code, @user_email, @agent_forwarder, @appointment_by,
               @appointment_type, @bol_number, @vessel_name, @vessel_reported_date, @chassis_number, @declaration_number, @container_number, 
-              @number_of_items, @booking_date, @booking_times, @timezone, @location, @created_at, @type_name)
+              @number_of_items, @booking_date, @booking_times, @timezone, @location, @created_at, @type_name, @primary_email)
       `;
       
 
@@ -1283,10 +1273,11 @@ const multibooking = async (req, res, next) => {
                 .input('location', sql.NVarChar, location)
                 .input('created_at', sql.NVarChar, created_at)
                 .input('type_name', sql.NVarChar, type_name)
+                .input('primary_email', sql.NVarChar, primary_email)
                 .query(query);
 
 
-
+                
                 var reason1 = 'Confirmed'
 
                 const booking_times = moment.tz(datetime, timezone).format('hh:mm A');
@@ -1524,7 +1515,7 @@ const cancelBooking = async (req, res, next) => {
   let pool;
   let transaction;
   let acuityResponse;
-  const { id, status, cancelNote ,booking_datetime } = req.body;
+  const { id, status, cancelNote ,booking_datetime , timezone } = req.body;
 
   try {
 
@@ -1533,8 +1524,8 @@ const cancelBooking = async (req, res, next) => {
 
         const acuityUrl =  `https://acuityscheduling.com/api/v1/appointments/${id}/cancel`
         const reason = "Cancelling Booking"
-        const userName = req.user ? req.user.user_email : 'Guest Mode';
-        const userRole = 'User';
+        const userName = req.user ? req.user.primary_email : 'Guest Mode';
+        const userRole =  req.user ? req.user.dashboard_type : 'Guest';
     
        await logAcuityRequest(acuityUrl, userRole, userName, reason);
     
@@ -1570,12 +1561,12 @@ const cancelBooking = async (req, res, next) => {
       await request.query(updateSql);
 
 
-      
+      const [, datetime] = booking_datetime.split(',');
 
-      const bookingtime = moment.tz(booking_datetime, timezone).format('hh:mm A');
-      const bookingdate = moment.tz(booking_datetime, timezone).format('YYYY-MM-DD');
+      const bookingtime = moment.tz(datetime, timezone).format('hh:mm A');
+      const bookingdate = moment.tz(datetime, timezone).format('YYYY-MM-DD');
       const bookingdatetime = `${bookingdate}, ${bookingtime}`;
-      
+      console.log("cancelling for date time -> ",bookingdatetime)
 
       await transaction.request()
       .input('user_role', sql.NVarChar, userRole)
@@ -1704,8 +1695,8 @@ const rescheduleBooking = async (req, res, next) => {
 
         const acuityUrl =  `https://acuityscheduling.com/api/v1/appointments/${booking_id}/reschedule`
         const reason = "Rescheduling Booking"
-        const userName = req.user ? req.user.user_email : 'Guest Mode';
-        const userRole = 'User';
+        const userName = req.user ? req.user.primary_email : 'Guest Mode';
+        const userRole =  req.user ? req.user.dashboard_type : 'Guest';
     
        await logAcuityRequest(acuityUrl, userRole, userName, reason);
     
@@ -1863,8 +1854,8 @@ const updateBooking = async (req, res) => {
 
         const acuityUrl =  `https://acuityscheduling.com/api/v1/appointments/${booking_id}`
         const reason = "Updating Booking Deatils"
-        const userName = req.user ? req.user.user_email : 'Guest Mode';
-        const userRole = 'User';
+        const userName = req.user ? req.user.primary_email : 'Guest Mode';
+        const userRole =  req.user ? req.user.dashboard_type : 'Guest';
     
        await logAcuityRequest(acuityUrl, userRole, userName, reason);
 
@@ -2067,9 +2058,9 @@ const book = async(req,res,next)=>{
 
     // Check if email exists in tbl_bookings
     const userResult = await transaction.request().query(`
-      SELECT COUNT(*) AS count FROM tbl_bookings WHERE user_email = '${email}'
+      SELECT COUNT(*) AS count FROM tbl_bookings WHERE primary_email  = '${email}'
     `);
-    
+
     const emailExists = userResult.recordset[0].count > 0;
 
     if (emailExists) {
@@ -2093,6 +2084,7 @@ const book = async(req,res,next)=>{
           VALUES ('${email}', '${otp}', '${expiresAt}')
         `);
       }
+
 
       await sendWelcomeMsg(email, otp);
       await transaction.commit();
@@ -2351,7 +2343,7 @@ const login = async (req, res, next) => {
     request.input('email', sql.VarChar, email);
 
     // Fetch user details from tbl_bookings
-    const userResult = await request.query('SELECT * FROM tbl_bookings WHERE user_email = @email');
+    const userResult = await request.query('SELECT * FROM tbl_bookings WHERE primary_email  = @email');
     const user = userResult.recordset[0];
 
     if (userResult.recordset.length === 0) {
@@ -2367,7 +2359,7 @@ const login = async (req, res, next) => {
     SELECT * FROM active_sessions_user WHERE user_email = @user_email
   `;
   const activeSessionResult = await pool.request()
-    .input('user_email', sql.NVarChar, user.user_email) // Corrected data type to sql.NVarChar
+    .input('user_email', sql.NVarChar, user.primary_email) // Corrected data type to sql.NVarChar
     .query(activeSessionQuery);
   
   const activeSession = activeSessionResult.recordset[0];
@@ -2375,11 +2367,14 @@ const login = async (req, res, next) => {
   if (activeSession) {
     return res.render('index', {
       output: 'You are already logged in from another device.',
-      user_email: user.user_email,
+      user_email: user.primary_email,
        showModal: true // Flag to show the modal
     });
   }
   // =============================== active seetion end ===============================
+
+ 
+
 
     // User exists, send token
  
@@ -2414,7 +2409,7 @@ const logoutandProceed = async (req, res) => {
     const userQuery = `
       SELECT * 
       FROM tbl_bookings 
-      WHERE user_email = @user_email
+      WHERE primary_email = @user_email
     `;
     const userResult = await pool.request().input('user_email', user_email).query(userQuery);
     const user = userResult.recordset[0];
@@ -2427,7 +2422,7 @@ const logoutandProceed = async (req, res) => {
 
   const activeSessionResult = await pool
   .request()
-  .input('user_email', sql.NVarChar, user.user_email)
+  .input('user_email', sql.NVarChar, user.primary_email)
   .query(activeSessionQuery);
 
 
@@ -2441,7 +2436,7 @@ const logoutandProceed = async (req, res) => {
     `;
     await pool
       .request()
-      .input('user_email', sql.NVarChar, user.user_email)
+      .input('user_email', sql.NVarChar, user.primary_email)
       .query(deleteSessionQuery);
   }
 
@@ -2452,7 +2447,7 @@ const logoutandProceed = async (req, res) => {
   `;
   await pool
     .request()
-    .input('user_email', sql.NVarChar, user.user_email)
+    .input('user_email', sql.NVarChar, user.primary_email)
     .input('token', sql.NVarChar, token)
     .query(insertSessionQuery);
 
@@ -2477,7 +2472,8 @@ const logout = async (req, res) => {
     pool = await connection();
 
 
- const user_email = req.user ? req.user.user_email : 'Guest Mode';
+ const user_email = req.user ? req.user.primary_email : 'Guest Mode';
+
 
       // Clear the active session for the admin
       const deleteSessionQuery = `
@@ -2507,7 +2503,7 @@ const logout = async (req, res) => {
 
 const logoutold = async (req, res) => {
 
-  const userName = req.user ? req.user.user_email : 'Guest Mode';
+  const userName = req.user ? req.user.primary_email : 'Guest Mode';
   try {
     res.cookie("User_kwl_token", null, {
       expires: new Date(Date.now()),
@@ -2809,6 +2805,10 @@ const fetchAndSyncAcuityBookingswithlimit = async (req, res, next) => {
 
 
  //============================== User Login End ==============================================
+
+
+
+
 
 
 

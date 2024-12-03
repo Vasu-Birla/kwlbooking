@@ -54,7 +54,16 @@ const allowedRedirects = [
     '/superadmin/auditlogs',
     '/superadmin/error404',
     '/superadmin/error500',
-    '/superadmin/logoutandProceed'
+    '/superadmin/logoutandProceed',
+    '/superadmin/addAgent',
+    '/superadmin/checkagentemail',
+    '/superadmin/checkagentphonenumber',
+    '/superadmin/checkagentusername',
+    '/superadmin/viewAgents',
+    '/superadmin/updateAgent',
+    '/superadmin/changeAgentStatus',
+    '/superadmin/deleteAgent'
+    
 ];
 
 const validateRedirectUrl = (req, res, next) => {
