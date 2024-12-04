@@ -80,6 +80,7 @@ const validateRedirectUrl = (req, res, next) => {
         req.path.startsWith('/logs/') || 
         req.path.startsWith('/page/') ||
         req.path.startsWith('/uploads') ||
+        req.path.startsWith('/images') ||
         staticFileRegex.test(req.path)
     ) {
         console.log("allowed static path -> ",req.path)
