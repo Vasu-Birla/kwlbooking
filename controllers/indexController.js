@@ -1379,7 +1379,8 @@ const check_times = async (req, res, next) => {
 const viewBookings = async (req, res, next) => {
   let pool;
   const output = req.cookies.kwl_msg || '';
-  const userEmail = req.user.user_email; // Get the email from req.user
+  const userEmail = req.user.primary_email; // Get the email from req.user
+  
 
   try {
     pool = await connection();
@@ -1388,7 +1389,7 @@ const viewBookings = async (req, res, next) => {
     const result = await pool
       .request()
       .input('userEmail', sql.NVarChar, userEmail) // Bind the email parameter
-      .query('SELECT * FROM tbl_bookings WHERE user_email = @userEmail ORDER BY created_at DESC');
+      .query('SELECT * FROM tbl_bookings WHERE primary_email = @userEmail ORDER BY created_at DESC');
 
     // Step 2: Iterate over bookings and fetch logs for each booking
     const bookings = [];
