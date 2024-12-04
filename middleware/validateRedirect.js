@@ -68,6 +68,17 @@ const allowedRedirects = [
 
 const validateRedirectUrl = (req, res, next) => {
     const redirectUrl = req.query.redirect || req.body.redirect || '';
+
+     // Allow static files to bypass validation
+     if (
+        req.path.startsWith('/adminassets/') || 
+        req.path.startsWith('/assets/') || 
+        req.path.startsWith('/logs/') || 
+        req.path.startsWith('/page/') ||
+        req.path.startsWith('/uploads')
+    ) {
+        return next();
+    }
     
     // Check if the redirectUrl or current path is allowed
     if (!allowedRedirects.includes(redirectUrl) && !allowedRedirects.includes(req.path)) {

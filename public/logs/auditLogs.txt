@@ -14502,3 +14502,10 @@ URL Hit: https://acuityscheduling.com/api/v1/appointments/1377574683/cancel
 Accessed By: Agent - agent@gmail.com
 Purpose: Cancelling Booking
 ------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 11:52:42
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: Agent - agent@gmail.com
+Purpose: Fetching Date Appointment Types
+------------------------------
