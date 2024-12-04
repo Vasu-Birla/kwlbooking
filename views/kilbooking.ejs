@@ -519,7 +519,203 @@ const forms = document.querySelectorAll('.form-container');
 
     //============ dynamic forms start ======================//
 
-    function generateMultipleForms() {
+
+   // let generatedForms = {}; // Track forms by slot and unit indices
+
+function generateMultipleForms() {
+
+    console.log("generting    Selected Timess===========>>>>>>>>>>>>>>> ", selectedDateTimes)
+
+    const formsContainer = document.getElementById('formsContainer');
+    const slotUnit = document.getElementById('slotUnit').value; // Get the number of slots
+   // const selectedTimes = selectedDateTimes; // Use the selected times array
+    const selectedTimes = [...selectedDateTimes]; // Assume this is up-to-date
+
+    if (slotUnit <= 0 || selectedTimes.length === 0) {
+        alert("Please select valid slots and number of slots.");
+        return;
+    }
+
+     // Initialize tracking object if not already done
+     if (!window.generatedForms) window.generatedForms = {};
+
+    //  Object.keys(window.generatedForms).forEach(formId => {
+    //     const [index, slotIndex] = formId.split('_').slice(1, 3);
+    //     const selectedTime = selectedTimes[index];
+    //     const formTime = selectedDateTimes[index];
+        
+    //     if (!selectedTimes.includes(formTime)) {
+    //         // If the time is no longer selected, remove the form
+    //         const formContainer = document.getElementById(`formContainer_${formId}`);
+    //         if (formContainer) {
+    //             formContainer.remove();
+    //         }
+    //         delete window.generatedForms[formId]; // Remove tracking of the form
+    //     }
+    // });
+
+    // Remove forms whose time is no longer in selectedTimes
+    const formContainers = formsContainer.querySelectorAll('.form-container');
+    formContainers.forEach((formContainer) => {
+        const formTime = formContainer.getAttribute('data-time');
+        if (!selectedTimes.includes(formTime)) {
+            formContainer.remove(); // Remove the form container
+            delete window.generatedForms[formTime]; // Remove tracking of the form
+        }
+    });
+
+    selectedTimes.forEach((time, index) => {
+        const formattedTime = new Intl.DateTimeFormat('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: timezone, // Use the selected timezone
+        }).format(new Date(time));
+
+          // Check how many forms already exist for this time
+          const existingFormContainers = formsContainer.querySelectorAll(`[data-time='${time}']`);
+        const existingFormCount = existingFormContainers.length;
+
+        for (let i = existingFormCount ; i < slotUnit; i++) {
+            const formId = `kilform_${index}_${i}`;
+
+      
+            const formTime = selectedTimes[index];
+
+            // Check if this form already exists
+           // const existingFormContainer = document.querySelector(`[data-time='${formTime}']`);
+
+            // Check if this form already exists
+            // if (!existingFormContainer) {
+           
+
+                const formHTML = `
+               
+                    <div class="form-container" id="formContainer_${formId}" data-time="${time}">
+                         <br>
+                <hr>
+                        <div class="form-divider">
+                            <h1>${selectedDate} ${formattedTime}</h1>
+                        </div>
+                        <form id="kilform_${index}_${i}">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <input type="hidden" id="calendarId_${index}_${i}" name="calendarId" value="${calendarId}">
+                            <input type="hidden" name="typename" id="typename_${index}_${i}" value="${typename}">
+                            <input type="hidden" name="selectedTime" value="${time}">
+                            <input type="hidden" name="appointment_type" value="${type_cat}" id="apppersonal_${index}_${i}">
+
+                            
+
+                            <div class="row gy-4">
+                                <div class="col-md-6">
+                                    <label>* TRN</label>
+                                    <input maxlength="20" type="text" id="trn_${index}_${i}" name="trn" class="form-control" placeholder="Enter the number" oninput="formatTRN(this)" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
+                                </div>
+                                <div class="col-md-6"></div>
+                                <div class="col-md-6">
+                                    <label>* First Name</label>
+                                    <input maxlength="20" type="text" id="fname_${index}_${i}" class="form-control" name="firstname" placeholder="Enter the name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
+                                </div>
+                                <div class="col-md-6">
+                                    <label>* Last Name</label>
+                                    <input maxlength="20" type="text" id="lname_${index}_${i}" class="form-control" name="lastname" placeholder="Last Name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
+                                </div>
+                                <div class="col-md-6">
+                                    <label>* Mobile Number</label>
+                                    <div class="input-group">
+                                        <input type="tel" name="contact" id="kilvishcontact_${index}_${i}" class="form-control" placeholder="Mobile Number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required>
+                                        <input type="hidden" id="fullkilvishcontact_${index}_${i}" name="fullkilvishcontact">
+                                        <input type="hidden" id="country_code_${index}_${i}" name="country_code">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label>* Email Address</label>
+                                    <% if (typeof loggeduser !== 'undefined' && loggeduser.user_email) { %>
+                                        <input type="email" id="email_${index}_${i}" class="form-control" name="user_email" placeholder="Enter the email" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" >
+                                    <% } else { %>
+                                        <input type="email" id="email_${index}_${i}" class="form-control" name="user_email" placeholder="Enter the email" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required>
+                                    <% } %>
+                                </div>
+
+                            
+
+                                <div class="col-md-6">
+                                    <label>* Agent/Freight Forwarder</label>
+                                    <select id="agent_${index}_${i}" class="form-control select2" name="agent_forwarder" required>
+                                        <option value="">Select Agent</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <input type="text" id="otherAgent_${index}_${i}" name="agent_forwarder" class="form-control" placeholder="Enter your agent's name" style="display:none;" />
+                                </div>
+
+
+                                <div class="col-md-6">
+                                    <label>Name of Individual Making Appointment (If not consignee)</label>
+                                    <input maxlength="20" type="text" id="appname_${index}_${i}" class="form-control" name="appointment_by" placeholder="Enter the name">
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label>* Bill of Lading Number</label>
+                                    <input maxlength="25" type="text" id="blnumber_${index}_${i}" class="form-control" name="bol_number" placeholder="Enter the number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
+                                </div>
+                                <div class="col-md-6">
+                                    <label>* Vessel Name</label>
+                                    <input maxlength="20" type="text" id="vname_${index}_${i}" class="form-control" name="vessel_name" placeholder="Enter the vessel name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
+                                </div>
+                                <div class="col-md-6">
+                                    <label>* Expected Vessel Reported Date</label>
+                                    <input type="date" id="vreport_${index}_${i}" class="form-control" name="vessel_reported_date" required>
+                                </div>
+                                <div class="col-md-6" id="chassisContainer_${index}_${i}" style="display: none;">
+                                    <label>* Chassis No</label>
+                                    <input maxlength="20" type="text" id="chassis_${index}_${i}" class="form-control" name="chassis_number" placeholder="Enter the number" >
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Customs Release/IMS4 Declaration Number</label>
+                                    <input maxlength="20" type="text" id="ims_${index}_${i}" class="form-control" name="declaration_number" placeholder="Customs Release/IMS4 Declaration Number">
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Container Number</label>
+                                    <input maxlength="20" type="text" id="cnumber_${index}_${i}" class="form-control" name="container_number" placeholder="Enter the data">
+                                </div>
+                                <div class="col-md-6">
+                                    <label>* Number of Pieces/Packages/Units</label>
+                                    <input type="number" min="0" id="ppnumber_${index}_${i}" class="form-control" name="number_of_items" placeholder="Enter the packages" required="">
+                                </div>
+                            </div>
+                        </form>
+                          <br>
+                    </div>
+                    
+                `;
+
+
+                // Append the new form to the container
+                formsContainer.insertAdjacentHTML('beforeend', formHTML);
+
+              
+
+                   // Track this form as generated
+                        if (!window.generatedForms[formTime]) {
+                            window.generatedForms[formTime] = [];
+                        }
+                        window.generatedForms[formTime].push(formId);
+
+                   // Track this form as generated this is also working
+                  // window.generatedForms[formTime] = true;
+
+                // Initialize the newly added dropdown or any plugins
+                initializeAgentDropdown(`agent_${index}_${i}`, `otherAgent_${index}_${i}`);
+                initializeIntlTelInput(index, i);
+
+            // }
+        }
+    });
+
+}
+
+
+
+    function generateMultipleForms_workingfine() {
     const formsContainer = document.getElementById('formsContainer');
     formsContainer.innerHTML = ''; // Clear previous forms if any
 
@@ -653,122 +849,6 @@ const forms = document.querySelectorAll('.form-container');
 }
 
 
-    function generateMultipleForms11() {
-    const formsContainer = document.getElementById('formsContainer');
-    formsContainer.innerHTML = ''; // Clear previous forms if any
-
-    const slotUnit = document.getElementById('slotUnit').value;  // Get the number of slots
-    const selectedTimes = selectedDateTimes;  // Use the selected times array
-
-    // Ensure that there are valid selected times and slotUnit value
-    if (slotUnit > 0 && selectedTimes.length > 0) {
-        selectedTimes.forEach((time, index) => {
-      
-
-            const formattedTime = new Intl.DateTimeFormat('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-            timeZone: timezone, // Use the selected timezone
-            }).format(new Date(time));
-
-            for (let i = 0; i < slotUnit; i++) {
-                const formHTML = `
-
-                 <div class="form-container">
-                        <div class="form-divider">
-                        <h1> ${selectedDate} ${formattedTime}</h1>
-                        </div>
-    
-                    <form id="kilform_${index}_${i}">
-                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                        <input type="hidden" name="calendarId" value="${calendarId}">
-                        <input type="hidden" name="typename" value="${typename}">
-                        <input type="hidden" name="selectedTime" value="${time}">
-                         <input type="hidden" name="appointment_type" id="apppersonal">
-                        
-                        <div class="row gy-4">
-                            <div class="col-md-6">
-                                <label>* TRN</label>
-                                <input maxlength="20" type="text" name="trn" class="form-control" placeholder="Enter the number" oninput="formatTRN(this)" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
-                            </div>
-                            <div class="col-md-6"></div>
-                            <div class="col-md-6">
-                                <label>* First Name</label>
-                                <input maxlength="20" type="text" name="firstname" class="form-control" placeholder="Enter the name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
-                            </div>
-                            <div class="col-md-6">
-                                <label>* Last Name</label>
-                                <input maxlength="20" type="text" name="lastname" class="form-control" placeholder="Last Name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
-                            </div>
-                            <div class="col-md-6">
-                                <label>* Mobile Number</label>
-                                <div class="input-group">
-                                    <input type="tel" name="contact" class="form-control" placeholder="Mobile Number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required>
-                                    <input type="hidden" name="fullkilvishcontact">
-                                    <input type="hidden" name="country_code">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label>* Email Address</label>
-                                <% if (typeof loggeduser !== 'undefined' && loggeduser.user_email) { %>
-                                    <input type="email" name="user_email" class="form-control" value="<%= loggeduser.user_email %>" readonly>
-                                <% } else { %>
-                                    <input type="email" name="user_email" class="form-control" placeholder="Enter the email" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required>
-                                <% } %>
-                            </div>
-                            <div class="col-md-6">
-                                <label>* Agent/Freight Forwarder</label>
-                                <select name="agent_forwarder" class="form-control select2" required>
-                                    <option value="">Select Agent</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                                <input type="text" name="agent_forwarder" class="form-control" placeholder="Enter your agent's name" style="display:none;" />
-                            </div>
-                            <div class="col-md-6">
-                                <label>Name of Individual Making Appointment (If not consignee)</label>
-                                <input maxlength="20" type="text" name="appointment_by" class="form-control" placeholder="Enter the name">
-                            </div>
-                           
-                            <div class="col-md-6">
-                                <label>* Bill of Lading Number</label>
-                                <input maxlength="25" type="text" name="bol_number" class="form-control" placeholder="Enter the number" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
-                            </div>
-                            <div class="col-md-6">
-                                <label>* Vessel Name</label>
-                                <input maxlength="20" type="text" name="vessel_name" class="form-control" placeholder="Enter the vessel name" onkeyup="validateKilvishInput(event)" onchange="validateKilvishInput(event)" required="">
-                            </div>
-                            <div class="col-md-6">
-                                <label>* Expected Vessel Reported Date</label>
-                                <input type="date" name="vessel_reported_date" class="form-control" required>
-                            </div>
-                            <div class="col-md-6" id="chassisContainer" style="display: none;">
-                                <label>* Chassis No</label>
-                                <input maxlength="20" type="text" name="chassis_number" class="form-control" placeholder="Enter the number" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label>Customs Release/IMS4 Declaration Number</label>
-                                <input maxlength="20" type="text" name="declaration_number" class="form-control" placeholder="Customs Release/IMS4 Declaration Number">
-                            </div>
-                            <div class="col-md-6">
-                                <label>Container Number</label>
-                                <input maxlength="20" type="text" name="container_number" class="form-control" placeholder="Enter the data">
-                            </div>
-                            <div class="col-md-6">
-                                <label>* Number of Pieces/Packages/Units</label>
-                                <input type="number" min="0" name="number_of_items" class="form-control" placeholder="Enter the packages" required="">
-                            </div>
-                        </div>
-                    </form>
-                    <br>`;
-
-                // Append the generated form to the container
-                formsContainer.insertAdjacentHTML('beforeend', formHTML);
-            }
-        });
-    } else {
-        alert("Please select valid slots and number of slots.");
-    }
-}
 
     //=========== dynamic forms end=============================
 
@@ -1321,7 +1401,21 @@ function renderAvailableDates(data,timezone) {
             selectedTimes = [];      
     
         selectedDateTimes=[]
-    // Re-render available times based on the updated slot unit value
+   
+
+
+    // Clear generated forms tracking
+    if (window.generatedForms) {
+        window.generatedForms = {};
+    }
+
+    // Clear the forms container
+    const formsContainer = document.getElementById('formsContainer');
+    while (formsContainer.firstChild) {
+        formsContainer.removeChild(formsContainer.firstChild);
+    }
+
+     // Re-render available times based on the updated slot unit value
     
     renderAvailableTimes(globaltimes);  // Assuming `times` is your available time slots array
 });
