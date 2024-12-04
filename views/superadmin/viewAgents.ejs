@@ -192,16 +192,16 @@ div[style*="overflow-x: auto;"] {
                                                   <td>
                                                     <div class="dropdown">
                                                       <button class="dropdown-toggle" type="button" data-toggle="dropdown" style="border: none;background: #fff0;">
-                                                        <img src="../Images/icons/setting.png" style="width:30px;height:30px;">
+                                                        <img src="../images/icons/setting.png" style="width:30px;height:30px;">
                                                       </button>
                                                       <ul class="dropdown-menu">
-                                                        <li><a href="#" onclick="updateAgent('<%= agent.admin_id %>', '<%= JSON.stringify(agent) %>')" data-toggle="tooltip" title="Update"><img src="../Images/icons/edit-doc.png" style="width:30px;height:30px;"></a></li>
+                                                        <li><a href="#" onclick="updateAgent('<%= agent.admin_id %>', '<%= JSON.stringify(agent) %>')" data-toggle="tooltip" title="Update"><img src="../images/icons/edit-doc.png" style="width:30px;height:30px;"></a></li>
                                                         <% if (agent.status === 'Active') { %>
-                                                          <li><a href="#" onclick="changeAgentStatus('<%= agent.admin_id  %>', 'Inactive', '<%= agent.first_name %>')" data-toggle="tooltip" title="Inactive"><img src="../Images/icons/inactive.png" style="width:30px;height:30px;"></a></li>
+                                                          <li><a href="#" onclick="changeAgentStatus('<%= agent.admin_id  %>', 'Inactive', '<%= agent.first_name %>')" data-toggle="tooltip" title="Inactive"><img src="../images/icons/inactive.png" style="width:30px;height:30px;"></a></li>
                                                         <% } else { %>
-                                                          <li><a href="#" onclick="changeAgentStatus('<%= agent.admin_id  %>', 'Active', '<%= agent.first_name %>')" data-toggle="tooltip" title="Active"><img src="../Images/icons/active.png" style="width:30px;height:30px;"></a></li>
+                                                          <li><a href="#" onclick="changeAgentStatus('<%= agent.admin_id  %>', 'Active', '<%= agent.first_name %>')" data-toggle="tooltip" title="Active"><img src="../images/icons/active.png" style="width:30px;height:30px;"></a></li>
                                                         <% } %>
-                                                        <li><a href="#"  onclick="deleteAgent('<%= agent.admin_id  %>', '<%= agent.first_name  %>')" data-toggle="tooltip" title="Delete"><img src="../Images/icons/delete.png" style="width:30px;height:30px;"></a></li>
+                                                        <li><a href="#"  onclick="deleteAgent('<%= agent.admin_id  %>', '<%= agent.first_name  %>')" data-toggle="tooltip" title="Delete"><img src="../images/icons/delete.png" style="width:30px;height:30px;"></a></li>
                                                       </ul>
                                                     </div>
                                                   </td>
