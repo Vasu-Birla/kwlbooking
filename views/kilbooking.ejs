@@ -1461,7 +1461,7 @@ function renderAvailableTimes(times) {
         // If the available slots are greater than or equal to the required number of slots, allow selection
         if (timeObj.slotsAvailable >= slotUnit) {
             timeSlotDiv.style.border = "2px solid green";  // Green border for available slots
-            slotsLeftText.textContent = `${timeObj.slotsAvailable} Slot${timeObj.slotsAvailable > 1 ? 's' : ''} left`;
+            slotsLeftText.innerHTML = `<br> ${timeObj.slotsAvailable} Slot${timeObj.slotsAvailable > 1 ? 's' : ''} left`;
 
             // Enable click for available slots
             timeSlotDiv.onclick = function () {
@@ -1469,7 +1469,7 @@ function renderAvailableTimes(times) {
             };
         } else {
             timeSlotDiv.style.border = "2px solid red";  // Red border for unavailable slots
-            slotsLeftText.textContent = `${timeObj.slotsAvailable} Slot${timeObj.slotsAvailable > 1 ? 's' : ''} left`;
+            slotsLeftText.innerHTML = `<br> ${timeObj.slotsAvailable} Slot${timeObj.slotsAvailable > 1 ? 's' : ''} left`;
             timeSlotDiv.style.pointerEvents = 'none';  // Disable click for unavailable slots
         }
 
@@ -1531,7 +1531,7 @@ function renderAvailableTimes(times) {
 
         if (timeObj.slotsAvailable >= slotUnit) {
             timeSlotDiv.style.border = "2px solid green";
-            slotsLeftText.textContent = `${timeObj.slotsAvailable} Slot${timeObj.slotsAvailable > 1 ? 's' : ''} left`;
+            slotsLeftText.innerHTML = `<br> ${timeObj.slotsAvailable} Slot${timeObj.slotsAvailable > 1 ? 's' : ''} left`;
 
             // Enable click for available slots
             timeSlotDiv.onclick = function () {
@@ -1539,7 +1539,7 @@ function renderAvailableTimes(times) {
             };
         } else {
             timeSlotDiv.style.border = "2px solid red";
-            slotsLeftText.textContent = "0 Slots left";
+            slotsLeftText.innerHTML = "<br> 0 Slots left";
             timeSlotDiv.style.pointerEvents = 'none';
         }
 

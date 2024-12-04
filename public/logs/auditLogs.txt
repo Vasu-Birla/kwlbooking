@@ -14509,3 +14509,164 @@ URL Hit: https://acuityscheduling.com/api/v1/appointment-types
 Accessed By: Agent - agent@gmail.com
 Purpose: Fetching Date Appointment Types
 ------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 12:58:07
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: Guest - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 12:58:11
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: Guest - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 12:58:14
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: Guest - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 12:58:18
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: Guest - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 12:58:21
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: Guest - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 12:58:28
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: Guest - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 13:12:05
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: Guest - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 13:12:09
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=December&appointmentTypeID=18478069&timezone=
+Accessed By: Guest - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 13:13:03
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: Guest - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 13:13:06
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=December&appointmentTypeID=18478069&timezone=
+Accessed By: Guest - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 13:14:09
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: Guest - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 13:14:13
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=December&appointmentTypeID=18478069&timezone=
+Accessed By: Guest - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 13:14:52
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: Guest - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 13:14:57
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=December&appointmentTypeID=18478069&timezone=
+Accessed By: Guest - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 13:19:05
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: Guest - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 13:19:08
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=December&appointmentTypeID=18478069&timezone=
+Accessed By: Guest - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 13:19:18
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: Guest - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 13:19:29
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: Guest - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 13:19:34
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: Guest - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 13:19:37
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: Guest - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 13:19:43
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=December&appointmentTypeID=18478069&timezone=
+Accessed By: Guest - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 13:23:47
+URL Hit: https://acuityscheduling.com/api/v1/appointment-types
+Accessed By: Guest - Guest Mode
+Purpose: Fetching Date Appointment Types
+------------------------------
+
+------------------------------
+Date and Time: 2024-12-04 13:23:50
+URL Hit: https://acuityscheduling.com/api/v1/availability/dates?month=December&appointmentTypeID=18478069&timezone=
+Accessed By: Guest - Guest Mode
+Purpose: Fetching Date Aailabilities
+------------------------------
