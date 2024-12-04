@@ -69,16 +69,26 @@ const allowedRedirects = [
 const validateRedirectUrl = (req, res, next) => {
     const redirectUrl = req.query.redirect || req.body.redirect || '';
 
+
+     // Skip static file requests (e.g., .png, .jpg, .css, .js)
+     const staticFileRegex = /\.(png|jpg|jpeg|css|js|ico|svg|woff|woff2|ttf|otf|eot|map|html|txt)$/i;
+
      // Allow static files to bypass validation
      if (
         req.path.startsWith('/adminassets/') || 
         req.path.startsWith('/assets/') || 
         req.path.startsWith('/logs/') || 
         req.path.startsWith('/page/') ||
-        req.path.startsWith('/uploads')
+        req.path.startsWith('/uploads') ||
+        staticFileRegex.test(req.path)
     ) {
+        console.log("allowed static path -> ",req.path)
         return next();
     }
+
+
+
+    console.log("redirectUrl ==>>>",redirectUrl )
     
     // Check if the redirectUrl or current path is allowed
     if (!allowedRedirects.includes(redirectUrl) && !allowedRedirects.includes(req.path)) {

@@ -140,6 +140,8 @@ router.route('/checkagentusername').post(isAuthenticatedAdmin,checkagentusername
 
 router.route('/viewAgents').get(isAuthenticatedAdmin,viewAgents)
 
+router.route('/viewAgents1').get(isAuthenticatedAdmin,viewAgents)
+
 router.route('/updateAgent').post(isAuthenticatedAdmin,updateAgent)
 
 router.route('/changeAgentStatus').post(isAuthenticatedAdmin,changeAgentStatus)
